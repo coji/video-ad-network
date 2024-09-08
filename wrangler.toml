@@ -13,10 +13,10 @@ compatibility_date = "2024-09-08"
 # binding = "MY_BUCKET"
 # bucket_name = "my-bucket"
 
-# [[d1_databases]]
-# binding = "DB"
-# database_name = "my-database"
-# database_id = ""
+[[d1_databases]]
+binding = "DB" # i.e. available in your Worker on env.DB
+database_name = "video-ad-network"
+database_id = "0001b8b4-28f3-48dd-af89-2f0e108cac57"
 
 # [ai]
 # binding = "AI"
