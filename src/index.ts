@@ -142,7 +142,7 @@ app.get('/vast', async (c) => {
     <InLine>
       <AdSystem>Custom Ad Network</AdSystem>
       <AdTitle>Ad ${ad.id}</AdTitle>
-      <Impression><![CDATA[${c.req.url}/impression?adId=${
+      <Impression><![CDATA[${origin}/impression?adId=${
     ad.id
   }&adSlotId=${adSlotId}&mediaId=${mediaId}]]></Impression>
       <Creatives>
