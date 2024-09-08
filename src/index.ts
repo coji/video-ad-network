@@ -109,6 +109,9 @@ app.get('/vast', async (c) => {
     return c.text('Missing required parameters', 400);
   }
 
+  const url = new URL(c.req.url);
+  const origin = url.origin;
+
   const frequencyDataCookie = getCookie(c, 'ad_frequency');
   const frequencyData = parseFrequencyData(frequencyDataCookie);
 
@@ -154,27 +157,21 @@ app.get('/vast', async (c) => {
               </MediaFile>
             </MediaFiles>
             <VideoClicks>
-              <ClickThrough><![CDATA[${c.req.url}/click?adId=${
+              <ClickThrough><![CDATA[${origin}/click?adId=${
     ad.id
   }&adSlotId=${adSlotId}&mediaId=${mediaId}&isCompanion=false]]></ClickThrough>
             </VideoClicks>
             <TrackingEvents>
-              <Tracking event="progress" offset="25%"><![CDATA[${
-                c.req.url
-              }/progress?adId=${
+              <Tracking event="progress" offset="25%"><![CDATA[${origin}/progress?adId=${
     ad.id
   }&adSlotId=${adSlotId}&mediaId=${mediaId}&progress=25]]></Tracking>
-              <Tracking event="progress" offset="50%"><![CDATA[${
-                c.req.url
-              }/progress?adId=${
+              <Tracking event="progress" offset="50%"><![CDATA[${origin}/progress?adId=${
     ad.id
   }&adSlotId=${adSlotId}&mediaId=${mediaId}&progress=50]]></Tracking>
-              <Tracking event="progress" offset="75%"><![CDATA[${
-                c.req.url
-              }/progress?adId=${
+              <Tracking event="progress" offset="75%"><![CDATA[${origin}/progress?adId=${
     ad.id
   }&adSlotId=${adSlotId}&mediaId=${mediaId}&progress=75]]></Tracking>
-              <Tracking event="complete"><![CDATA[${c.req.url}/progress?adId=${
+              <Tracking event="complete"><![CDATA[${origin}/progress?adId=${
     ad.id
   }&adSlotId=${adSlotId}&mediaId=${mediaId}&progress=100]]></Tracking>
             </TrackingEvents>
@@ -190,7 +187,7 @@ app.get('/vast', async (c) => {
                 <![CDATA[${companion.url}]]>
               </StaticResource>
               <CompanionClickThrough>
-                <![CDATA[${c.req.url}/click?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&isCompanion=true&companionId=${companion.id}]]>
+                <![CDATA[${origin}/click?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&isCompanion=true&companionId=${companion.id}]]>
               </CompanionClickThrough>
             </Companion>
           </CompanionAds>
