@@ -138,7 +138,7 @@ app.get('/vast', async (c) => {
 
   const vastXml = `<?xml version="1.0" encoding="UTF-8"?>
 <VAST version="4.1">
-  <Ad id="${ad.id}">
+  <Ad id="${ad.id}" adType="${ad.type}">
     <InLine>
       <AdSystem>Custom Ad Network</AdSystem>
       <AdTitle>Ad ${ad.id}</AdTitle>
