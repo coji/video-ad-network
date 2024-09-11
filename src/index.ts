@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import { setCookie, getCookie } from 'hono/cookie';
 import type { D1Database } from '@cloudflare/workers-types';
+import { cors } from 'hono/cors';
 
 interface Bindings {
   DB: D1Database;
@@ -99,6 +100,18 @@ async function getCompanionBanners(
 
   return companions.results || [];
 }
+
+app.use(
+  '/vast',
+  cors({
+    origin: '*', // すべてのオリジンを許可
+    allowMethods: ['GET', 'OPTIONS'],
+    allowHeaders: ['Content-Type', 'Authorization'],
+    exposeHeaders: ['Content-Length', 'X-Kuma-Revision'],
+    maxAge: 600,
+    credentials: true,
+  })
+);
 
 app.get('/vast', async (c) => {
   const adSlotId = Number.parseInt(c.req.query('adSlotId') || '');
