@@ -1,5 +1,5 @@
 name = "video-ad-network"
-compatibility_date = "2024-09-08"
+compatibility_date = "2024-09-25"
 # compatibility_flags = [ "nodejs_compat" ]
 
 # [vars]
@@ -20,3 +20,6 @@ database_id = "0001b8b4-28f3-48dd-af89-2f0e108cac57"
 
 # [ai]
 # binding = "AI"
+
+[observability]
+enabled = true
