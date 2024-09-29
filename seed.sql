@@ -28,21 +28,21 @@ INSERT INTO ad_slot_targeting (ad_id, ad_slot_id, bid_amount) VALUES
 (3, 3, 0.07);
 
 -- インプレッションのサンプルデータ
-INSERT INTO impressions (ad_id, ad_slot_id, media_id, ip_address, user_agent) VALUES
-(1, 1, 1, '192.168.1.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'),
-(2, 2, 2, '192.168.1.2', 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0.3 Mobile/15E148 Safari/604.1'),
-(3, 3, 3, '192.168.1.3', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.1 Safari/605.1.15');
+INSERT INTO impressions (id, ad_id, ad_slot_id, media_id, ip_address, user_agent) VALUES
+('550e8400-e29b-41d4-a716-446655440000', 1, 1, 1, '192.168.1.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'),
+('550e8400-e29b-41d4-a716-446655440001', 2, 2, 2, '192.168.1.2', 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0.3 Mobile/15E148 Safari/604.1'),
+('550e8400-e29b-41d4-a716-446655440002', 3, 3, 3, '192.168.1.3', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.1 Safari/605.1.15');
 
 -- クリックのサンプルデータ
-INSERT INTO clicks (ad_id, ad_slot_id, media_id, ip_address, user_agent, is_companion) VALUES
-(1, 1, 1, '192.168.1.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 0),
-(3, 3, 3, '192.168.1.3', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.1 Safari/605.1.15', 1);
+INSERT INTO clicks (ad_id, ad_slot_id, media_id, ip_address, user_agent, is_companion, impression_id) VALUES
+(1, 1, 1, '192.168.1.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', 0, '550e8400-e29b-41d4-a716-446655440000'),
+(3, 3, 3, '192.168.1.3', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.1 Safari/605.1.15', 1, '550e8400-e29b-41d4-a716-446655440002');
 
--- 視聴進捗のサンプルデータ
-INSERT INTO view_progress (ad_id, ad_slot_id, media_id, progress) VALUES
-(1, 1, 1, 25),
-(1, 1, 1, 50),
-(1, 1, 1, 75),
-(1, 1, 1, 100),
-(3, 3, 3, 25),
-(3, 3, 3, 50);
+-- 視聴進捗のサンプルデータ（impression_idを含む）
+INSERT INTO view_progress (ad_id, ad_slot_id, media_id, progress, impression_id) VALUES
+(1, 1, 1, 25, '550e8400-e29b-41d4-a716-446655440000'),
+(1, 1, 1, 50, '550e8400-e29b-41d4-a716-446655440000'),
+(1, 1, 1, 75, '550e8400-e29b-41d4-a716-446655440000'),
+(1, 1, 1, 100, '550e8400-e29b-41d4-a716-446655440000'),
+(3, 3, 3, 25, '550e8400-e29b-41d4-a716-446655440002'),
+(3, 3, 3, 50, '550e8400-e29b-41d4-a716-446655440002');
