@@ -149,16 +149,19 @@ app.get('/vast', async (c) => {
 		sameSite: 'Strict',
 	})
 
+	// インプレッションIDを生成
+	const impressionId = crypto.randomUUID()
+
 	// tracker urls
 	const tracker = {
-		click: `${origin}/click?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&isCompanion=false`,
+		click: `${origin}/click?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&isCompanion=false&impressionId=${impressionId}`,
 		companionClick: (companionId: number) =>
-			`${origin}/click?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&isCompanion=true&companionId=${companionId}`,
-		impression: `${origin}/impression?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}`,
-		progress25: `${origin}/progress?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&progress=25`,
-		progress50: `${origin}/progress?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&progress=50`,
-		progress75: `${origin}/progress?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&progress=75`,
-		progress100: `${origin}/progress?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&progress=100`,
+			`${origin}/click?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&isCompanion=true&companionId=${companionId}&impressionId=${impressionId}`,
+		impression: `${origin}/impression?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&impressionId=${impressionId}`,
+		progress25: `${origin}/progress?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&progress=25&impressionId=${impressionId}`,
+		progress50: `${origin}/progress?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&progress=50&impressionId=${impressionId}`,
+		progress75: `${origin}/progress?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&progress=75&impressionId=${impressionId}`,
+		progress100: `${origin}/progress?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&progress=100&impressionId=${impressionId}`,
 	}
 
 	const vastXml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -225,9 +228,10 @@ app.get('/impression', async (c) => {
 	const adId = Number.parseInt(c.req.query('adId') || '')
 	const adSlotId = Number.parseInt(c.req.query('adSlotId') || '')
 	const mediaId = Number.parseInt(c.req.query('mediaId') || '')
+	const impressionId = c.req.query('impressionId')
 	const db: D1Database = c.env.DB
 
-	if (!adId || !adSlotId || !mediaId) {
+	if (!adId || !adSlotId || !mediaId || !impressionId) {
 		return c.text('Missing required parameters', 400)
 	}
 
@@ -235,11 +239,12 @@ app.get('/impression', async (c) => {
 	await db
 		.prepare(
 			`
-    INSERT INTO impressions (ad_id, ad_slot_id, media_id, ip_address, user_agent)
+    INSERT INTO impressions (id, ad_id, ad_slot_id, media_id, ip_address, user_agent)
     VALUES (?, ?, ?, ?, ?)
   `,
 		)
 		.bind(
+			impressionId,
 			adId,
 			adSlotId,
 			mediaId,
@@ -257,9 +262,10 @@ app.get('/click', async (c) => {
 	const mediaId = Number.parseInt(c.req.query('mediaId') || '')
 	const isCompanion = c.req.query('isCompanion') === 'true'
 	const companionId = Number.parseInt(c.req.query('companionId') || '0')
+	const impressionId = c.req.query('impressionId')
 	const db: D1Database = c.env.DB
 
-	if (!adId || !adSlotId || !mediaId) {
+	if (!adId || !adSlotId || !mediaId || !impressionId) {
 		return c.text('Missing required parameters', 400)
 	}
 
@@ -267,9 +273,9 @@ app.get('/click', async (c) => {
 	await db
 		.prepare(
 			`
-    INSERT INTO clicks (ad_id, ad_slot_id, media_id, ip_address, user_agent, is_companion)
-    VALUES (?, ?, ?, ?, ?, ?)
-  `,
+    INSERT INTO clicks (ad_id, ad_slot_id, media_id, ip_address, user_agent, is_companion, impression_id)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+	`,
 		)
 		.bind(
 			adId,
@@ -278,6 +284,7 @@ app.get('/click', async (c) => {
 			c.req.header('CF-Connecting-IP'),
 			c.req.header('User-Agent'),
 			isCompanion ? 1 : 0,
+			impressionId,
 		)
 		.run()
 
@@ -307,9 +314,10 @@ app.get('/progress', async (c) => {
 	const adSlotId = Number.parseInt(c.req.query('adSlotId') || '')
 	const mediaId = Number.parseInt(c.req.query('mediaId') || '')
 	const progress = Number.parseInt(c.req.query('progress') || '')
+	const impressionId = c.req.query('impressionId')
 	const db: D1Database = c.env.DB
 
-	if (!adId || !adSlotId || !mediaId || !progress) {
+	if (!adId || !adSlotId || !mediaId || !progress || !impressionId) {
 		return c.text('Missing required parameters', 400)
 	}
 
@@ -317,11 +325,11 @@ app.get('/progress', async (c) => {
 	await db
 		.prepare(
 			`
-    INSERT INTO view_progress (ad_id, ad_slot_id, media_id, progress)
-    VALUES (?, ?, ?, ?)
+    INSERT INTO view_progress (ad_id, ad_slot_id, media_id, progress, impression_id)
+    VALUES (?, ?, ?, ?, ?)
   `,
 		)
-		.bind(adId, adSlotId, mediaId, progress)
+		.bind(adId, adSlotId, mediaId, progress, impressionId)
 		.run()
 
 	return c.text('Progress recorded', 200)
