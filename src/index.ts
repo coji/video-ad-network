@@ -149,15 +149,25 @@ app.get('/vast', async (c) => {
 		sameSite: 'Strict',
 	})
 
+	// tracker urls
+	const tracker = {
+		click: `${origin}/click?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&isCompanion=false`,
+		companionClick: (companionId: number) =>
+			`${origin}/click?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&isCompanion=true&companionId=${companionId}`,
+		impression: `${origin}/impression?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}`,
+		progress25: `${origin}/progress?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&progress=25`,
+		progress50: `${origin}/progress?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&progress=50`,
+		progress75: `${origin}/progress?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&progress=75`,
+		progress100: `${origin}/progress?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&progress=100`,
+	}
+
 	const vastXml = `<?xml version="1.0" encoding="UTF-8"?>
 <VAST version="4.1">
   <Ad id="${ad.id}" adType="${ad.type}">
     <InLine>
       <AdSystem>Custom Ad Network</AdSystem>
       <AdTitle>Ad ${ad.id}</AdTitle>
-      <Impression><![CDATA[${origin}/impression?adId=${
-				ad.id
-			}&adSlotId=${adSlotId}&mediaId=${mediaId}]]></Impression>
+      <Impression><![CDATA[${tracker.impression}]]></Impression>
       <Creatives>
         <Creative id="${ad.id}">
           <${ad.type === 'video' ? 'Linear' : 'NonLinearAds'}>
@@ -170,23 +180,13 @@ app.get('/vast', async (c) => {
               </MediaFile>
             </MediaFiles>
             <VideoClicks>
-              <ClickThrough><![CDATA[${origin}/click?adId=${
-								ad.id
-							}&adSlotId=${adSlotId}&mediaId=${mediaId}&isCompanion=false]]></ClickThrough>
+              <ClickThrough><![CDATA[${tracker.click}]]></ClickThrough>
             </VideoClicks>
             <TrackingEvents>
-              <Tracking event="progress" offset="25%"><![CDATA[${origin}/progress?adId=${
-								ad.id
-							}&adSlotId=${adSlotId}&mediaId=${mediaId}&progress=25]]></Tracking>
-              <Tracking event="progress" offset="50%"><![CDATA[${origin}/progress?adId=${
-								ad.id
-							}&adSlotId=${adSlotId}&mediaId=${mediaId}&progress=50]]></Tracking>
-              <Tracking event="progress" offset="75%"><![CDATA[${origin}/progress?adId=${
-								ad.id
-							}&adSlotId=${adSlotId}&mediaId=${mediaId}&progress=75]]></Tracking>
-              <Tracking event="complete"><![CDATA[${origin}/progress?adId=${
-								ad.id
-							}&adSlotId=${adSlotId}&mediaId=${mediaId}&progress=100]]></Tracking>
+              <Tracking event="progress" offset="25%"><![CDATA[${tracker.progress25}]]></Tracking>
+              <Tracking event="progress" offset="50%"><![CDATA[${tracker.progress50}]]></Tracking>
+              <Tracking event="progress" offset="75%"><![CDATA[${tracker.progress75}]]></Tracking>
+              <Tracking event="complete"><![CDATA[${tracker.progress100}]]></Tracking>
             </TrackingEvents>
           </${ad.type === 'video' ? 'Linear' : 'NonLinearAds'}>
         </Creative>
@@ -200,7 +200,7 @@ app.get('/vast', async (c) => {
                 <![CDATA[${companion.url}]]>
               </StaticResource>
               <CompanionClickThrough>
-                <![CDATA[${origin}/click?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&isCompanion=true&companionId=${companion.id}]]>
+                <![CDATA[${tracker.companionClick(companion.id)}]]>
               </CompanionClickThrough>
             </Companion>
           </CompanionAds>
