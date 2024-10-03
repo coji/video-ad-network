@@ -124,6 +124,7 @@ app.get('/vast', async (c) => {
 
 	const url = new URL(c.req.url)
 	const origin = url.origin
+	const trackerOrigin = 'https://video-ad-network-tracker.fly.dev'
 
 	const frequencyDataCookie = getCookie(c, 'ad_frequency')
 	const frequencyData = parseFrequencyData(frequencyDataCookie)
@@ -157,11 +158,11 @@ app.get('/vast', async (c) => {
 		click: `${origin}/click?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&isCompanion=false&impressionId=${impressionId}`,
 		companionClick: (companionId: number) =>
 			`${origin}/click?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&isCompanion=true&companionId=${companionId}&impressionId=${impressionId}`,
-		impression: `${origin}/impression?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&impressionId=${impressionId}`,
-		progress25: `${origin}/progress?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&progress=25&impressionId=${impressionId}`,
-		progress50: `${origin}/progress?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&progress=50&impressionId=${impressionId}`,
-		progress75: `${origin}/progress?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&progress=75&impressionId=${impressionId}`,
-		progress100: `${origin}/progress?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&progress=100&impressionId=${impressionId}`,
+		impression: `${trackerOrigin}/impression?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&impressionId=${impressionId}`,
+		progress25: `${trackerOrigin}/progress?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&progress=25&impressionId=${impressionId}`,
+		progress50: `${trackerOrigin}/progress?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&progress=50&impressionId=${impressionId}`,
+		progress75: `${trackerOrigin}/progress?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&progress=75&impressionId=${impressionId}`,
+		progress100: `${trackerOrigin}/progress?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&progress=100&impressionId=${impressionId}`,
 	}
 
 	const vastXml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -224,38 +225,6 @@ app.get('/vast', async (c) => {
 	})
 })
 
-app.get('/impression', async (c) => {
-	const adId = Number.parseInt(c.req.query('adId') || '')
-	const adSlotId = Number.parseInt(c.req.query('adSlotId') || '')
-	const mediaId = Number.parseInt(c.req.query('mediaId') || '')
-	const impressionId = c.req.query('impressionId')
-	const db: D1Database = c.env.DB
-
-	if (!adId || !adSlotId || !mediaId || !impressionId) {
-		return c.text('Missing required parameters', 400)
-	}
-
-	// インプレッションを記録
-	await db
-		.prepare(
-			`
-    INSERT INTO impressions (id, ad_id, ad_slot_id, media_id, ip_address, user_agent)
-    VALUES (?, ?, ?, ?, ?)
-  `,
-		)
-		.bind(
-			impressionId,
-			adId,
-			adSlotId,
-			mediaId,
-			c.req.header('CF-Connecting-IP'),
-			c.req.header('User-Agent'),
-		)
-		.run()
-
-	return c.text('Impression recorded', 200)
-})
-
 app.get('/click', async (c) => {
 	const adId = Number.parseInt(c.req.query('adId') || '')
 	const adSlotId = Number.parseInt(c.req.query('adSlotId') || '')
@@ -307,32 +276,6 @@ app.get('/click', async (c) => {
 	return redirectUrl
 		? c.redirect(redirectUrl)
 		: c.text('Redirect URL not found', 404)
-})
-
-app.get('/progress', async (c) => {
-	const adId = Number.parseInt(c.req.query('adId') || '')
-	const adSlotId = Number.parseInt(c.req.query('adSlotId') || '')
-	const mediaId = Number.parseInt(c.req.query('mediaId') || '')
-	const progress = Number.parseInt(c.req.query('progress') || '')
-	const impressionId = c.req.query('impressionId')
-	const db: D1Database = c.env.DB
-
-	if (!adId || !adSlotId || !mediaId || !progress || !impressionId) {
-		return c.text('Missing required parameters', 400)
-	}
-
-	// 視聴進捗を記録
-	await db
-		.prepare(
-			`
-    INSERT INTO view_progress (ad_id, ad_slot_id, media_id, progress, impression_id)
-    VALUES (?, ?, ?, ?, ?)
-  `,
-		)
-		.bind(adId, adSlotId, mediaId, progress, impressionId)
-		.run()
-
-	return c.text('Progress recorded', 200)
 })
 
 export default app

@@ -1,0 +1,24 @@
+{
+	"name": "@video-ad-network/tracker",
+	"type": "module",
+	"scripts": {
+		"dev": "vite",
+		"build": "vite build",
+		"start": "node dist/index.js",
+		"format": "biome format .",
+		"lint": "biome lint ."
+	},
+	"dependencies": {
+		"@google-cloud/bigquery": "7.9.1",
+		"@hono/node-server": "1.13.1",
+		"hono": "4.6.3"
+	},
+	"devDependencies": {
+		"@hono/vite-build": "1.1.0",
+		"@hono/vite-dev-server": "0.16.0",
+		"@types/node": "20.11.17",
+		"biome": "0.3.3",
+		"typescript": "5.6.2",
+		"vite": "5.4.8"
+	}
+}
