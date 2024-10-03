@@ -1,4 +1,4 @@
-app = 'video-ad-server-tracker'
+app = 'video-ad-network-tracker'
 primary_region = 'nrt'
 
 [build]
