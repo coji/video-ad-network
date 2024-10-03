@@ -1,0 +1,21 @@
+{
+  "name": "@video-ad-network/ad-server",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev --show-interactive-dev-session false src/index.ts",
+    "db:migration": "wrangler d1 execute --local --file ./migration.sql video-ad-network",
+    "db:seed": "wrangler d1 execute --local --file ./seed.sql video-ad-network",
+    "deploy": "wrangler deploy --minify src/index.ts",
+    "cf-typegen": "wrangler types --env-interface CloudflareBindings",
+    "format": "biome format .",
+    "lint": "biome lint ."
+  },
+  "dependencies": {
+    "hono": "^4.6.3"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.2",
+    "@cloudflare/workers-types": "^4.20240925.0",
+    "wrangler": "^3.78.12"
+  }
+}
