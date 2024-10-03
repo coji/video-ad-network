@@ -1,8 +1,11 @@
-```
-npm install
-npm run dev
+
+# Video ad network system, running on Cloudflare Workers and Fly.io
+
+```sh
+pnpm install
+pnpm run dev
 ```
 
-```
-npm run deploy
+```sh
+pnpm run deploy
 ```
