@@ -3,8 +3,10 @@
 	"type": "module",
 	"scripts": {
 		"dev": "wrangler dev --show-interactive-dev-session false src/index.ts",
-		"db:migration": "wrangler d1 execute --local --file ./migration.sql video-ad-network",
-		"db:seed": "wrangler d1 execute --local --file ./seed.sql video-ad-network",
+		"db:migration:local": "wrangler d1 migrations apply video-ad-network",
+		"db:migration:remote": "wrangler d1 migrations apply --remote video-ad-network",
+		"db:seed:local": "wrangler d1 execute --local --file ./seed.sql video-ad-network",
+		"db:seed:remote": "wrangler d1 execute --remote --file ./seed.sql video-ad-network",
 		"deploy": "wrangler deploy --minify src/index.ts",
 		"cf-typegen": "wrangler types --env-interface CloudflareBindings",
 		"format": "biome format .",

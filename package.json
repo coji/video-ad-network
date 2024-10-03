@@ -9,6 +9,7 @@
 		"lint": "turbo lint",
 		"format": "turbo format",
 		"deploy": "run-s deploy:tracker",
+		"deploy:ad-server": "pnpm run --filter @video-ad-network/ad-server deploy",
 		"deploy:tracker": "fly deploy -c infra/flyio/tracker/fly.toml --dockerfile infra/flyio/tracker/Dockerfile"
 	},
 	"keywords": [],

@@ -6,10 +6,6 @@ assets = { directory = "./public", binding = "ASSETS" }
 # [vars]
 # MY_VAR = "my-variable"
 
-# [[kv_namespaces]]
-# binding = "MY_KV_NAMESPACE"
-# id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-
 # [[r2_buckets]]
 # binding = "MY_BUCKET"
 # bucket_name = "my-bucket"
@@ -17,11 +13,7 @@ assets = { directory = "./public", binding = "ASSETS" }
 [[d1_databases]]
 binding = "DB" # i.e. available in your Worker on env.DB
 database_name = "video-ad-network"
-database_id = "0001b8b4-28f3-48dd-af89-2f0e108cac57"
-
-# [ai]
-# binding = "AI"
-
+database_id = "135d293f-c13e-4ac3-b3ed-c095c57baeac"
 
 [observability]
 enabled = true
