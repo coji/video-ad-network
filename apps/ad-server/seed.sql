@@ -11,15 +11,15 @@ INSERT INTO ad_slots (media_id, name, type, width, height) VALUES
 (3, 'Music Stream Video Slot', 'video', 1280, 720);
 
 -- 広告のサンプルデータ
-INSERT INTO ads (advertiser_id, type, url, duration, width, height) VALUES
-(1, 'video', 'http://localhost:8787/example/ads/example_video1.mp4', 15, 1920, 1080),
-(2, 'audio', 'http://localhost:8787/example/ads/example_audio1.mp3', 15, NULL, NULL),
-(3, 'video', 'http://localhost:8787/example/ads/example_video2.mp4', 14, 1920, 1080);
+INSERT INTO ads (advertiser_id, type, url, duration, width, height, clickThroughURL) VALUES
+(1, 'video', 'http://localhost:8787/example/ads/example_video1.mp4', 15, 1920, 1080, 'https://example.com/ad/1'),
+(2, 'audio', 'http://localhost:8787/example/ads/example_audio1.mp3', 15, NULL, NULL, 'https://example.com/ad/2'),
+(3, 'video', 'http://localhost:8787/example/ads/example_video2.mp4', 14, 1920, 1080, 'https://example.com/ad/3');
 
 -- コンパニオンバナーのサンプルデータ
-INSERT INTO companion_banners (ad_id, url, width, height) VALUES
-(1, 'http://localhost:8787/example/ads/example_companion_banner1.jpg', 300, 250),
-(3, 'http://localhost:8787/example/ads/example_companion_banner2.jpg', 728, 90);
+INSERT INTO companion_banners (ad_id, url, width, height, clickThroughURL) VALUES
+(1, 'http://localhost:8787/example/ads/example_companion_banner1.png', 300, 250, 'https://example.com/ad/1/banner'),
+(3, 'http://localhost:8787/example/ads/example_companion_banner2.png', 728, 90, 'https://example.com/ad/3/banner');
 
 -- 広告枠ターゲティングのサンプルデータ
 INSERT INTO ad_slot_targeting (ad_id, ad_slot_id, bid_amount) VALUES

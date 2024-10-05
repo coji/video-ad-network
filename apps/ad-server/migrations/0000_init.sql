@@ -22,7 +22,8 @@ CREATE TABLE ads (
   url TEXT NOT NULL,
   duration INTEGER,
   width INTEGER,
-  height INTEGER
+  height INTEGER,
+  clickThroughURL TEXT
 );
 
 CREATE TABLE companion_banners (
@@ -31,6 +32,7 @@ CREATE TABLE companion_banners (
   url TEXT NOT NULL,
   width INTEGER NOT NULL,
   height INTEGER NOT NULL,
+  clickThroughURL TEXT,
   FOREIGN KEY (ad_id) REFERENCES ads(id)
 );
 
@@ -43,19 +45,6 @@ CREATE TABLE ad_slot_targeting (
   FOREIGN KEY (ad_slot_id) REFERENCES ad_slots(id)
 );
 
-CREATE TABLE impressions (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  ad_id INTEGER NOT NULL,
-  ad_slot_id INTEGER NOT NULL,
-  media_id INTEGER NOT NULL,
-  timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-  ip_address TEXT NOT NULL,
-  user_agent TEXT,
-  FOREIGN KEY (ad_id) REFERENCES ads(id),
-  FOREIGN KEY (ad_slot_id) REFERENCES ad_slots(id),
-  FOREIGN KEY (media_id) REFERENCES media(id)
-);
-
 CREATE TABLE clicks (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   ad_id INTEGER NOT NULL,
@@ -65,19 +54,9 @@ CREATE TABLE clicks (
   ip_address TEXT NOT NULL,
   user_agent TEXT,
   is_companion BOOLEAN NOT NULL,
+  impression_id TEXT,
   FOREIGN KEY (ad_id) REFERENCES ads(id),
   FOREIGN KEY (ad_slot_id) REFERENCES ad_slots(id),
   FOREIGN KEY (media_id) REFERENCES media(id)
 );
 
-CREATE TABLE view_progress (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  ad_id INTEGER NOT NULL,
-  ad_slot_id INTEGER NOT NULL,
-  media_id INTEGER NOT NULL,
-  timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-  progress INTEGER NOT NULL,
-  FOREIGN KEY (ad_id) REFERENCES ads(id),
-  FOREIGN KEY (ad_slot_id) REFERENCES ad_slots(id),
-  FOREIGN KEY (media_id) REFERENCES media(id)
-);
