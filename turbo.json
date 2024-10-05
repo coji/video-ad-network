@@ -6,6 +6,15 @@
 			"dependsOn": ["^build"],
 			"outputs": ["dist/**"]
 		},
+		"deploy": {
+			"dependsOn": ["^deploy"],
+			"outputs": [],
+			"cache": false
+		},
+		"deploy#apps/ad-server": {
+			"dependsOn": ["build#packages/ad-sdk"],
+			"outputs": []
+		},
 		"dev": {
 			"dependsOn": ["^dev"],
 			"outputs": ["dist/**"],
@@ -18,6 +27,10 @@
 		},
 		"format": {
 			"dependsOn": ["^format"],
+			"cache": false
+		},
+		"test": {
+			"dependsOn": ["^test"],
 			"cache": false
 		}
 	}
