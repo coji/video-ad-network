@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ad SDK Example: Media 2 audio</title>
+    <style>
+        #ad-container {
+          display: none;
+        }
+        #companion-container {
+          width: 300px;
+          height: 250px;
+          background-color: #e0e0e0;
+          margin: 20px auto;
+        }
+        button {
+          display: block;
+          margin: 20px auto;
+        }
+    </style>
+</head>
+<body>
+  <h1>Ad SDK Example: Media 2 audio</h1>
+  <div id="ad-container"></div>
+
+  <button id="play" type="button">Play</button>
+
+  <div id="companion-container"></div>
+
+
+  <script type="module">
+    import { initializeAdSDK, play, pause, setVolume } from '/js/ad-sdk.js';
+
+    async function loadAd() {
+      const adContainer = document.getElementById('ad-container');
+      const companionContainer = document.getElementById('companion-container');
+      const playButton = document.getElementById('play');
+
+      try {
+        const adState = await initializeAdSDK({
+          mediaId: 2,
+          adSlotId: 2,
+          containerElement: adContainer,
+          companionContainer: companionContainer
+        });
+        console.log('Ad State:', adState);
+
+        playButton.addEventListener('click', () => {
+            play(adState);
+        })
+
+          // 広告の再生
+          // play(adState);
+
+          // // ボリューム調整の例（50%）
+          // setVolume(adState, 0.5);
+
+          // // 5秒後に一時停止する例
+          // setTimeout(() => {
+          //     pause(adState);
+          // }, 5000);
+
+          // // 10秒後に再開する例
+          // setTimeout(() => {
+          //     play(adState);
+          // }, 10000);
+
+      } catch (error) {
+        console.error('Error loading ad:', error);
+      }
+    }
+
+    loadAd();
+  </script>
+</body>
+</html>
