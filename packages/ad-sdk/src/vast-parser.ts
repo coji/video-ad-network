@@ -126,13 +126,6 @@ export function parseVastXml(vastXml: string): VastResponse {
 		)
 	}
 
-	// const clickThroughUrl = clickThrough ? clickThrough['#text'] : ''
-	console.log({
-		videoClicks: linear.VideoClicks,
-		clickThrough,
-		clickThroughUrl,
-	})
-
 	const trackingEvents: VastResponse['trackingEvents'] = {
 		impression: [],
 		start: [],
