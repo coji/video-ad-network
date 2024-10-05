@@ -232,6 +232,8 @@ app.get('/click', async (c) => {
 	const isCompanion = c.req.query('isCompanion') === 'true'
 	const companionId = Number.parseInt(c.req.query('companionId') || '0')
 	const impressionId = c.req.query('impressionId')
+	const ipAddress = c.req.header('CF-Connecting-IP')
+	const userAgent = c.req.header('User-Agent')
 	const db: D1Database = c.env.DB
 
 	if (!adId || !adSlotId || !mediaId || !impressionId) {
@@ -250,8 +252,8 @@ app.get('/click', async (c) => {
 			adId,
 			adSlotId,
 			mediaId,
-			c.req.header('CF-Connecting-IP'),
-			c.req.header('User-Agent'),
+			ipAddress ?? '',
+			userAgent ?? '',
 			isCompanion ? 1 : 0,
 			impressionId,
 		)
@@ -261,16 +263,16 @@ app.get('/click', async (c) => {
 	let redirectUrl: string | undefined
 	if (isCompanion && companionId) {
 		const companion = await db
-			.prepare('SELECT url FROM companion_banners WHERE id = ?')
+			.prepare('SELECT clickThroughURL FROM companion_banners WHERE id = ?')
 			.bind(companionId)
-			.first<{ url: string }>()
-		redirectUrl = companion?.url
+			.first<{ clickThroughURL: string }>()
+		redirectUrl = companion?.clickThroughURL
 	} else {
 		const ad = await db
-			.prepare('SELECT url FROM ads WHERE id = ?')
+			.prepare('SELECT clickThroughURL FROM ads WHERE id = ?')
 			.bind(adId)
-			.first<{ url: string }>()
-		redirectUrl = ad?.url
+			.first<{ clickThroughURL: string }>()
+		redirectUrl = ad?.clickThroughURL
 	}
 
 	return redirectUrl
