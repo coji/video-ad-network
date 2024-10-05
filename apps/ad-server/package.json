@@ -7,13 +7,15 @@
 		"db:migration:remote": "wrangler d1 migrations apply --remote video-ad-network",
 		"db:seed:local": "wrangler d1 execute --local --file ./seed.sql video-ad-network",
 		"db:seed:remote": "wrangler d1 execute --remote --file ./seed.sql video-ad-network",
+		"predeploy": "cp ../../packages/ad-sdk/dist/ad-sdk.js public/js/",
 		"deploy": "wrangler deploy --minify src/index.ts",
 		"cf-typegen": "wrangler types --env-interface CloudflareBindings",
 		"format": "biome format .",
 		"lint": "biome lint ."
 	},
 	"dependencies": {
-		"hono": "4.6.3"
+		"hono": "4.6.3",
+		"@video-ad-network/ad-sdk": "workspace:*"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.2",

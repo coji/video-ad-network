@@ -5,6 +5,12 @@
 		"clientKind": "git",
 		"useIgnoreFile": true
 	},
+	"linter": {
+		"ignore": ["apps/ad-server/public/js/**"]
+	},
+	"formatter": {
+		"ignore": ["apps/ad-server/public/js/**"]
+	},
 	"javascript": {
 		"formatter": {
 			"quoteStyle": "single",

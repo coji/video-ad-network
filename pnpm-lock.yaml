@@ -17,6 +17,9 @@ importers:
 
   apps/ad-server:
     dependencies:
+      '@video-ad-network/ad-sdk':
+        specifier: workspace:*
+        version: link:../../packages/ad-sdk
       hono:
         specifier: 4.6.3
         version: 4.6.3
