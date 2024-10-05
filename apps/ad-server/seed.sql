@@ -19,7 +19,7 @@ INSERT INTO ads (advertiser_id, type, url, duration, width, height, clickThrough
 -- コンパニオンバナーのサンプルデータ
 INSERT INTO companion_banners (ad_id, url, width, height, clickThroughURL) VALUES
 (1, 'http://localhost:8787/example/ads/example_companion_banner1.png', 300, 250, 'https://example.com/ad/1/banner'),
-(2, 'http://localhost:8787/example/ads/example_companion_banner2.png', 728, 90, 'https://example.com/ad/2/banner'),
+(2, 'http://localhost:8787/example/ads/example_companion_banner2.png', 300, 250, 'https://example.com/ad/2/banner'),
 (3, 'http://localhost:8787/example/ads/example_companion_banner3.png', 728, 90, 'https://example.com/ad/3/banner');
 
 -- 広告枠ターゲティングのサンプルデータ
