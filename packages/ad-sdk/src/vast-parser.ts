@@ -114,7 +114,24 @@ export function parseVastXml(vastXml: string): VastResponse {
 	}
 
 	const clickThrough = linear.VideoClicks?.ClickThrough
-	const clickThroughUrl = clickThrough ? clickThrough['#text'] : ''
+	let clickThroughUrl = ''
+	if (typeof clickThrough === 'string') {
+		clickThroughUrl = (clickThrough as string).trim()
+	} else if (typeof clickThrough === 'object' && clickThrough['#text']) {
+		clickThroughUrl = clickThrough['#text'].trim()
+	} else {
+		console.warn(
+			'VideoClicks is missing or has unexpected structure:',
+			linear.VideoClicks,
+		)
+	}
+
+	// const clickThroughUrl = clickThrough ? clickThrough['#text'] : ''
+	console.log({
+		videoClicks: linear.VideoClicks,
+		clickThrough,
+		clickThroughUrl,
+	})
 
 	const trackingEvents: VastResponse['trackingEvents'] = {
 		impression: [],

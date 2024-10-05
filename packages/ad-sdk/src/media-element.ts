@@ -1,5 +1,4 @@
 import type { AdState } from './types'
-import { handleClick } from './click'
 
 export function createMediaElement(state: AdState): AdState {
 	if (!state.vastData) return state
@@ -16,4 +15,10 @@ export function createMediaElement(state: AdState): AdState {
 	state.config.containerElement.appendChild(mediaElement)
 
 	return { ...state, mediaElement }
+}
+
+export function handleClick(state: AdState): void {
+	if (state.vastData) {
+		window.open(state.vastData.clickThroughUrl, '_blank')
+	}
 }
