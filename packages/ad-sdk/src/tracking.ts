@@ -5,31 +5,48 @@ export function setupTracking(state: AdState): AdState {
 
 	const { trackingEvents } = state.vastData
 
+	// トラッキングイベントの送信フラグを初期化
+	const trackingEventsSent = {
+		start: false,
+		firstQuartile: false,
+		midpoint: false,
+		thirdQuartile: false,
+		complete: false,
+	}
+
 	sendTrackingEvent(trackingEvents.impression)
+
+	const trackingEventThresholds = [
+		{ event: 'start', threshold: 0 },
+		{ event: 'firstQuartile', threshold: 0.25 },
+		{ event: 'midpoint', threshold: 0.5 },
+		{ event: 'thirdQuartile', threshold: 0.75 },
+	] satisfies { event: keyof typeof trackingEventsSent; threshold: number }[]
 
 	state.mediaElement.addEventListener('timeupdate', () => {
 		if (!state.vastData || !state.mediaElement) return
 		const progress = state.mediaElement.currentTime / state.vastData.duration
-		if (progress <= 0) {
-			sendTrackingEvent(trackingEvents.start)
-		} else if (progress >= 0.25 && progress < 0.5) {
-			sendTrackingEvent(trackingEvents.firstQuartile)
-		} else if (progress >= 0.5 && progress < 0.75) {
-			sendTrackingEvent(trackingEvents.midpoint)
-		} else if (progress >= 0.75 && progress < 1) {
-			sendTrackingEvent(trackingEvents.thirdQuartile)
+
+		for (const { event, threshold } of trackingEventThresholds) {
+			if (progress >= threshold && !trackingEventsSent[event]) {
+				sendTrackingEvent(trackingEvents[event])
+				trackingEventsSent[event] = true
+			}
 		}
 	})
 
-	state.mediaElement.addEventListener('ended', () =>
-		sendTrackingEvent(trackingEvents.complete),
-	)
+	state.mediaElement.addEventListener('ended', () => {
+		if (!trackingEventsSent.complete) {
+			sendTrackingEvent(trackingEvents.complete)
+			trackingEventsSent.complete = true
+		}
+	})
 
 	return state
 }
 
-function sendTrackingEvent(url: string[]): void {
-	for (const u of url) {
-		fetch(u, { method: 'GET', mode: 'no-cors' })
+function sendTrackingEvent(urls: string[]): void {
+	for (const url of urls) {
+		fetch(url, { method: 'GET', mode: 'no-cors' })
 	}
 }
