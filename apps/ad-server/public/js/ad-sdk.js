@@ -1167,7 +1167,7 @@ function C(e) {
 function bt(e) {
   if (!e.vastData) return e;
   const t = e.vastData.adType === "video" ? document.createElement("video") : document.createElement("audio");
-  return t.src = e.vastData.mediaUrl, t.style.width = "100%", t.style.height = "100%", t.addEventListener("click", () => Tt(e)), e.config.containerElement.appendChild(t), { ...e, mediaElement: t };
+  return t.src = e.vastData.mediaUrl, t.style.width = "100%", t.style.height = "100%", t.setAttribute("playsinline", ""), t.addEventListener("click", () => Tt(e)), e.config.containerElement.appendChild(t), { ...e, mediaElement: t };
 }
 function Tt(e) {
   e.vastData && window.open(e.vastData.clickThroughUrl, "_blank");
