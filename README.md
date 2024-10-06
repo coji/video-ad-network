@@ -49,7 +49,7 @@ video-ad-network/
 1. リポジトリをクローンします:
 
    ```sh
-   git clone https://github.com/your-organization/video-ad-network.git
+   git clone https://github.com/coji/video-ad-network.git
    cd video-ad-network
    ```
 
