@@ -11,6 +11,7 @@ export function createMediaElement(state: AdState): AdState {
 	mediaElement.src = state.vastData.mediaUrl
 	mediaElement.style.width = '100%'
 	mediaElement.style.height = '100%'
+	mediaElement.setAttribute('playsinline', '') // Required for iOS inline playback
 	mediaElement.addEventListener('click', () => handleClick(state))
 	state.config.containerElement.appendChild(mediaElement)
 
