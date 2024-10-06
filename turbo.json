@@ -16,7 +16,7 @@
 			"outputs": []
 		},
 		"dev": {
-			"dependsOn": ["^dev"],
+			"dependsOn": [],
 			"outputs": ["dist/**"],
 			"cache": false,
 			"persistent": true
