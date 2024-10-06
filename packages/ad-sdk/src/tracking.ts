@@ -16,25 +16,22 @@ export function setupTracking(state: AdState): AdState {
 
 	sendTrackingEvent(trackingEvents.impression)
 
+	const trackingEventThresholds = [
+		{ event: 'start', threshold: 0 },
+		{ event: 'firstQuartile', threshold: 0.25 },
+		{ event: 'midpoint', threshold: 0.5 },
+		{ event: 'thirdQuartile', threshold: 0.75 },
+	] satisfies { event: keyof typeof trackingEventsSent; threshold: number }[]
+
 	state.mediaElement.addEventListener('timeupdate', () => {
 		if (!state.vastData || !state.mediaElement) return
 		const progress = state.mediaElement.currentTime / state.vastData.duration
 
-		if (progress >= 0 && !trackingEventsSent.start) {
-			sendTrackingEvent(trackingEvents.start)
-			trackingEventsSent.start = true
-		}
-		if (progress >= 0.25 && !trackingEventsSent.firstQuartile) {
-			sendTrackingEvent(trackingEvents.firstQuartile)
-			trackingEventsSent.firstQuartile = true
-		}
-		if (progress >= 0.5 && !trackingEventsSent.midpoint) {
-			sendTrackingEvent(trackingEvents.midpoint)
-			trackingEventsSent.midpoint = true
-		}
-		if (progress >= 0.75 && !trackingEventsSent.thirdQuartile) {
-			sendTrackingEvent(trackingEvents.thirdQuartile)
-			trackingEventsSent.thirdQuartile = true
+		for (const { event, threshold } of trackingEventThresholds) {
+			if (progress >= threshold && !trackingEventsSent[event]) {
+				sendTrackingEvent(trackingEvents[event])
+				trackingEventsSent[event] = true
+			}
 		}
 	})
 
