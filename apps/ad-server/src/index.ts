@@ -1,3 +1,5 @@
+// vast-api.ts
+
 import { Hono } from 'hono'
 import { setCookie, getCookie } from 'hono/cookie'
 import type { D1Database } from '@cloudflare/workers-types'
@@ -5,7 +7,9 @@ import { cors } from 'hono/cors'
 
 interface Bindings {
 	DB: D1Database
+	TRACKER_ORIGIN: string
 }
+
 const app = new Hono<{ Bindings: Bindings }>()
 
 interface Ad {
@@ -16,7 +20,10 @@ interface Ad {
 	duration: number
 	width: number
 	height: number
-	bid_amount: number
+	clickThroughURL: string
+	category?: string
+	description?: string
+	mimeType?: string // 追加
 }
 
 interface CompanionBanner {
@@ -25,6 +32,8 @@ interface CompanionBanner {
 	url: string
 	width: number
 	height: number
+	clickThroughURL?: string
+	mimeType?: string
 }
 
 interface FrequencyData {
@@ -35,7 +44,7 @@ interface FrequencyData {
 }
 
 const FREQUENCY_CAP = 3
-const FREQUENCY_PERIOD = 24 * 60 * 60 * 1000 // 24 hours in milliseconds
+const FREQUENCY_PERIOD = 24 * 60 * 60 * 1000 // 24時間（ミリ秒単位）
 
 function parseFrequencyData(cookieValue: string | undefined): FrequencyData {
 	if (!cookieValue) return {}
@@ -58,12 +67,12 @@ async function selectAd(
 	const ads = await db
 		.prepare(
 			`
-    SELECT a.*, ast.bid_amount
-    FROM ads a
-    JOIN ad_slot_targeting ast ON a.id = ast.ad_id
-    WHERE ast.ad_slot_id = ?
-    ORDER BY ast.bid_amount DESC
-  `,
+      SELECT a.*, ast.bid_amount
+      FROM ads a
+      JOIN ad_slot_targeting ast ON a.id = ast.ad_id
+      WHERE ast.ad_slot_id = ?
+      ORDER BY ast.bid_amount DESC
+    `,
 		)
 		.bind(adSlotId)
 		.all<Ad>()
@@ -74,7 +83,7 @@ async function selectAd(
 	for (const ad of ads.results) {
 		const adFreq = frequencyData[ad.id] || { count: 0, lastSeen: 0 }
 		if (now - adFreq.lastSeen > FREQUENCY_PERIOD) {
-			// Reset if the frequency period has passed
+			// フリークエンシー期間が過ぎた場合、カウントをリセット
 			return ad
 		}
 		if (adFreq.count < FREQUENCY_CAP) {
@@ -82,7 +91,7 @@ async function selectAd(
 		}
 	}
 
-	return null // No suitable ad found
+	return null // 適切な広告が見つからない場合
 }
 
 async function getCompanionBanners(
@@ -92,8 +101,8 @@ async function getCompanionBanners(
 	const companions = await db
 		.prepare(
 			`
-    SELECT * FROM companion_banners WHERE ad_id = ?
-  `,
+      SELECT * FROM companion_banners WHERE ad_id = ?
+    `,
 		)
 		.bind(adId)
 		.all<CompanionBanner>()
@@ -113,6 +122,10 @@ app.use(
 	}),
 )
 
+// AdSystemの定数を定義
+const AD_SYSTEM_NAME = 'Custom Ad Network'
+const AD_SYSTEM_VERSION = '1.0'
+
 app.get('/vast', async (c) => {
 	const adSlotId = Number.parseInt(c.req.query('adSlotId') || '')
 	const mediaId = Number.parseInt(c.req.query('mediaId') || '')
@@ -124,7 +137,7 @@ app.get('/vast', async (c) => {
 
 	const url = new URL(c.req.url)
 	const origin = url.origin
-	const trackerOrigin = 'https://video-ad-network-tracker.fly.dev'
+	const trackerOrigin = c.env.TRACKER_ORIGIN // トラッカーのドメインに変更してください
 
 	const frequencyDataCookie = getCookie(c, 'ad_frequency')
 	const frequencyData = parseFrequencyData(frequencyDataCookie)
@@ -136,49 +149,54 @@ app.get('/vast', async (c) => {
 
 	const companionBanners = await getCompanionBanners(db, ad.id)
 
-	// Update frequency data
+	// フリークエンシーデータを更新
 	const now = Date.now()
 	frequencyData[ad.id] = frequencyData[ad.id] || { count: 0, lastSeen: now }
 	frequencyData[ad.id].count += 1
 	frequencyData[ad.id].lastSeen = now
 
-	// Set updated cookie
+	// 更新したクッキーをセット
 	setCookie(c, 'ad_frequency', stringifyFrequencyData(frequencyData), {
-		maxAge: 30 * 24 * 60 * 60, // 30 days
+		maxAge: 30 * 24 * 60 * 60, // 30日間
 		httpOnly: true,
 		secure: true,
 		sameSite: 'Strict',
 	})
 
-	// インプレッションIDを生成
+	// インプレッションIDと広告配信IDを生成
 	const impressionId = crypto.randomUUID()
+	const adServingId = crypto.randomUUID()
 
-	// tracker urls
+	// トラッカーURLを生成
 	const tracker = {
 		click: `${origin}/click?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&isCompanion=false&impressionId=${impressionId}`,
 		companionClick: (companionId: number) =>
 			`${origin}/click?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&isCompanion=true&companionId=${companionId}&impressionId=${impressionId}`,
 		impression: `${trackerOrigin}/impression?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&impressionId=${impressionId}`,
-		progress25: `${trackerOrigin}/progress?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&progress=25&impressionId=${impressionId}`,
-		progress50: `${trackerOrigin}/progress?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&progress=50&impressionId=${impressionId}`,
-		progress75: `${trackerOrigin}/progress?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&progress=75&impressionId=${impressionId}`,
-		progress100: `${trackerOrigin}/progress?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&progress=100&impressionId=${impressionId}`,
+		start: `${trackerOrigin}/progress?progress=0&adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&impressionId=${impressionId}`,
+		firstQuartile: `${trackerOrigin}/progress?progress=25?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&impressionId=${impressionId}`,
+		midpoint: `${trackerOrigin}/progress?progress=50?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&impressionId=${impressionId}`,
+		thirdQuartile: `${trackerOrigin}/progress?progress=75?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&impressionId=${impressionId}`,
+		complete: `${trackerOrigin}/progress?progress=100?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&impressionId=${impressionId}`,
+		error: `${trackerOrigin}/error?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&impressionId=${impressionId}`,
 	}
 
 	const vastXml = `<?xml version="1.0" encoding="UTF-8"?>
-<VAST version="4.1">
+<VAST version="4.1" xmlns="http://www.iab.com/VAST">
   <Ad id="${ad.id}" adType="${ad.type}">
     <InLine>
-      <AdSystem>Custom Ad Network</AdSystem>
-      <AdTitle>Ad ${ad.id}</AdTitle>
+      <AdSystem version="${AD_SYSTEM_VERSION}">${AD_SYSTEM_NAME}</AdSystem>
+      <Error><![CDATA[${tracker.error}]]></Error>
+      <AdServingId>${adServingId}</AdServingId>
+      <AdTitle>${ad.description || `Ad ${ad.id}`}</AdTitle>
       <Impression><![CDATA[${tracker.impression}]]></Impression>
       <Creatives>
         <Creative id="${ad.id}">
-          <${ad.type === 'video' ? 'Linear' : 'NonLinearAds'}>
+          <Linear>
             <Duration>${ad.duration || '00:00:15'}</Duration>
             <MediaFiles>
-              <MediaFile delivery="progressive" type="${ad.type}/${
-								ad.type === 'video' ? 'mp4' : 'mpeg'
+              <MediaFile delivery="progressive" type="${
+								ad.mimeType || 'application/octet-stream'
 							}" width="${ad.width}" height="${ad.height}">
                 <![CDATA[${ad.url}]]>
               </MediaFile>
@@ -187,12 +205,13 @@ app.get('/vast', async (c) => {
               <ClickThrough><![CDATA[${tracker.click}]]></ClickThrough>
             </VideoClicks>
             <TrackingEvents>
-              <Tracking event="progress" offset="25%"><![CDATA[${tracker.progress25}]]></Tracking>
-              <Tracking event="progress" offset="50%"><![CDATA[${tracker.progress50}]]></Tracking>
-              <Tracking event="progress" offset="75%"><![CDATA[${tracker.progress75}]]></Tracking>
-              <Tracking event="complete"><![CDATA[${tracker.progress100}]]></Tracking>
+              <Tracking event="start"><![CDATA[${tracker.start}]]></Tracking>
+              <Tracking event="firstQuartile"><![CDATA[${tracker.firstQuartile}]]></Tracking>
+              <Tracking event="midpoint"><![CDATA[${tracker.midpoint}]]></Tracking>
+              <Tracking event="thirdQuartile"><![CDATA[${tracker.thirdQuartile}]]></Tracking>
+              <Tracking event="complete"><![CDATA[${tracker.complete}]]></Tracking>
             </TrackingEvents>
-          </${ad.type === 'video' ? 'Linear' : 'NonLinearAds'}>
+          </Linear>
         </Creative>
         ${companionBanners
 					.map(
@@ -200,7 +219,9 @@ app.get('/vast', async (c) => {
         <Creative>
           <CompanionAds>
             <Companion width="${companion.width}" height="${companion.height}">
-              <StaticResource creativeType="image/jpeg">
+              <StaticResource creativeType="${
+								companion.mimeType || 'image/jpeg'
+							}">
                 <![CDATA[${companion.url}]]>
               </StaticResource>
               <CompanionClickThrough>
@@ -225,6 +246,7 @@ app.get('/vast', async (c) => {
 	})
 })
 
+// クリックエンドポイントの追加
 app.get('/click', async (c) => {
 	const adId = Number.parseInt(c.req.query('adId') || '')
 	const adSlotId = Number.parseInt(c.req.query('adSlotId') || '')
@@ -244,9 +266,9 @@ app.get('/click', async (c) => {
 	await db
 		.prepare(
 			`
-    INSERT INTO clicks (ad_id, ad_slot_id, media_id, ip_address, user_agent, is_companion, impression_id)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
-	`,
+      INSERT INTO clicks (ad_id, ad_slot_id, media_id, timestamp, ip_address, user_agent, is_companion, impression_id)
+      VALUES (?, ?, ?, CURRENT_TIMESTAMP, ?, ?, ?, ?)
+    `,
 		)
 		.bind(
 			adId,
@@ -259,7 +281,7 @@ app.get('/click', async (c) => {
 		)
 		.run()
 
-	// 広告のランディングページにリダイレクト
+	// リダイレクト先を取得
 	let redirectUrl: string | undefined
 	if (isCompanion && companionId) {
 		const companion = await db
