@@ -36,14 +36,18 @@
     import { initializeAdSDK, play, pause, setVolume } from '../src/index.ts';
 
     async function loadAd() {
+      const searchParams = new URLSearchParams(window.location.search);
+      const adSlotId = searchParams.get('adSlotId') ?? '1';
+      const mediaId = searchParams.get('mediaId') ?? '1';
+
       const adContainer = document.getElementById('ad-container');
       const companionContainer = document.getElementById('companion-container');
       const playButton = document.getElementById('play');
 
       try {
         const adState = await initializeAdSDK({
-          mediaId: 1,
-          adSlotId: 1,
+          mediaId,
+          adSlotId,
           containerElement: adContainer,
           companionContainer: companionContainer
         });
