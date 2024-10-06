@@ -347,6 +347,6 @@ pnpm run deploy:tracker
 2. 新しいブランチを作成します（`git checkout -b feature/AmazingFeature`）。
 3. 変更をコミットします（`git commit -m 'Add some AmazingFeature'`）。
 
-## [ライセンス](#ライセンス)
+## ライセンス
 
 このプロジェクトは[ライセンス名]のもとで公開されています。詳細はLICENSEファイルを参照してください。
