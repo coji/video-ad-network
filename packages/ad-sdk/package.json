@@ -3,8 +3,7 @@
 	"version": "1.0.0",
 	"description": "",
 	"type": "module",
-	"main": "dist/index.js",
-	"types": "dist/index.d.ts",
+	"main": "dist/ad-sdk.js",
 	"scripts": {
 		"dev": "vite --mode development --open /example/index.html",
 		"build": "vite build",
