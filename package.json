@@ -17,8 +17,8 @@
 	"author": "",
 	"license": "ISC",
 	"devDependencies": {
-		"npm-run-all": "4.1.5",
-		"turbo": "2.1.3"
+		"npm-run-all": "catalog:",
+		"turbo": "catalog:"
 	},
-	"packageManager": "pnpm@9.11.0"
+	"packageManager": "pnpm@9.12.3"
 }
