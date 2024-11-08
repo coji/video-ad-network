@@ -11,12 +11,11 @@ export type Ad = {
     type: string;
     url: string;
     duration: number;
-    width: number;
-    height: number;
-    clickThroughUrl: string;
-    category: string | null;
-    description: string | null;
+    width: number | null;
+    height: number | null;
     mimeType: string | null;
+    clickThroughUrl: string;
+    description: string | null;
 };
 export type AdEvent = {
     id: string;
@@ -34,6 +33,7 @@ export type AdEvent = {
 export type AdGroup = {
     id: string;
     name: string;
+    categories: string | null;
     bidPriceCpm: number;
     frequencyCapImpressions: number;
     frequencyCapWindow: number;
@@ -45,6 +45,7 @@ export type AdSlot = {
     id: string;
     name: string;
     mediaId: string;
+    type: string;
 };
 export type Advertiser = {
     id: string;
@@ -55,6 +56,8 @@ export type Campaign = {
     id: string;
     name: string;
     advertiserId: string;
+    startDate: string;
+    endDate: string;
 };
 export type Click = {
     id: string;
@@ -75,8 +78,15 @@ export type CompanionBanner = {
     url: string;
     width: number;
     height: number;
-    clickThroughUrl: string | null;
     mimeType: string | null;
+    clickThroughUrl: string | null;
+};
+export type CompanionSlot = {
+    id: string;
+    name: string;
+    adSlotId: string;
+    width: number;
+    height: number;
 };
 export type DailyReport = {
     date: string;
@@ -100,6 +110,7 @@ export type FrequencyCapEntry = {
 export type Media = {
     id: string;
     name: string;
+    categories: string | null;
     organizationId: string;
 };
 export type Organization = {
@@ -125,6 +136,7 @@ export type DB = {
     campaigns: Campaign;
     clicks: Click;
     companionBanners: CompanionBanner;
+    companionSlots: CompanionSlot;
     dailyReports: DailyReport;
     FrequencyCapEntry: FrequencyCapEntry;
     medias: Media;
