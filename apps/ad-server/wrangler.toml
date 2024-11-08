@@ -15,6 +15,7 @@ binding = "DB" # i.e. available in your Worker on env.DB
 database_name = "video-ad-network"
 database_id = "ad4c0de9-dc9d-44b1-b2c2-e7f343cf2841"
 
+
 [observability]
 enabled = true
 

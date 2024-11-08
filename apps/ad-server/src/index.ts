@@ -1,9 +1,15 @@
-// vast-api.ts
-
 import { Hono } from 'hono'
 import { setCookie, getCookie } from 'hono/cookie'
 import type { D1Database } from '@cloudflare/workers-types'
 import { cors } from 'hono/cors'
+import { getDB } from './services/db'
+import { getCompanionBanners } from './functions/get-companion-banners'
+import { selectAd } from './functions/ad-selection'
+import {
+	FREQUENCY_COOKIE_OPTIONS,
+	parseFrequencyData,
+	stringifyFrequencyData,
+} from './functions/frequency-cap'
 
 interface Bindings {
 	DB: D1Database
@@ -12,106 +18,8 @@ interface Bindings {
 
 const app = new Hono<{ Bindings: Bindings }>()
 
-interface Ad {
-	id: number
-	advertiser_id: number
-	type: 'video' | 'audio'
-	url: string
-	duration: number
-	width: number
-	height: number
-	clickThroughURL: string
-	category?: string
-	description?: string
-	mimeType?: string // 追加
-}
-
-interface CompanionBanner {
-	id: number
-	ad_id: number
-	url: string
-	width: number
-	height: number
-	clickThroughURL?: string
-	mimeType?: string
-}
-
-interface FrequencyData {
-	[adId: string]: {
-		count: number
-		lastSeen: number
-	}
-}
-
-const FREQUENCY_CAP = 3
-const FREQUENCY_PERIOD = 24 * 60 * 60 * 1000 // 24時間（ミリ秒単位）
-
-function parseFrequencyData(cookieValue: string | undefined): FrequencyData {
-	if (!cookieValue) return {}
-	try {
-		return JSON.parse(cookieValue)
-	} catch {
-		return {}
-	}
-}
-
-function stringifyFrequencyData(data: FrequencyData): string {
-	return JSON.stringify(data)
-}
-
-async function selectAd(
-	db: D1Database,
-	adSlotId: number,
-	frequencyData: FrequencyData,
-): Promise<Ad | null> {
-	const ads = await db
-		.prepare(
-			`
-      SELECT a.*, ast.bid_amount
-      FROM ads a
-      JOIN ad_slot_targeting ast ON a.id = ast.ad_id
-      WHERE ast.ad_slot_id = ?
-      ORDER BY ast.bid_amount DESC
-    `,
-		)
-		.bind(adSlotId)
-		.all<Ad>()
-
-	if (!ads.results) return null
-
-	const now = Date.now()
-	for (const ad of ads.results) {
-		const adFreq = frequencyData[ad.id] || { count: 0, lastSeen: 0 }
-		if (now - adFreq.lastSeen > FREQUENCY_PERIOD) {
-			// フリークエンシー期間が過ぎた場合、カウントをリセット
-			return ad
-		}
-		if (adFreq.count < FREQUENCY_CAP) {
-			return ad
-		}
-	}
-
-	return null // 適切な広告が見つからない場合
-}
-
-async function getCompanionBanners(
-	db: D1Database,
-	adId: number,
-): Promise<CompanionBanner[]> {
-	const companions = await db
-		.prepare(
-			`
-      SELECT * FROM companion_banners WHERE ad_id = ?
-    `,
-		)
-		.bind(adId)
-		.all<CompanionBanner>()
-
-	return companions.results || []
-}
-
 app.use(
-	'/vast',
+	'/v1/vast',
 	cors({
 		origin: '*', // すべてのオリジンを許可
 		allowMethods: ['GET', 'OPTIONS'],
@@ -126,15 +34,14 @@ app.use(
 const AD_SYSTEM_NAME = 'Custom Ad Network'
 const AD_SYSTEM_VERSION = '1.0'
 
-app.get('/vast', async (c) => {
-	const adSlotId = Number.parseInt(c.req.query('adSlotId') || '')
-	const mediaId = Number.parseInt(c.req.query('mediaId') || '')
-	const db: D1Database = c.env.DB
-
+app.get('/v1/vast', async (c) => {
+	const adSlotId = c.req.query('adSlotId')
+	const mediaId = c.req.query('mediaId')
 	if (!adSlotId || !mediaId) {
 		return c.text('Missing required parameters', 400)
 	}
 
+	const db = getDB(c.env.DB)
 	const url = new URL(c.req.url)
 	const origin = url.origin
 	const trackerOrigin = c.env.TRACKER_ORIGIN // トラッカーのドメインに変更してください
@@ -142,26 +49,27 @@ app.get('/vast', async (c) => {
 	const frequencyDataCookie = getCookie(c, 'ad_frequency')
 	const frequencyData = parseFrequencyData(frequencyDataCookie)
 
-	const ad = await selectAd(db, adSlotId, frequencyData)
+	const now = Date.now()
+	// Changed the selectAd call to include currentTime
+	const ad = await selectAd(db, now, frequencyData)
 	if (!ad) {
-		return c.text('No suitable ad available', 204)
+		return c.notFound()
 	}
 
 	const companionBanners = await getCompanionBanners(db, ad.id)
 
 	// フリークエンシーデータを更新
-	const now = Date.now()
 	frequencyData[ad.id] = frequencyData[ad.id] || { count: 0, lastSeen: now }
 	frequencyData[ad.id].count += 1
 	frequencyData[ad.id].lastSeen = now
 
 	// 更新したクッキーをセット
-	setCookie(c, 'ad_frequency', stringifyFrequencyData(frequencyData), {
-		maxAge: 30 * 24 * 60 * 60, // 30日間
-		httpOnly: true,
-		secure: true,
-		sameSite: 'Strict',
-	})
+	setCookie(
+		c,
+		'ad_frequency',
+		stringifyFrequencyData(frequencyData),
+		FREQUENCY_COOKIE_OPTIONS,
+	)
 
 	// インプレッションIDと広告配信IDを生成
 	const impressionId = crypto.randomUUID()
@@ -170,7 +78,7 @@ app.get('/vast', async (c) => {
 	// トラッカーURLを生成
 	const tracker = {
 		click: `${origin}/click?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&isCompanion=false&impressionId=${impressionId}`,
-		companionClick: (companionId: number) =>
+		companionClick: (companionId: string) =>
 			`${origin}/click?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&isCompanion=true&companionId=${companionId}&impressionId=${impressionId}`,
 		impression: `${trackerOrigin}/impression?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&impressionId=${impressionId}`,
 		start: `${trackerOrigin}/progress?progress=0&adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&impressionId=${impressionId}`,
@@ -188,15 +96,15 @@ app.get('/vast', async (c) => {
       <AdSystem version="${AD_SYSTEM_VERSION}">${AD_SYSTEM_NAME}</AdSystem>
       <Error><![CDATA[${tracker.error}]]></Error>
       <AdServingId>${adServingId}</AdServingId>
-      <AdTitle>${ad.description || `Ad ${ad.id}`}</AdTitle>
+      <AdTitle>${ad.description ?? `Ad ${ad.id}`}</AdTitle>
       <Impression><![CDATA[${tracker.impression}]]></Impression>
       <Creatives>
         <Creative id="${ad.id}">
           <Linear>
-            <Duration>${ad.duration || '00:00:15'}</Duration>
+            <Duration>${ad.duration}</Duration>
             <MediaFiles>
               <MediaFile delivery="progressive" type="${
-								ad.mimeType || 'application/octet-stream'
+								ad.mimeType ?? 'application/octet-stream'
 							}" width="${ad.width}" height="${ad.height}">
                 <![CDATA[${ad.url}]]>
               </MediaFile>
@@ -220,7 +128,7 @@ app.get('/vast', async (c) => {
           <CompanionAds>
             <Companion width="${companion.width}" height="${companion.height}">
               <StaticResource creativeType="${
-								companion.mimeType || 'image/jpeg'
+								companion.mimeType ?? 'image/jpeg'
 							}">
                 <![CDATA[${companion.url}]]>
               </StaticResource>
@@ -247,58 +155,59 @@ app.get('/vast', async (c) => {
 })
 
 // クリックエンドポイントの追加
-app.get('/click', async (c) => {
-	const adId = Number.parseInt(c.req.query('adId') || '')
-	const adSlotId = Number.parseInt(c.req.query('adSlotId') || '')
-	const mediaId = Number.parseInt(c.req.query('mediaId') || '')
+app.get('/v1/click', async (c) => {
+	const adId = c.req.query('adId')
+	const adSlotId = c.req.query('adSlotId')
+	const mediaId = c.req.query('mediaId')
 	const isCompanion = c.req.query('isCompanion') === 'true'
-	const companionId = Number.parseInt(c.req.query('companionId') || '0')
+	const companionId = c.req.query('companionId')
 	const impressionId = c.req.query('impressionId')
 	const ipAddress = c.req.header('CF-Connecting-IP')
 	const userAgent = c.req.header('User-Agent')
-	const db: D1Database = c.env.DB
+	const db = getDB(c.env.DB)
 
 	if (!adId || !adSlotId || !mediaId || !impressionId) {
 		return c.text('Missing required parameters', 400)
 	}
 
+	// リダイレクト先を取得
+	let clickThroughUrl: string
+	if (isCompanion && companionId) {
+		const companion = await db
+			.selectFrom('companionBanners')
+			.select('clickThroughUrl')
+			.where('id', '==', companionId)
+			.executeTakeFirst()
+		clickThroughUrl = companion?.clickThroughUrl ?? ''
+	} else {
+		const ad = await db
+			.selectFrom('ads')
+			.select('clickThroughUrl')
+			.where('id', '==', adId)
+			.executeTakeFirst()
+		clickThroughUrl = ad?.clickThroughUrl ?? ''
+	}
+
 	// クリックを記録
 	await db
-		.prepare(
-			`
-      INSERT INTO clicks (ad_id, ad_slot_id, media_id, timestamp, ip_address, user_agent, is_companion, impression_id)
-      VALUES (?, ?, ?, CURRENT_TIMESTAMP, ?, ?, ?, ?)
-    `,
-		)
-		.bind(
+		.insertInto('clicks')
+		.values({
+			id: crypto.randomUUID(),
+			uid: 'uid!',
 			adId,
 			adSlotId,
 			mediaId,
-			ipAddress ?? '',
-			userAgent ?? '',
-			isCompanion ? 1 : 0,
+			timestamp: new Date().toISOString(),
+			ipAddress: ipAddress ?? '',
+			userAgent: userAgent ?? '',
+			isCompanion: isCompanion ? 1 : 0,
 			impressionId,
-		)
-		.run()
+			clickThroughUrl,
+		})
+		.execute()
 
-	// リダイレクト先を取得
-	let redirectUrl: string | undefined
-	if (isCompanion && companionId) {
-		const companion = await db
-			.prepare('SELECT clickThroughURL FROM companion_banners WHERE id = ?')
-			.bind(companionId)
-			.first<{ clickThroughURL: string }>()
-		redirectUrl = companion?.clickThroughURL
-	} else {
-		const ad = await db
-			.prepare('SELECT clickThroughURL FROM ads WHERE id = ?')
-			.bind(adId)
-			.first<{ clickThroughURL: string }>()
-		redirectUrl = ad?.clickThroughURL
-	}
-
-	return redirectUrl
-		? c.redirect(redirectUrl)
+	return clickThroughUrl !== ''
+		? c.redirect(clickThroughUrl)
 		: c.text('Redirect URL not found', 404)
 })
 

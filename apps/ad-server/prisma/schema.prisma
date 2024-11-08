@@ -1,0 +1,225 @@
+// schema.prisma
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator kysely {
+  provider  = "prisma-kysely"
+  output    = "../src/services"
+  fileName  = "database-schema.ts"
+  camelCase = true
+}
+
+model User {
+  id          String                   @unique // Clerk's user ID
+  email       String                   @unique
+  membersnhip OrganizationMembership[]
+
+  @@index([email])
+  @@map("users")
+}
+
+model Organization {
+  id          String                   @id // Clerk's organization ID
+  name        String                   @unique
+  membership  OrganizationMembership[]
+  advertisers Advertiser[]             @relation
+  medias      Media[]                  @relation
+
+  @@index([name])
+  @@map("organizations")
+}
+
+model OrganizationMembership {
+  id             String       @id // Clerk's organization membership ID
+  userId         String       @map("user_id")
+  organizationId String       @map("organization_id")
+  role           String
+  user           User         @relation(fields: [userId], references: [id])
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  @@index([userId])
+  @@index([organizationId])
+  @@map("organization_memberships")
+}
+
+model Media {
+  id             String   @id
+  name           String   @unique
+  categories     String? // JSON Array
+  organizationId String   @map("organization_id")
+  adSlots        AdSlot[]
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+
+  @@index([organizationId])
+  @@map("medias")
+}
+
+model AdSlot {
+  id      String @id
+  name    String @unique
+  mediaId String @map("media_id")
+  media   Media  @relation(fields: [mediaId], references: [id])
+  type    String // video, audio
+  companionSlots CompanionSlot[]
+
+  @@index([mediaId])
+  @@map("ad_slots")
+}
+
+model CompanionSlot {
+  id       String @id
+  name     String @unique
+  adSlotId String @map("ad_slot_id")
+  adSlot   AdSlot @relation(fields: [adSlotId], references: [id])
+  width    Int
+  height   Int
+
+  @@index([adSlotId])
+  @@map("companion_slots")
+}
+
+model Advertiser {
+  id             String       @id
+  name           String       @unique
+  organizationId String       @map("organization_id")
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  campaigns      Campaign[]
+  adGroups       AdGroup[]
+  ads            Ad[]
+
+  @@index([organizationId])
+  @@map("advertisers")
+}
+
+model Campaign {
+  id           String     @id
+  name         String     @unique
+  advertiserId String     @map("advertiser_id")
+  adGroups     AdGroup[]
+  startDate    DateTime
+  endDate      DateTime
+  advertiser   Advertiser @relation(fields: [advertiserId], references: [id])
+
+  @@index([advertiserId])
+  @@map("campaigns")
+}
+
+model AdGroup {
+  id                      String  @id
+  name                    String  @unique
+  categories              String? // JSON Array
+  bidPriceCPM             Decimal @map("bid_price_cpm")
+  frequencyCapImpressions Int     @map("frequency_cap_impressions")
+  frequencyCapWindow      Int     @map("frequency_cap_window")
+  frequencyCapUnit        String  @map("frequency_cap_unit") // "MINUTE", "HOUR", or "DAY"
+  advertiserId            String  @map("advertiser_id")
+  campaignId              String  @map("campaign_id")
+  ads                     Ad[]
+
+  advertiser Advertiser @relation(fields: [advertiserId], references: [id])
+  campaign   Campaign   @relation(fields: [campaignId], references: [id])
+
+  @@index([campaignId])
+  @@map("ad_groups")
+}
+
+model Ad {
+  id               String            @id
+  advertiserId     String            @map("advertiser_id")
+  adGroupId        String            @map("ad_group_id")
+  type             String // "video" または "audio"
+  url              String
+  duration         Int // 広告の長さ（秒）
+  width            Int?
+  height           Int?
+  mimeType         String?           @map("mime_type") // オプショナル
+  clickThroughURL  String            @map("click_through_url")
+  description      String? // オプショナル
+  companionBanners CompanionBanner[]
+
+  advertiser Advertiser @relation(fields: [advertiserId], references: [id])
+  adGroup    AdGroup    @relation(fields: [adGroupId], references: [id])
+
+  @@index([advertiserId, adGroupId])
+  @@map("ads")
+}
+
+model CompanionBanner {
+  id              String  @id
+  adId            String  @map("ad_id")
+  url             String
+  width           Int
+  height          Int
+  mimeType        String? @map("mime_type") // オプショナル
+  clickThroughURL String? @map("click_through_url") // オプショナル
+  ad              Ad      @relation(fields: [adId], references: [id])
+
+  @@index([adId])
+  @@map("companion_banners")
+}
+
+model Click {
+  id              String   @id
+  adId            String   @map("ad_id")
+  adSlotId        String   @map("ad_slot_id")
+  mediaId         String   @map("media_id")
+  timestamp       DateTime @default(now())
+  ipAddress       String   @map("ip_address")
+  userAgent       String   @map("user_agent")
+  isCompanion     Boolean  @map("is_companion")
+  impressionId    String   @map("impression_id")
+  uid             String   @map("uid") // End-user UID
+  clickThroughURL String   @map("click_through_url")
+
+  @@map("clicks")
+}
+
+model AdEvent {
+  id             String   @id
+  eventTimestamp DateTime @default(now()) @map("event_timestamp")
+  eventType      String   @map("event_type") // "impression" または "progress"
+  adId           String   @map("ad_id")
+  adSlotId       String   @map("ad_slot_id")
+  mediaId        String   @map("media_id")
+  impressionId   String   @map("impression_id")
+  progress       Int?     @map("progress") // 進捗（進捗イベントの場合）
+  ipAddress      String   @map("ip_address")
+  userAgent      String   @map("user_agent")
+  uid            String   @map("uid") // End-user UID
+
+  @@map("ad_events")
+}
+
+model DailyReport {
+  date         DateTime // 集計日
+  mediaId      String   @map("media_id")
+  adSlotId     String   @map("ad_slot_id")
+  advertiserId String   @map("advertiser_id")
+  campaignId   String   @map("campaign_id")
+  adGroupId    String   @map("ad_group_id")
+  adId         String   @map("ad_id")
+  impressions  Int      @default(0)
+  clicks       Int      @default(0)
+  reach        Int      @default(0)
+
+  @@unique([date, mediaId, adSlotId, advertiserId, campaignId, adGroupId, adId], name: "date_media_adslot_advertiser_campaign_adgroup_ad")
+  @@index([date, mediaId])
+  @@index([date, campaignId])
+  @@index([date, adGroupId])
+  @@index([date, adId])
+  @@map("daily_reports")
+}
+
+model FrequencyCapEntry {
+  userId    String
+  adId      String
+  count     Int      @default(0)
+  lastSeen  DateTime
+  createdAt DateTime @default(now())
+
+  @@unique([userId, adId])
+}
