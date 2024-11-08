@@ -2,6 +2,7 @@ import {
 	CamelCasePlugin,
 	Kysely,
 	ParseJSONResultsPlugin,
+	DeduplicateJoinsPlugin,
 	type sql,
 } from 'kysely'
 import { D1Dialect } from 'kysely-d1'
@@ -13,7 +14,11 @@ export const getDB = (db: D1Database) => {
 		dialect: new D1Dialect({
 			database: db,
 		}),
-		plugins: [new CamelCasePlugin(), new ParseJSONResultsPlugin()],
+		plugins: [
+			new CamelCasePlugin(),
+			new ParseJSONResultsPlugin(),
+			new DeduplicateJoinsPlugin(),
+		],
 	})
 	return kysely
 }

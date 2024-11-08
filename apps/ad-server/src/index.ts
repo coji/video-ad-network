@@ -10,6 +10,7 @@ import {
 	parseFrequencyData,
 	stringifyFrequencyData,
 } from './functions/frequency-cap'
+import { getAdSlot } from './functions/get-ad-slot'
 
 interface Bindings {
 	DB: D1Database
@@ -50,7 +51,13 @@ app.get('/v1/vast', async (c) => {
 	const frequencyData = parseFrequencyData(frequencyDataCookie)
 
 	const now = Date.now()
-	// Changed the selectAd call to include currentTime
+
+	const { adSlot, companionSlots } = await getAdSlot(db, mediaId, adSlotId)
+	if (!adSlot) {
+		return c.notFound()
+	}
+
+	console.log({ adSlot, companionSlots })
 	const ad = await selectAd(db, now, frequencyData)
 	if (!ad) {
 		return c.notFound()
