@@ -64,7 +64,6 @@ export async function selectAd(
 	companionSizes: { width: number; height: number }[],
 ) {
 	const ads = await fetchAds(db, categories, mediaType, companionSizes)
-	console.log({ ads })
 
 	for (const ad of ads) {
 		const adFrequency = frequencyData[ad.id]
