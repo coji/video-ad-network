@@ -1,6 +1,6 @@
 export interface AdConfig {
-	adSlotId: number
-	mediaId: number
+	adSlotId: string
+	mediaId: string
 	containerElement: HTMLElement
 	companionContainer?: HTMLElement
 }

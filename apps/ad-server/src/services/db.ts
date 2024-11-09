@@ -19,6 +19,7 @@ export const getDB = (db: D1Database) => {
 			new ParseJSONResultsPlugin(),
 			new DeduplicateJoinsPlugin(),
 		],
+		log: (event) => console.log(event),
 	})
 	return kysely
 }

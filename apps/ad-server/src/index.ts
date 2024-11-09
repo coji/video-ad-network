@@ -53,6 +53,7 @@ app.get('/v1/vast', async (c) => {
 	const now = Date.now()
 
 	const { adSlot, companionSlots } = await getAdSlot(db, mediaId, adSlotId)
+	console.log({ mediaId, adSlotId, adSlot, companionSlots })
 	if (!adSlot) {
 		return c.notFound()
 	}

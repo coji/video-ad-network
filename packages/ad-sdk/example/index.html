@@ -37,8 +37,8 @@
 
     async function loadAd() {
       const searchParams = new URLSearchParams(window.location.search);
-      const adSlotId = searchParams.get('adSlotId') ?? '1';
-      const mediaId = searchParams.get('mediaId') ?? '1';
+      const mediaId = searchParams.get('mediaId') ?? 'media1';
+      const adSlotId = searchParams.get('adSlotId') ?? 'adslot1';
 
       const adContainer = document.getElementById('ad-container');
       const companionContainer = document.getElementById('companion-container');
