@@ -3,9 +3,9 @@ import { bigquery } from './bigquery'
 export interface AdEventImpression {
 	event_timestamp: string
 	event_type: 'impression'
-	ad_id: number
-	ad_slot_id: number
-	media_id: number
+	ad_id: string
+	ad_slot_id: string
+	media_id: string
 	impression_id: string
 	ip_address: string
 	user_agent: string
@@ -14,11 +14,11 @@ export interface AdEventImpression {
 export interface AdEventProgress {
 	event_timestamp: string
 	event_type: 'progress'
-	ad_id: number
-	ad_slot_id: number
-	media_id: number
+	ad_id: string
+	ad_slot_id: string
+	media_id: string
 	impression_id: string
-	progress: number
+	progress: string
 	ip_address: string
 	user_agent: string
 }

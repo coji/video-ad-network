@@ -85,16 +85,16 @@ app.get('/v1/vast', async (c) => {
 
 	// トラッカーURLを生成
 	const tracker = {
-		click: `${origin}/click?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&isCompanion=false&impressionId=${impressionId}`,
+		click: `${origin}/click?ad_id=${ad.id}&media_id=${mediaId}&ad_slot_id=${adSlotId}&is_companion=false&impression_id=${impressionId}`,
 		companionClick: (companionId: string) =>
-			`${origin}/click?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&isCompanion=true&companionId=${companionId}&impressionId=${impressionId}`,
-		impression: `${trackerOrigin}/impression?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&impressionId=${impressionId}`,
-		start: `${trackerOrigin}/progress?progress=0&adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&impressionId=${impressionId}`,
-		firstQuartile: `${trackerOrigin}/progress?progress=25?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&impressionId=${impressionId}`,
-		midpoint: `${trackerOrigin}/progress?progress=50?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&impressionId=${impressionId}`,
-		thirdQuartile: `${trackerOrigin}/progress?progress=75?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&impressionId=${impressionId}`,
-		complete: `${trackerOrigin}/progress?progress=100?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&impressionId=${impressionId}`,
-		error: `${trackerOrigin}/error?adId=${ad.id}&adSlotId=${adSlotId}&mediaId=${mediaId}&impressionId=${impressionId}`,
+			`${origin}/click?ad_id=${ad.id}&media_id=${mediaId}&ad_slot_id=${adSlotId}&is_companion=true&companion_id=${companionId}&impression_id=${impressionId}`,
+		impression: `${trackerOrigin}/impression?ad_id=${ad.id}&media_id=${mediaId}&ad_slot_id=${adSlotId}&impression_id=${impressionId}`,
+		start: `${trackerOrigin}/progress?progress=0&ad_id=${ad.id}&media_id=${mediaId}&ad_slot_id=${adSlotId}&impression_id=${impressionId}`,
+		firstQuartile: `${trackerOrigin}/progress?progress=25&ad_id=${ad.id}&media_id=${mediaId}&ad_slot_id=${adSlotId}&impression_id=${impressionId}`,
+		midpoint: `${trackerOrigin}/progress?progress=50&ad_id=${ad.id}&media_id=${mediaId}&ad_slot_id=${adSlotId}&impression_id=${impressionId}`,
+		thirdQuartile: `${trackerOrigin}/progress?progress=75&ad_id=${ad.id}&media_id=${mediaId}&ad_slot_id=${adSlotId}&impression_id=${impressionId}`,
+		complete: `${trackerOrigin}/progress?progress=100&ad_id=${ad.id}&media_id=${mediaId}&ad_slot_id=${adSlotId}&impression_id=${impressionId}`,
+		error: `${trackerOrigin}/error?ad_id=${ad.id}&media_id=${mediaId}&ad_slot_id=${adSlotId}&impression_id=${impressionId}`,
 	}
 
 	const vastXml = `<?xml version="1.0" encoding="UTF-8"?>

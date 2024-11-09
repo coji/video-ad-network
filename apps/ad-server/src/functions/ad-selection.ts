@@ -53,6 +53,7 @@ export async function selectAd(
 	frequencyData: FrequencyData,
 ) {
 	const ads = await fetchAds(db)
+	console.log({ ads })
 
 	for (const ad of ads) {
 		const adFrequency = frequencyData[ad.id]

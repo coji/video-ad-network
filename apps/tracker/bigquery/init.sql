@@ -6,13 +6,13 @@ CREATE TABLE `video-ad-network.tracker.ad_events`
 (
   event_timestamp TIMESTAMP NOT NULL,
   event_type STRING NOT NULL,
-  ad_id INT64 NOT NULL,
-  ad_slot_id INT64 NOT NULL,
-  media_id INT64 NOT NULL,
+  ad_id STRING NOT NULL,
+  media_id STRING NOT NULL,
+  ad_slot_id STRING NOT NULL,
   impression_id STRING NOT NULL,
   ip_address STRING,
   user_agent STRING,
-  progress INT64,
+  progress STRING,
   error_message STRING
 )
 PARTITION BY DATE(event_timestamp)

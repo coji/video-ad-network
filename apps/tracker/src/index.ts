@@ -16,9 +16,9 @@ app.get('/', (c) => {
 
 // Impressionエンドポイント
 app.get('/impression', async (c) => {
-	const { adId, adSlotId, mediaId, impressionId } = c.req.query()
+	const { ad_id, media_id, ad_slot_id, impression_id } = c.req.query()
 
-	if (!adId || !adSlotId || !mediaId || !impressionId) {
+	if (!ad_id || !media_id || !ad_slot_id || !impression_id) {
 		return c.body(PIXCEL, 200, {
 			'Content-Type': 'image/gif',
 			'Cache-Control': 'no-store, no-cache, must-revalidate, private',
@@ -29,10 +29,10 @@ app.get('/impression', async (c) => {
 		{
 			event_timestamp: new Date().toISOString(),
 			event_type: 'impression',
-			ad_id: Number.parseInt(adId as string),
-			ad_slot_id: Number.parseInt(adSlotId as string),
-			media_id: Number.parseInt(mediaId as string),
-			impression_id: impressionId,
+			ad_id,
+			ad_slot_id,
+			media_id,
+			impression_id,
 			ip_address: c.req.header('X-Forwarded-For') || 'unknown',
 			user_agent: c.req.header('User-Agent') || 'unknown',
 		},
@@ -49,9 +49,9 @@ app.get('/impression', async (c) => {
 
 // Progressエンドポイント
 app.get('/progress', async (c) => {
-	const { adId, adSlotId, mediaId, progress, impressionId } = c.req.query()
+	const { ad_id, media_id, ad_slot_id, progress, impression_id } = c.req.query()
 
-	if (!adId || !adSlotId || !mediaId || !progress || !impressionId) {
+	if (!ad_id || !media_id || !ad_slot_id || !progress || !impression_id) {
 		return c.body(PIXCEL, 200, {
 			'Content-Type': 'image/gif',
 			'Cache-Control': 'no-store, no-cache, must-revalidate, private',
@@ -62,11 +62,11 @@ app.get('/progress', async (c) => {
 		{
 			event_timestamp: new Date().toISOString(),
 			event_type: 'progress',
-			ad_id: Number.parseInt(adId as string),
-			ad_slot_id: Number.parseInt(adSlotId as string),
-			media_id: Number.parseInt(mediaId as string),
-			impression_id: impressionId,
-			progress: Number.parseInt(progress as string),
+			ad_id,
+			ad_slot_id,
+			media_id,
+			impression_id,
+			progress,
 			ip_address: c.req.header('X-Forwarded-For') || 'unknown',
 			user_agent: c.req.header('User-Agent') || 'unknown',
 		},
