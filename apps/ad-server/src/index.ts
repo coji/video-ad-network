@@ -85,9 +85,9 @@ app.get('/v1/vast', async (c) => {
 
 	// トラッカーURLを生成
 	const tracker = {
-		click: `${origin}/click?ad_id=${ad.id}&media_id=${mediaId}&ad_slot_id=${adSlotId}&is_companion=false&impression_id=${impressionId}`,
+		click: `${origin}/v1/click?ad_id=${ad.id}&media_id=${mediaId}&ad_slot_id=${adSlotId}&is_companion=false&impression_id=${impressionId}`,
 		companionClick: (companionId: string) =>
-			`${origin}/click?ad_id=${ad.id}&media_id=${mediaId}&ad_slot_id=${adSlotId}&is_companion=true&companion_id=${companionId}&impression_id=${impressionId}`,
+			`${origin}/v1/click?ad_id=${ad.id}&media_id=${mediaId}&ad_slot_id=${adSlotId}&is_companion=true&companion_id=${companionId}&impression_id=${impressionId}`,
 		impression: `${trackerOrigin}/impression?ad_id=${ad.id}&media_id=${mediaId}&ad_slot_id=${adSlotId}&impression_id=${impressionId}`,
 		start: `${trackerOrigin}/progress?progress=0&ad_id=${ad.id}&media_id=${mediaId}&ad_slot_id=${adSlotId}&impression_id=${impressionId}`,
 		firstQuartile: `${trackerOrigin}/progress?progress=25&ad_id=${ad.id}&media_id=${mediaId}&ad_slot_id=${adSlotId}&impression_id=${impressionId}`,
