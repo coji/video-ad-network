@@ -164,12 +164,12 @@ app.get('/v1/vast', async (c) => {
 
 // クリックエンドポイントの追加
 app.get('/v1/click', async (c) => {
-	const adId = c.req.query('adId')
-	const adSlotId = c.req.query('adSlotId')
-	const mediaId = c.req.query('mediaId')
-	const isCompanion = c.req.query('isCompanion') === 'true'
-	const companionId = c.req.query('companionId')
-	const impressionId = c.req.query('impressionId')
+	const adId = c.req.query('ad_id')
+	const adSlotId = c.req.query('ad_slot_id')
+	const mediaId = c.req.query('media_id')
+	const isCompanion = c.req.query('is_companion') === 'true'
+	const companionId = c.req.query('companion_id')
+	const impressionId = c.req.query('impression_idd')
 	const ipAddress = c.req.header('CF-Connecting-IP')
 	const userAgent = c.req.header('User-Agent')
 	const db = getDB(c.env.DB)
