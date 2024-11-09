@@ -4,7 +4,7 @@ import { API_BASE_URL } from './config'
 
 export async function fetchVastXml(config: AdConfig): Promise<VastResponse> {
 	const response = await fetch(
-		`${API_BASE_URL}/v1/vast?adSlotId=${config.adSlotId}&mediaId=${config.mediaId}`,
+		`${API_BASE_URL}/v1/vast?media_id=${config.mediaId}&ad_slot_id=${config.adSlotId}`,
 	)
 	if (!response.ok) {
 		throw new Error('Failed to fetch VAST XML')

@@ -36,9 +36,9 @@ const AD_SYSTEM_NAME = 'Custom Ad Network'
 const AD_SYSTEM_VERSION = '1.0'
 
 app.get('/v1/vast', async (c) => {
-	const adSlotId = c.req.query('adSlotId')
-	const mediaId = c.req.query('mediaId')
-	if (!adSlotId || !mediaId) {
+	const mediaId = c.req.query('media_id')
+	const adSlotId = c.req.query('ad_slot_id')
+	if (!mediaId || !adSlotId) {
 		return c.text('Missing required parameters', 400)
 	}
 
