@@ -14,14 +14,14 @@ export const getAdSlot = async (
 			'adSlots.mediaId',
 			'adSlots.name',
 			'adSlots.type',
-			'medias.categories',
+			'medias.categories as categories',
 		])
 		.where('adSlots.id', '==', adSlotId)
 		.where('adSlots.mediaId', '==', mediaId)
 		.executeTakeFirst()
 
 	if (!adSlot) {
-		return { adSlot: null, companionSlots: [] }
+		return null
 	}
 
 	const companionSlots = await db
@@ -30,5 +30,14 @@ export const getAdSlot = async (
 		.where('adSlotId', '==', adSlotId)
 		.execute()
 
-	return { adSlot, companionSlots }
+	return {
+		adSlot,
+		companionSlots,
+		categories: adSlot.categories as string[] | null,
+		mediaType: adSlot.type,
+		companionSizes: companionSlots.map((cs) => ({
+			width: cs.width,
+			height: cs.height,
+		})),
+	}
 }

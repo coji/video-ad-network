@@ -22,11 +22,21 @@ function getCapWindowStart(
 
 async function fetchAds(
 	db: Kysely<DB>, // Added db parameter
+	categories: string[] | null,
+	mediaType: string,
+	companionSizes: { width: number; height: number }[],
 ) {
-	// Updated return type
-	const ads = await db
+	// Fetch ads matching category, media type, and companion banner sizes
+	return await db
 		.selectFrom('ads')
+		.innerJoin('companionBanners', 'companionBanners.adId', 'ads.id')
 		.innerJoin('adGroups', 'adGroups.id', 'ads.adGroupId')
+		.where('ads.type', '==', mediaType)
+		.where(
+			'companionBanners.width',
+			'in',
+			companionSizes.map((s) => s.width),
+		)
 		.select([
 			'ads.id',
 			'ads.type',
@@ -43,16 +53,17 @@ async function fetchAds(
 		])
 		.orderBy('adGroups.bidPriceCpm', 'desc')
 		.execute()
-
-	return ads
 }
 
 export async function selectAd(
 	db: Kysely<DB>, // Added db parameter
 	currentTime: number,
 	frequencyData: FrequencyData,
+	categories: string[] | null,
+	mediaType: string,
+	companionSizes: { width: number; height: number }[],
 ) {
-	const ads = await fetchAds(db)
+	const ads = await fetchAds(db, categories, mediaType, companionSizes)
 	console.log({ ads })
 
 	for (const ad of ads) {

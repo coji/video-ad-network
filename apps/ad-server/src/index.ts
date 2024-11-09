@@ -52,14 +52,20 @@ app.get('/v1/vast', async (c) => {
 
 	const now = Date.now()
 
-	const { adSlot, companionSlots } = await getAdSlot(db, mediaId, adSlotId)
-	console.log({ mediaId, adSlotId, adSlot, companionSlots })
+	const adSlot = await getAdSlot(db, mediaId, adSlotId)
+	console.log({ adSlot })
 	if (!adSlot) {
 		return c.notFound()
 	}
 
-	console.log({ adSlot, companionSlots })
-	const ad = await selectAd(db, now, frequencyData)
+	const ad = await selectAd(
+		db,
+		now,
+		frequencyData,
+		adSlot.categories,
+		adSlot.mediaType,
+		adSlot.companionSizes,
+	)
 	if (!ad) {
 		return c.notFound()
 	}
