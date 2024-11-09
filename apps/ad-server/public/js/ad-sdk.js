@@ -1157,10 +1157,10 @@ function pt(e) {
     companionAds: g.length > 0 ? g : void 0
   };
 }
-const gt = "https://video-ad-network.techtalkjp.workers.dev";
+const gt = "";
 async function Nt(e) {
   const t = await fetch(
-    `${gt}/vast?adSlotId=${e.adSlotId}&mediaId=${e.mediaId}`
+    `${gt}/v1/vast?adSlotId=${e.adSlotId}&mediaId=${e.mediaId}`
   );
   if (!t.ok)
     throw new Error("Failed to fetch VAST XML");
