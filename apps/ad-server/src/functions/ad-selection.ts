@@ -1,7 +1,21 @@
 import type { FrequencyData } from './frequency-cap'
 import type { DB } from '../services/database-schema'
-import type { Kysely, Selectable } from 'kysely'
-import { getDB } from '../services/db' // Added import for getDB
+import type { Kysely } from 'kysely'
+
+export interface AdCandidate {
+	id: string
+	type: string
+	url: string
+	duration: number
+	width: number | null
+	height: number | null
+	mimeType: string | null
+	description: string | null
+	bidPriceCpm: number
+	frequencyCapImpressions: number
+	frequencyCapWindow: number
+	frequencyCapUnit: string
+}
 
 function getCapWindowStart(
 	currentTime: number,
@@ -25,7 +39,7 @@ async function fetchAds(
 	categories: string[] | null,
 	mediaType: string,
 	companionSizes: { width: number; height: number }[],
-) {
+): Promise<AdCandidate[]> {
 	// Fetch ads matching category, media type, and companion banner sizes
 	return await db
 		.selectFrom('ads')
@@ -62,7 +76,7 @@ export async function selectAd(
 	categories: string[] | null,
 	mediaType: string,
 	companionSizes: { width: number; height: number }[],
-) {
+): Promise<AdCandidate | null> {
 	const ads = await fetchAds(db, categories, mediaType, companionSizes)
 
 	for (const ad of ads) {
