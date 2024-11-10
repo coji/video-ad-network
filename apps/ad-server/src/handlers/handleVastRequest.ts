@@ -1,15 +1,15 @@
 import type { Context } from 'hono'
-import { getDB } from '../services/db'
-import { selectAd } from '../functions/ad-selection'
-import { getAdSlot } from '../functions/get-ad-slot'
+import { getDB } from '~/services/db'
+import { selectAd } from '~/functions/ad-selection'
+import { getAdSlot } from '~/functions/get-ad-slot'
 import {
 	validateVastRequest,
 	getFrequencyData,
 	updateFrequencyData,
 	generateTrackers,
 	generateVastXml,
-} from '../functions/vast-utils'
-import { getCompanionBanners } from '../functions/get-companion-banners'
+} from '~/functions/vast-utils'
+import { getCompanionBanners } from '~/functions/get-companion-banners'
 
 export async function handleVastRequest(c: Context) {
 	const { mediaId, adSlotId } = validateVastRequest(c)

@@ -1,5 +1,5 @@
 import type { Kysely } from 'kysely'
-import type { DB } from '../services/database-schema'
+import type { DB } from '~/services/database-schema'
 
 export const getAdSlot = async (
 	db: Kysely<DB>,

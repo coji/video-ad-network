@@ -1,5 +1,5 @@
 import type { Context } from 'hono'
-import { getDB } from '../services/db'
+import { getDB } from '~/services/db'
 
 export async function handleClick(c: Context) {
 	const adId = c.req.query('ad_id')
