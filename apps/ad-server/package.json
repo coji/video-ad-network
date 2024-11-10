@@ -17,13 +17,13 @@
 	"dependencies": {
 		"@video-ad-network/ad-sdk": "workspace:*",
 		"hono": "catalog:",
-		"kysely": "0.27.4",
-		"kysely-d1": "0.3.0"
+		"kysely": "catalog:",
+		"kysely-d1": "catalog:"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "catalog:",
 		"@cloudflare/workers-types": "catalog:",
-		"prisma": "5.21.1",
+		"prisma": "5.22.0",
 		"prisma-kysely": "1.8.0",
 		"wrangler": "catalog:"
 	}

@@ -14,10 +14,10 @@
 		"hono": "catalog:"
 	},
 	"devDependencies": {
+		"@biomejs/biome": "catalog:",
 		"@hono/vite-build": "catalog:",
 		"@hono/vite-dev-server": "catalog:",
 		"@types/node": "catalog:",
-		"biome": "catalog:",
 		"typescript": "catalog:",
 		"vite": "catalog:"
 	}
