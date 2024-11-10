@@ -175,7 +175,7 @@ app.get('/v1/click', async (c) => {
 	const mediaId = c.req.query('media_id')
 	const isCompanion = c.req.query('is_companion') === 'true'
 	const companionId = c.req.query('companion_id')
-	const impressionId = c.req.query('impression_idd')
+	const impressionId = c.req.query('impression_id')
 	const ipAddress = c.req.header('CF-Connecting-IP')
 	const userAgent = c.req.header('User-Agent')
 	const db = getDB(c.env.DB)
