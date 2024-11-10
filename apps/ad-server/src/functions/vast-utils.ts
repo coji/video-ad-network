@@ -54,27 +54,92 @@ export function updateFrequencyData(
 	)
 }
 
+const buildUrl = (
+	origin: string,
+	path: string,
+	params: Record<string, string>,
+) => {
+	const url = new URL(path, origin)
+	for (const [key, value] of Object.entries(params)) {
+		url.searchParams.append(key, value)
+	}
+	return url.toString()
+}
+
 export function generateTrackers(
 	c: Context,
-	adId: string,
-	mediaId: string,
-	adSlotId: string,
-	impressionId: string,
+	ad_id: string,
+	media_id: string,
+	ad_slot_id: string,
+	impression_id: string,
 ): Trackers {
 	const origin = new URL(c.req.url).origin
 	const trackerOrigin = c.env.TRACKER_ORIGIN
 
 	return {
-		click: `${origin}/v1/click?ad_id=${adId}&media_id=${mediaId}&ad_slot_id=${adSlotId}&is_companion=false&impression_id=${impressionId}`,
-		companionClick: (companionId: string) =>
-			`${origin}/v1/click?ad_id=${adId}&media_id=${mediaId}&ad_slot_id=${adSlotId}&is_companion=true&companion_id=${companionId}&impression_id=${impressionId}`,
-		impression: `${trackerOrigin}/impression?ad_id=${adId}&media_id=${mediaId}&ad_slot_id=${adSlotId}&impression_id=${impressionId}`,
-		start: `${trackerOrigin}/progress?progress=0&ad_id=${adId}&media_id=${mediaId}&ad_slot_id=${adSlotId}&impression_id=${impressionId}`,
-		firstQuartile: `${trackerOrigin}/progress?progress=25&ad_id=${adId}&media_id=${mediaId}&ad_slot_id=${adSlotId}&impression_id=${impressionId}`,
-		midpoint: `${trackerOrigin}/progress?progress=50&ad_id=${adId}&media_id=${mediaId}&ad_slot_id=${adSlotId}&impression_id=${impressionId}`,
-		thirdQuartile: `${trackerOrigin}/progress?progress=75&ad_id=${adId}&media_id=${mediaId}&ad_slot_id=${adSlotId}&impression_id=${impressionId}`,
-		complete: `${trackerOrigin}/progress?progress=100&ad_id=${adId}&media_id=${mediaId}&ad_slot_id=${adSlotId}&impression_id=${impressionId}`,
-		error: `${trackerOrigin}/error?ad_id=${adId}&media_id=${mediaId}&ad_slot_id=${adSlotId}&impression_id=${impressionId}`,
+		click: buildUrl(origin, '/v1/click', {
+			ad_id,
+			media_id,
+			ad_slot_id,
+			is_companion: 'false',
+			impression_id,
+		}),
+		companionClick: (companion_id: string) =>
+			buildUrl(origin, '/v1/click', {
+				ad_id,
+				media_id,
+				ad_slot_id,
+				is_companion: 'true',
+				companion_id,
+				impression_id,
+			}),
+		impression: buildUrl(trackerOrigin, '/impression', {
+			ad_id,
+			media_id,
+			ad_slot_id,
+			impression_id,
+		}),
+		start: buildUrl(trackerOrigin, '/progress', {
+			progress: '0',
+			ad_id,
+			media_id,
+			ad_slot_id,
+			impression_id,
+		}),
+		firstQuartile: buildUrl(trackerOrigin, '/progress', {
+			progress: '25',
+			ad_id,
+			media_id,
+			ad_slot_id,
+			impression_id,
+		}),
+		midpoint: buildUrl(trackerOrigin, '/progress', {
+			progress: '50',
+			ad_id,
+			media_id,
+			ad_slot_id,
+			impression_id,
+		}),
+		thirdQuartile: buildUrl(trackerOrigin, '/progress', {
+			progress: '75',
+			ad_id,
+			media_id,
+			ad_slot_id,
+			impression_id,
+		}),
+		complete: buildUrl(trackerOrigin, '/progress', {
+			progress: '100',
+			ad_id,
+			media_id,
+			ad_slot_id,
+			impression_id,
+		}),
+		error: buildUrl(trackerOrigin, '/error', {
+			ad_id,
+			media_id,
+			ad_slot_id,
+			impression_id,
+		}),
 	}
 }
 
