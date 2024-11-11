@@ -16,6 +16,8 @@ export type Ad = {
     mimeType: string | null;
     clickThroughUrl: string;
     description: string | null;
+    createdAt: Generated<string>;
+    updatedAt: string;
 };
 export type AdEvent = {
     id: string;
@@ -40,27 +42,35 @@ export type AdGroup = {
     frequencyCapUnit: string;
     advertiserId: string;
     campaignId: string;
+    createdAt: Generated<string>;
+    updatedAt: string;
 };
 export type AdSlot = {
     id: string;
     name: string;
     mediaId: string;
     type: string;
+    createdAt: Generated<string>;
+    updatedAt: string;
 };
 export type Advertiser = {
     id: string;
     name: string;
     organizationId: string;
+    createdAt: Generated<string>;
+    updatedAt: string;
 };
 export type Campaign = {
     id: string;
     name: string;
     advertiserId: string;
-    startDate: string;
-    endDate: string;
+    startAt: string;
+    endAt: string;
     budget: Generated<number>;
     budgetType: string;
     deliveryPace: string;
+    createdAt: Generated<string>;
+    updatedAt: string;
 };
 export type Click = {
     id: string;
@@ -74,6 +84,8 @@ export type Click = {
     impressionId: string;
     uid: string;
     clickThroughUrl: string;
+    createdAt: Generated<string>;
+    updatedAt: string;
 };
 export type CompanionBanner = {
     id: string;
@@ -83,6 +95,8 @@ export type CompanionBanner = {
     height: number;
     mimeType: string | null;
     clickThroughUrl: string | null;
+    createdAt: Generated<string>;
+    updatedAt: string;
 };
 export type CompanionSlot = {
     id: string;
@@ -90,6 +104,8 @@ export type CompanionSlot = {
     adSlotId: string;
     width: number;
     height: number;
+    createdAt: Generated<string>;
+    updatedAt: string;
 };
 export type DailyReport = {
     date: string;
@@ -102,33 +118,36 @@ export type DailyReport = {
     impressions: Generated<number>;
     clicks: Generated<number>;
     reach: Generated<number>;
-};
-export type FrequencyCapEntry = {
-    userId: string;
-    adId: string;
-    count: Generated<number>;
-    lastSeen: string;
     createdAt: Generated<string>;
+    updatedAt: string;
 };
 export type Media = {
     id: string;
     name: string;
     categories: string | null;
     organizationId: string;
+    createdAt: Generated<string>;
+    updatedAt: string;
 };
 export type Organization = {
     id: string;
     name: string;
+    createdAt: Generated<string>;
+    updatedAt: string;
 };
 export type OrganizationMembership = {
     id: string;
     userId: string;
     organizationId: string;
     role: string;
+    createdAt: Generated<string>;
+    updatedAt: string;
 };
 export type User = {
     id: string;
     email: string;
+    createdAt: Generated<string>;
+    updatedAt: string;
 };
 export type DB = {
     adEvents: AdEvent;
@@ -141,7 +160,6 @@ export type DB = {
     companionBanners: CompanionBanner;
     companionSlots: CompanionSlot;
     dailyReports: DailyReport;
-    FrequencyCapEntry: FrequencyCapEntry;
     medias: Media;
     organizationMemberships: OrganizationMembership;
     organizations: Organization;
