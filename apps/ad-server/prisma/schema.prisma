@@ -17,6 +17,9 @@ model User {
   email       String                   @unique
   membersnhip OrganizationMembership[]
 
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
   @@index([email])
   @@map("users")
 }
@@ -27,6 +30,9 @@ model Organization {
   membership  OrganizationMembership[]
   advertisers Advertiser[]             @relation
   medias      Media[]                  @relation
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@index([name])
   @@map("organizations")
@@ -40,6 +46,9 @@ model OrganizationMembership {
   user           User         @relation(fields: [userId], references: [id])
   organization   Organization @relation(fields: [organizationId], references: [id])
 
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
   @@index([userId])
   @@index([organizationId])
   @@map("organization_memberships")
@@ -51,6 +60,9 @@ model Media {
   categories     String? // JSON Array
   organizationId String   @map("organization_id")
   adSlots        AdSlot[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   organization Organization @relation(fields: [organizationId], references: [id])
 
@@ -66,17 +78,23 @@ model AdSlot {
   type    String // video, audio
   companionSlots CompanionSlot[]
 
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
   @@index([mediaId])
   @@map("ad_slots")
 }
 
 model CompanionSlot {
   id       String @id
-  name     String @unique
+  name     String
   adSlotId String @map("ad_slot_id")
   adSlot   AdSlot @relation(fields: [adSlotId], references: [id])
   width    Int
   height   Int
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@index([adSlotId])
   @@map("companion_slots")
@@ -91,6 +109,9 @@ model Advertiser {
   adGroups       AdGroup[]
   ads            Ad[]
 
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
   @@index([organizationId])
   @@map("advertisers")
 }
@@ -100,9 +121,15 @@ model Campaign {
   name         String     @unique
   advertiserId String     @map("advertiser_id")
   adGroups     AdGroup[]
-  startDate    DateTime
-  endDate      DateTime
+  startAt      DateTime   @map("start_at")
+  endAt        DateTime   @map("end_at")
+  budget       Decimal    @default(0)
+  budgetType   String     @map("budget_type") // "CPM"
+  deliveryPace String     @map("delivery_pace") // "AS_MUCH_AS_POSSIBLE", "EVENLY", "FRONT_LOADING"
   advertiser   Advertiser @relation(fields: [advertiserId], references: [id])
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@index([advertiserId])
   @@map("campaigns")
@@ -119,6 +146,9 @@ model AdGroup {
   advertiserId            String  @map("advertiser_id")
   campaignId              String  @map("campaign_id")
   ads                     Ad[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   advertiser Advertiser @relation(fields: [advertiserId], references: [id])
   campaign   Campaign   @relation(fields: [campaignId], references: [id])
@@ -141,6 +171,9 @@ model Ad {
   description      String? // オプショナル
   companionBanners CompanionBanner[]
 
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
   advertiser Advertiser @relation(fields: [advertiserId], references: [id])
   adGroup    AdGroup    @relation(fields: [adGroupId], references: [id])
 
@@ -158,6 +191,9 @@ model CompanionBanner {
   clickThroughURL String? @map("click_through_url") // オプショナル
   ad              Ad      @relation(fields: [adId], references: [id])
 
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
   @@index([adId])
   @@map("companion_banners")
 }
@@ -174,6 +210,9 @@ model Click {
   impressionId    String   @map("impression_id")
   uid             String   @map("uid") // End-user UID
   clickThroughURL String   @map("click_through_url")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("clicks")
 }
@@ -206,20 +245,13 @@ model DailyReport {
   clicks       Int      @default(0)
   reach        Int      @default(0)
 
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
   @@unique([date, mediaId, adSlotId, advertiserId, campaignId, adGroupId, adId], name: "date_media_adslot_advertiser_campaign_adgroup_ad")
   @@index([date, mediaId])
   @@index([date, campaignId])
   @@index([date, adGroupId])
   @@index([date, adId])
   @@map("daily_reports")
-}
-
-model FrequencyCapEntry {
-  userId    String
-  adId      String
-  count     Int      @default(0)
-  lastSeen  DateTime
-  createdAt DateTime @default(now())
-
-  @@unique([userId, adId])
 }

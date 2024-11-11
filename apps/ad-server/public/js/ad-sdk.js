@@ -46,7 +46,7 @@ P.validate = function(e, t) {
     } else if (e[r] === "<") {
       let u = r;
       if (r++, e[r] === "!") {
-        r = S(e, r);
+        r = V(e, r);
         continue;
       } else {
         let a = !1;
@@ -66,7 +66,7 @@ P.validate = function(e, t) {
         if (r = f.index, l[l.length - 1] === "/") {
           const c = r - l.length;
           l = l.substring(0, l.length - 1);
-          const d = V(l, t);
+          const d = S(l, t);
           if (d === !0)
             s = !0;
           else
@@ -91,7 +91,7 @@ P.validate = function(e, t) {
             }
           } else return p("InvalidTag", "Closing tag '" + o + "' doesn't have proper closing.", N(e, r));
         else {
-          const c = V(l, t);
+          const c = S(l, t);
           if (c !== !0)
             return p(c.err.code, c.err.msg, N(e, r - l.length + c.err.line));
           if (i === !0)
@@ -101,7 +101,7 @@ P.validate = function(e, t) {
         for (r++; r < e.length; r++)
           if (e[r] === "<")
             if (e[r + 1] === "!") {
-              r++, r = S(e, r);
+              r++, r = V(e, r);
               continue;
             } else if (e[r + 1] === "?") {
               if (r = k(e, ++r), r.err) return r;
@@ -148,7 +148,7 @@ function k(e, t) {
     }
   return t;
 }
-function S(e, t) {
+function V(e, t) {
   if (e.length > t + 5 && e[t + 1] === "-" && e[t + 2] === "-") {
     for (t += 3; t < e.length; t++)
       if (e[t] === "-" && e[t + 1] === "-" && e[t + 2] === ">") {
@@ -190,7 +190,7 @@ function q(e, t) {
   };
 }
 const Y = new RegExp(`(\\s*)([^\\s=]+)(\\s*=)?(\\s*(['"])(([\\s\\S])*?)\\5)?`, "g");
-function V(e, t) {
+function S(e, t) {
   const n = O.getAllMatches(e, Y), s = {};
   for (let i = 0; i < n.length; i++) {
     if (n[i][1].length === 0)
@@ -261,7 +261,7 @@ function y(e) {
   return e.startIndex + e[1].length;
 }
 var x = {};
-const _ = {
+const F = {
   preserveOrder: !1,
   attributeNamePrefix: "@_",
   attributesGroupName: !1,
@@ -305,10 +305,10 @@ const _ = {
   }
   // skipEmptyListItem: false
 }, H = function(e) {
-  return Object.assign({}, _, e);
+  return Object.assign({}, F, e);
 };
 x.buildOptions = H;
-x.defaultOptions = _;
+x.defaultOptions = F;
 class j {
   constructor(t) {
     this.tagname = t, this.child = [], this[":@"] = {};
@@ -450,7 +450,7 @@ let Te = class {
       inr: { regex: /&(inr|#8377);/g, val: "₹" },
       num_dec: { regex: /&#([0-9]{1,7});/g, val: (n, s) => String.fromCharCode(Number.parseInt(s, 10)) },
       num_hex: { regex: /&#x([0-9a-fA-F]{1,6});/g, val: (n, s) => String.fromCharCode(Number.parseInt(s, 16)) }
-    }, this.addExternalEntities = ye, this.parseXml = Ie, this.parseTextData = Ae, this.resolveNameSpace = we, this.buildAttributesMap = ve, this.isItStopNode = $e, this.replaceEntitiesValue = Oe, this.readStopNodeData = Se, this.saveTextToParentTag = xe, this.addChild = Pe, this.ignoreAttributesFn = Ee(this.options.ignoreAttributes);
+    }, this.addExternalEntities = ye, this.parseXml = Ie, this.parseTextData = Ae, this.resolveNameSpace = we, this.buildAttributesMap = ve, this.isItStopNode = $e, this.replaceEntitiesValue = Oe, this.readStopNodeData = Ve, this.saveTextToParentTag = xe, this.addChild = Pe, this.ignoreAttributesFn = Ee(this.options.ignoreAttributes);
   }
 };
 function ye(e) {
@@ -677,7 +677,7 @@ function v(e, t, n, s = ">") {
     rawTagName: l
   };
 }
-function Se(e, t, n) {
+function Ve(e, t, n) {
   const s = n;
   let i = 1;
   for (; n < e.length; n++)
@@ -708,15 +708,15 @@ function I(e, t, n) {
   } else
     return X.isExist(e) ? e : "";
 }
-var Ve = Te, M = {};
-function Fe(e, t) {
+var Se = Te, M = {};
+function _e(e, t) {
   return B(e, t);
 }
 function B(e, t, n) {
   let s;
   const i = {};
   for (let r = 0; r < e.length; r++) {
-    const u = e[r], a = _e(u);
+    const u = e[r], a = Fe(u);
     let o = "";
     if (n === void 0 ? o = a : o = n + "." + a, a === t.textNodeName)
       s === void 0 ? s = u[a] : s += "" + u[a];
@@ -732,7 +732,7 @@ function B(e, t, n) {
   }
   return typeof s == "string" ? s.length > 0 && (i[t.textNodeName] = s) : s !== void 0 && (i[t.textNodeName] = s), i;
 }
-function _e(e) {
+function Fe(e) {
   const t = Object.keys(e);
   for (let n = 0; n < t.length; n++) {
     const s = t[n];
@@ -752,8 +752,8 @@ function Xe(e, t) {
   const { textNodeName: n } = t, s = Object.keys(e).length;
   return !!(s === 0 || s === 1 && (e[n] || typeof e[n] == "boolean" || e[n] === 0));
 }
-M.prettify = Fe;
-const { buildOptions: Me } = x, Be = Ve, { prettify: Re } = M, Ue = P;
+M.prettify = _e;
+const { buildOptions: Me } = x, Be = Se, { prettify: Re } = M, Ue = P;
 let Ge = class {
   constructor(t) {
     this.externalEntities = {}, this.options = Me(t);
@@ -818,14 +818,14 @@ function R(e, t, n, s) {
       i += s + `<!--${a[o][0][t.textNodeName]}-->`, r = !0;
       continue;
     } else if (o[0] === "?") {
-      const h = F(a[":@"], t), T = o === "?xml" ? "" : s;
+      const h = _(a[":@"], t), T = o === "?xml" ? "" : s;
       let m = a[o][0][t.textNodeName];
       m = m.length !== 0 ? " " + m : "", i += T + `<${o}${m}${h}?>`, r = !0;
       continue;
     }
     let l = s;
     l !== "" && (l += t.indentBy);
-    const c = F(a[":@"], t), d = s + `<${o}${c}`, g = R(a[o], t, f, l);
+    const c = _(a[":@"], t), d = s + `<${o}${c}`, g = R(a[o], t, f, l);
     t.unpairedTags.indexOf(o) !== -1 ? t.suppressUnpairedNode ? i += d + ">" : i += d + "/>" : (!g || g.length === 0) && t.suppressEmptyNode ? i += d + "/>" : g && g.endsWith(">") ? i += d + `>${g}${s}</${o}>` : (i += d + ">", g && s !== "" && (g.includes("/>") || g.includes("</")) ? i += s + t.indentBy + g + s : i += g, i += `</${o}>`), r = !0;
   }
   return i;
@@ -838,7 +838,7 @@ function Ye(e) {
       return s;
   }
 }
-function F(e, t) {
+function _(e, t) {
   let n = "";
   if (e && !t.ignoreAttributes)
     for (let s in e) {
@@ -1160,7 +1160,7 @@ function pt(e) {
 const gt = "";
 async function Nt(e) {
   const t = await fetch(
-    `${gt}/v1/vast?adSlotId=${e.adSlotId}&mediaId=${e.mediaId}`
+    `${gt}/v1/vast?media_id=${e.mediaId}&ad_slot_id=${e.adSlotId}`
   );
   if (!t.ok)
     throw new Error("Failed to fetch VAST XML");

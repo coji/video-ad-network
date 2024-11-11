@@ -58,6 +58,9 @@ export type Campaign = {
     advertiserId: string;
     startDate: string;
     endDate: string;
+    budget: Generated<number>;
+    budgetType: string;
+    deliveryPace: string;
 };
 export type Click = {
     id: string;
