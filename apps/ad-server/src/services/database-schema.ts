@@ -69,6 +69,9 @@ export type Campaign = {
     budget: Generated<number>;
     budgetType: string;
     deliveryPace: string;
+    spentBudget: Generated<number>;
+    remainingBudget: Generated<number>;
+    status: Generated<string>;
     createdAt: Generated<string>;
     updatedAt: string;
 };

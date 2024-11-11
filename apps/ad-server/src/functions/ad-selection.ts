@@ -45,6 +45,7 @@ async function fetchAds(
 		.selectFrom('ads')
 		.innerJoin('companionBanners', 'companionBanners.adId', 'ads.id')
 		.innerJoin('adGroups', 'adGroups.id', 'ads.adGroupId')
+		.innerJoin('campaigns', 'campaigns.id', 'adGroups.campaignId')
 		.where('ads.type', '==', mediaType)
 		.where(
 			'companionBanners.width',
@@ -65,6 +66,7 @@ async function fetchAds(
 			'adGroups.frequencyCapWindow',
 			'adGroups.frequencyCapUnit',
 		])
+		.where('campaigns.status', '==', 'ACTIVE')
 		.orderBy('adGroups.bidPriceCpm', 'desc')
 		.execute()
 }

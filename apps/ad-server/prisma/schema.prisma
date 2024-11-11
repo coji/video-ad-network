@@ -71,11 +71,11 @@ model Media {
 }
 
 model AdSlot {
-  id      String @id
-  name    String @unique
-  mediaId String @map("media_id")
-  media   Media  @relation(fields: [mediaId], references: [id])
-  type    String // video, audio
+  id             String          @id
+  name           String          @unique
+  mediaId        String          @map("media_id")
+  media          Media           @relation(fields: [mediaId], references: [id])
+  type           String // video, audio
   companionSlots CompanionSlot[]
 
   createdAt DateTime @default(now()) @map("created_at")
@@ -117,16 +117,20 @@ model Advertiser {
 }
 
 model Campaign {
-  id           String     @id
-  name         String     @unique
-  advertiserId String     @map("advertiser_id")
-  adGroups     AdGroup[]
-  startAt      DateTime   @map("start_at")
-  endAt        DateTime   @map("end_at")
-  budget       Decimal    @default(0)
-  budgetType   String     @map("budget_type") // "CPM"
-  deliveryPace String     @map("delivery_pace") // "AS_MUCH_AS_POSSIBLE", "EVENLY", "FRONT_LOADING"
-  advertiser   Advertiser @relation(fields: [advertiserId], references: [id])
+  id              String    @id
+  name            String    @unique
+  advertiserId    String    @map("advertiser_id")
+  adGroups        AdGroup[]
+  startAt         DateTime  @map("start_at")
+  endAt           DateTime  @map("end_at")
+  budget          Decimal   @default(0)
+  budgetType      String    @map("budget_type") // "CPM"
+  deliveryPace    String    @map("delivery_pace") // "AS_MUCH_AS_POSSIBLE", "EVENLY", "FRONT_LOADING"
+  spentBudget     Decimal   @default(0) @map("spent_budget") // 消費済み予算
+  remainingBudget Decimal   @default(0) @map("remaining_budget") // 残予算
+  status          String    @default("ACTIVE") // "ACTIVE", "PAUSED", "ENDED" など
+
+  advertiser Advertiser @relation(fields: [advertiserId], references: [id])
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")

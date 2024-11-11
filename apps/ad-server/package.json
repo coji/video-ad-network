@@ -3,7 +3,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "wrangler dev --show-interactive-dev-session false src/index.ts",
-		"db:reset:local": "rm -Rf .wrangler/state/v3/d1 && pnpm run db:migrate:local && pnpm run db:seed:local",
+		"db:reset:local": "rm -Rf .wrangler/state/v3/d1 && pnpm run db:migrate:local && pnpm run db:seed",
 		"db:migrate:diff": "prisma migrate diff --from-local-d1 --to-schema-datamodel ./prisma/schema.prisma --script --output",
 		"db:migrate:local": "wrangler d1 migrations apply --local video-ad-network",
 		"db:migrate:remote": "wrangler d1 migrations apply --remote video-ad-network",

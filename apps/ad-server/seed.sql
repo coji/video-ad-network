@@ -36,9 +36,9 @@ INSERT INTO advertisers (id, name, organization_id, created_at, updated_at) VALU
 ('adv2', 'Advertiser Two', 'org2', '2023-10-10 12:00:00', '2023-10-10 12:00:00');
 
 -- Campaignsのサンプルデータ
-INSERT INTO campaigns (id, name, advertiser_id, start_at, end_at, budget, budget_type, delivery_pace, created_at, updated_at) VALUES
-('camp1', 'Campaign One', 'adv1', '2023-10-01', '2030-12-31', 50000, 'CPM', 'EVENLY', '2023-10-10 12:00:00', '2023-10-10 12:00:00'),
-('camp2', 'Campaign Two', 'adv2', '2023-11-01', '2030-01-31', 75000, 'CPM', 'AS_MUCH_AS_POSSIBLE', '2023-10-10 12:00:00', '2023-10-10 12:00:00');
+INSERT INTO campaigns (id, name, advertiser_id, start_at, end_at, budget, budget_type, delivery_pace, spent_budget, remaining_budget, status, created_at, updated_at) VALUES
+('camp1', 'Campaign One', 'adv1', '2023-10-01', '2030-12-31', 50000, 'CPM', 'EVENLY', 0, 50000, 'ACTIVE', '2023-10-10 12:00:00', '2023-10-10 12:00:00'),
+('camp2', 'Campaign Two', 'adv2', '2023-11-01', '2030-01-31', 75000, 'CPM', 'AS_MUCH_AS_POSSIBLE', 0, 75000, 'ACTIVE', '2023-10-10 12:00:00', '2023-10-10 12:00:00');
 
 -- AdGroupsのサンプルデータ
 INSERT INTO ad_groups (id, name, categories, bid_price_cpm, frequency_cap_impressions, frequency_cap_window, frequency_cap_unit, advertiser_id, campaign_id, created_at, updated_at) VALUES
