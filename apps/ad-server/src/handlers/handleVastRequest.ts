@@ -1,5 +1,5 @@
 import type { Context } from 'hono'
-import { getDB } from '~/services/db'
+import { getDB } from '@video-ad-network/db'
 import { selectAd } from '~/functions/ad-selection'
 import { getAdSlot } from '~/functions/get-ad-slot'
 import {

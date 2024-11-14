@@ -10,7 +10,8 @@
 		"jsx": "react-jsx",
 		"jsxImportSource": "hono/jsx",
 		"paths": {
-			"~/*": ["./src/*"]
+			"~/*": ["./src/*"],
+			"@video-ad-network/db": ["../../packages/db/src"]
 		}
 	}
 }

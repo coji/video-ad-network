@@ -1,5 +1,5 @@
 import type { Context } from 'hono'
-import { getDB } from '~/services/db'
+import { getDB } from '@video-ad-network/db'
 
 export async function handleClick(c: Context) {
 	const adId = c.req.query('ad_id')
@@ -49,6 +49,7 @@ export async function handleClick(c: Context) {
 			isCompanion: isCompanion ? 1 : 0,
 			impressionId,
 			clickThroughUrl,
+			updatedAt: new Date().toISOString(),
 		})
 		.execute()
 

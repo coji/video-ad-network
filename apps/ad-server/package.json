@@ -16,6 +16,7 @@
 	},
 	"dependencies": {
 		"@video-ad-network/ad-sdk": "workspace:*",
+		"@video-ad-network/db": "workspace:*",
 		"hono": "catalog:",
 		"kysely": "catalog:",
 		"kysely-d1": "catalog:"

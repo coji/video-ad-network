@@ -1,0 +1,22 @@
+{
+	"include": ["**/*.ts"],
+	"compilerOptions": {
+		"lib": ["DOM", "DOM.Iterable", "ES2022"],
+		"types": ["@cloudflare/workers-types"],
+		"isolatedModules": true,
+		"esModuleInterop": true,
+		"module": "ESNext",
+		"moduleResolution": "Bundler",
+		"target": "ES2022",
+		"strict": true,
+		"allowJs": true,
+		"skipLibCheck": true,
+		"forceConsistentCasingInFileNames": true,
+		"declaration": true,
+		"declarationMap": true,
+		"paths": {
+			"~/*": ["./src/*"]
+		},
+		"outDir": "./dist"
+	}
+}
