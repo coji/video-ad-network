@@ -12,25 +12,19 @@
 		"./*": "./dist/*"
 	},
 	"scripts": {
-		"db:reset:local": "rm -Rf .wrangler/state/v3/d1 && pnpm run db:migrate:local && pnpm run db:seed",
-		"db:migrate:diff": "prisma migrate diff --from-local-d1 --to-schema-datamodel ./prisma/schema.prisma --script --output",
-		"db:migrate:local": "wrangler d1 migrations apply --local video-ad-network",
-		"db:migrate:remote": "wrangler d1 migrations apply --remote video-ad-network",
-		"db:seed": "wrangler d1 execute --local --file ./seed.sql video-ad-network",
+		"db:seed": "turso db shell video-ad-network < prisma/seed.sql",
 		"build": "tsc -b"
 	},
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
 	"devDependencies": {
-		"@cloudflare/workers-types": "4.20241112.0",
 		"prisma": "5.22.0",
 		"prisma-kysely": "1.8.0",
-		"typescript": "5.6.3",
-		"wrangler": "3.86.1"
+		"typescript": "catalog:"
 	},
 	"dependencies": {
-		"kysely": "0.27.4",
-		"kysely-d1": "0.3.0"
+		"@libsql/kysely-libsql": "0.4.1",
+		"kysely": "0.27.4"
 	}
 }

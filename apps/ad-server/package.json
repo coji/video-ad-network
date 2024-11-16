@@ -3,29 +3,20 @@
 	"type": "module",
 	"scripts": {
 		"dev": "wrangler dev --show-interactive-dev-session false src/index.ts",
-		"db:reset:local": "rm -Rf .wrangler/state/v3/d1 && pnpm run db:migrate:local && pnpm run db:seed",
-		"db:migrate:diff": "prisma migrate diff --from-local-d1 --to-schema-datamodel ./prisma/schema.prisma --script --output",
-		"db:migrate:local": "wrangler d1 migrations apply --local video-ad-network",
-		"db:migrate:remote": "wrangler d1 migrations apply --remote video-ad-network",
-		"db:seed": "wrangler d1 execute --local --file ./seed.sql video-ad-network",
 		"build": "cp ../../packages/ad-sdk/dist/ad-sdk.js public/js/",
 		"deploy": "wrangler deploy --minify src/index.ts",
-		"cf-typegen": "wrangler types --env-interface CloudflareBindings",
+		"typegen": "wrangler types --env-interface CloudflareBindings",
 		"format": "biome format .",
 		"lint": "biome lint ."
 	},
 	"dependencies": {
 		"@video-ad-network/ad-sdk": "workspace:*",
 		"@video-ad-network/db": "workspace:*",
-		"hono": "catalog:",
-		"kysely": "catalog:",
-		"kysely-d1": "catalog:"
+		"hono": "catalog:"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "catalog:",
 		"@cloudflare/workers-types": "catalog:",
-		"prisma": "5.22.0",
-		"prisma-kysely": "1.8.0",
 		"wrangler": "catalog:"
 	}
 }

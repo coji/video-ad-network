@@ -1,5 +1,5 @@
 import type { FrequencyData } from './frequency-cap'
-import type { DB } from '~/services/database-schema'
+import type { DB } from '@video-ad-network/db'
 import type { Kysely } from 'kysely'
 
 export interface AdCandidate {

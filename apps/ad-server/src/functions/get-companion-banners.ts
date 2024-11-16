@@ -1,5 +1,5 @@
 import type { Selectable } from 'kysely'
-import type { getDB, DB } from '~/services/db'
+import type { getDB, DB } from '@video-ad-network/db'
 
 export type CompanionBanner = Selectable<DB['companionBanners']>
 

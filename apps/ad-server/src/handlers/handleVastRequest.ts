@@ -17,7 +17,7 @@ export async function handleVastRequest(c: Context) {
 		return c.text('Missing required parameters', 400)
 	}
 
-	const db = getDB(c.env.DB)
+	const db = getDB(c.env)
 	const frequencyData = getFrequencyData(c)
 	const now = Date.now()
 

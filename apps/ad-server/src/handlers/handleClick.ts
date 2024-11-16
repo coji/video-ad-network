@@ -10,7 +10,7 @@ export async function handleClick(c: Context) {
 	const impressionId = c.req.query('impression_id')
 	const ipAddress = c.req.header('CF-Connecting-IP')
 	const userAgent = c.req.header('User-Agent')
-	const db = getDB(c.env.DB)
+	const db = getDB(c.env)
 
 	if (!adId || !adSlotId || !mediaId || !impressionId) {
 		return c.text('Missing required parameters', 400)

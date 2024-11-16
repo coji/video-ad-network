@@ -80,6 +80,9 @@ CREATE TABLE "campaigns" (
     "budget" DECIMAL NOT NULL DEFAULT 0,
     "budget_type" TEXT NOT NULL,
     "delivery_pace" TEXT NOT NULL,
+    "spent_budget" DECIMAL NOT NULL DEFAULT 0,
+    "remaining_budget" DECIMAL NOT NULL DEFAULT 0,
+    "status" TEXT NOT NULL DEFAULT 'ACTIVE',
     "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" DATETIME NOT NULL,
     CONSTRAINT "campaigns_advertiser_id_fkey" FOREIGN KEY ("advertiser_id") REFERENCES "advertisers" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
