@@ -1,21 +1,42 @@
 packages:
   - ./apps/*
   - ./packages/*
+
 catalog:
   "@biomejs/biome": 1.9.4
-  "@cloudflare/workers-types": 4.20241106.0
+  "@cloudflare/workers-types": 4.20241112.0
   "@google-cloud/bigquery": 7.9.1
-  "@hono/node-server": 1.13.5
+  "@hono/node-server": 1.13.7
   "@hono/vite-build": 1.1.0
-  "@hono/vite-dev-server": 0.16.0
+  "@hono/vite-dev-server": 0.17.0
+  "@libsql/kysely-libsql": 0.4.1
+  "@remix-run/cloudflare": 2.14.0
+  "@remix-run/dev": 2.14.0
+  "@remix-run/react": 2.14.0
+  "@remix-run/route-config": 2.14.0
+  "@remix-run/routes-option-adapter": 2.14.0
+  "@remix-run/server-runtime": 2.14.0
   "@types/node": 22.9.0
+  "@types/react": 18.3.12
+  "@types/react-dom": 18.3.1
+  "@typescript-eslint/eslint-plugin": 6.7.4
+  "@typescript-eslint/parser": 6.7.4
+  autoprefixer: 10.4.20
   fast-xml-parser: 4.5.0
-  hono: 4.6.9
+  hono: 4.6.10
+  isbot: 5.1.17
   kysely: 0.27.4
-  kysely-d1: 0.3.0
   npm-run-all: 4.1.5
-  turbo: 2.2.3
+  postcss: 8.4.49
+  prisma: 5.22.0
+  prisma-kysely: 1.8.0
+  react: 18.3.1
+  react-dom: 18.3.1
+  remix-flat-routes: 0.6.5
+  tailwindcss: 3.4.15
+  turbo: 2.3.0
   typescript: 5.6.3
-  vite: 5.4.10
-  vitest: 2.1.4
-  wrangler: 3.86.0
+  vite: 5.4.11
+  vite-tsconfig-paths: 5.1.2
+  vitest: 2.1.5
+  wrangler: 3.87.0

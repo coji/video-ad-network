@@ -19,12 +19,12 @@
 	"author": "",
 	"license": "ISC",
 	"devDependencies": {
-		"prisma": "5.22.0",
-		"prisma-kysely": "1.8.0",
+		"prisma": "catalog:",
+		"prisma-kysely": "catalog:",
 		"typescript": "catalog:"
 	},
 	"dependencies": {
-		"@libsql/kysely-libsql": "0.4.1",
-		"kysely": "0.27.4"
+		"@libsql/kysely-libsql": "catalog:",
+		"kysely": "catalog:"
 	}
 }
