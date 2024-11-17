@@ -10,7 +10,7 @@ export const meta: MetaFunction = () => {
 }
 
 export const loader = async ({ context }: LoaderFunctionArgs) => {
-	const db = getDB(context.cloudflare.env.DB)
+	const db = getDB(context.cloudflare.env)
 	const ads = await db.selectFrom('ads').selectAll().execute()
 	return { ads }
 }

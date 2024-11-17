@@ -12,15 +12,18 @@
 		"./*": "./dist/*"
 	},
 	"scripts": {
-		"db:seed": "turso db shell video-ad-network < prisma/seed.sql",
+		"db:migrate:reset": "tsx scripts/db_reset.ts",
+		"db:seed": "turso db shell http://127.0.0.1:8080 < prisma/seed.sql",
 		"build": "tsc -b"
 	},
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
 	"devDependencies": {
+		"@types/node": "22.9.0",
 		"prisma": "catalog:",
 		"prisma-kysely": "catalog:",
+		"tsx": "catalog:",
 		"typescript": "catalog:"
 	},
 	"dependencies": {
