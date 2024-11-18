@@ -1,5 +1,5 @@
 {
-	"name": "@hyperlocal/ui",
+	"name": "@video-ad-network/ui",
 	"private": true,
 	"sideEffects": false,
 	"type": "module",
