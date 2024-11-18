@@ -2,6 +2,7 @@ import { getAuth } from '@clerk/remix/ssr.server'
 import { type LoaderFunctionArgs, redirect } from '@remix-run/cloudflare'
 import { useLoaderData } from '@remix-run/react'
 import { getDB, sql } from '@video-ad-network/db'
+import { ExternalLinkIcon } from 'lucide-react'
 import {
 	Badge,
 	Popover,
@@ -20,6 +21,7 @@ import {
 	TableRow,
 	HStack,
 	Button,
+	Stack,
 } from '~/components/ui'
 
 export const loader = async (args: LoaderFunctionArgs) => {
@@ -29,7 +31,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
 	}
 
 	const db = getDB(args.context.cloudflare.env)
-	const query = db
+	const ads = await db
 		.selectFrom('ads')
 		.innerJoin('adGroups', 'ads.adGroupId', 'adGroups.id')
 		.innerJoin('campaigns', 'adGroups.campaignId', 'campaigns.id')
@@ -62,9 +64,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
 		.where('advertisers.organizationId', '==', orgId)
 		.groupBy('ads.id')
 		.limit(100)
-
-	console.log(query.compile().sql)
-	const ads = await query.execute()
+		.execute()
 
 	return { ads }
 }
@@ -108,25 +108,40 @@ export default function AdsIndexPage() {
 													詳細
 												</Button>
 											</PopoverTrigger>
-											<PopoverContent className="w-80">
-												<Table>
-													<TableHeader>
-														<TableRow>
-															<TableHead>URL</TableHead>
-															<TableHead>MIME</TableHead>
-															<TableHead>サイズ</TableHead>
-														</TableRow>
-													</TableHeader>
-													<TableBody>
-														<TableRow>
-															<TableCell>{ad.url}</TableCell>
-															<TableCell>{ad.mimeType}</TableCell>
-															<TableCell>
-																{ad.width} x {ad.height}
-															</TableCell>
-														</TableRow>
-													</TableBody>
-												</Table>
+											<PopoverContent className="w-96">
+												<Stack>
+													{/* biome-ignore lint/a11y/useMediaCaption: <explanation> */}
+													<video src={ad.url} controls />
+
+													<a
+														className="text-xs"
+														href={ad.url}
+														target="_blank"
+														rel="noreferrer"
+													>
+														URL
+														<ExternalLinkIcon className="ml-2 inline w-4 h-4" />
+													</a>
+
+													<Table>
+														<TableHeader>
+															<TableRow>
+																<TableHead>MIME</TableHead>
+																{ad.width && <TableHead>サイズ</TableHead>}
+															</TableRow>
+														</TableHeader>
+														<TableBody>
+															<TableRow>
+																<TableCell>{ad.mimeType}</TableCell>
+																{ad.width && (
+																	<TableCell>
+																		{ad.width} x {ad.height}
+																	</TableCell>
+																)}
+															</TableRow>
+														</TableBody>
+													</Table>
+												</Stack>
 											</PopoverContent>
 										</Popover>
 									</HStack>
