@@ -13,10 +13,7 @@
 		"deploy": "run-s deploy:*",
 		"deploy:ad-server": "pnpm run --filter @video-ad-network/ad-server deploy",
 		"deploy:tracker": "fly deploy -c infra/flyio/tracker/fly.toml --dockerfile infra/flyio/tracker/Dockerfile",
-		"dev:start": "concurrently --kill-others-on-fail \"nohup turso dev --db-file=./data/dev.db　> turso-dev.log 2>&1 &\"",
-		"dev:stop": "pkill -f 'turso dev' || true",
-		"dev:logs": "tail -f turso-dev.log",
-		"db:seed": "pnpm run --filter @video-ad-network/db db:seed"
+		"db:reset": "docker compose down && rm -Rf ./data/sqld && docker compose up -d && pnpm run --filter @video-ad-network/db db:migrate:reset && pnpm run --filter @video-ad-network/db db:seed"
 	},
 	"keywords": [],
 	"author": "",

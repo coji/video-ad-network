@@ -12,7 +12,7 @@
 		"./*": "./dist/*"
 	},
 	"scripts": {
-		"db:migrate:reset": "tsx scripts/db_reset.ts",
+		"db:migrate:reset": "tsx scripts/db_migrate_reset.ts",
 		"db:seed": "turso db shell http://127.0.0.1:8080 < prisma/seed.sql",
 		"build": "tsc -b"
 	},
@@ -20,11 +20,14 @@
 	"author": "",
 	"license": "ISC",
 	"devDependencies": {
+		"@date-fns/utc": "2.1.0",
 		"@types/node": "22.9.0",
+		"date-fns": "4.1.0",
 		"prisma": "catalog:",
 		"prisma-kysely": "catalog:",
 		"tsx": "catalog:",
-		"typescript": "catalog:"
+		"typescript": "catalog:",
+		"zx": "8.2.2"
 	},
 	"dependencies": {
 		"@libsql/kysely-libsql": "catalog:",
