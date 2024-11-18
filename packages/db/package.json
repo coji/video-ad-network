@@ -7,9 +7,9 @@
 	"types": "dist/index.d.ts",
 	"exports": {
 		".": {
-			"import": "./dist/index.js"
+			"import": "./dist/src/index.js"
 		},
-		"./*": "./dist/*"
+		"./*": "./dist/src/*"
 	},
 	"scripts": {
 		"db:migrate:reset": "tsx scripts/db_migrate_reset.ts",

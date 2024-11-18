@@ -1,9 +1,10 @@
 #:schema node_modules/wrangler/config-schema.json
-name = "remix-cloudflare-workers-template"
+name = "video-ad-network-ui"
 
 main = "./server.ts"
 workers_dev = true
 # https://developers.cloudflare.com/workers/platform/compatibility-dates
+compatibility_flags = [ "nodejs_compat" ]
 compatibility_date = "2024-09-26"
 
 [assets]
@@ -11,4 +12,4 @@ compatibility_date = "2024-09-26"
 directory = "./build/client"
 
 [build]
-command = "npm run build"
+command = "pnpm run build"

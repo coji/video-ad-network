@@ -4,10 +4,14 @@ import {
 	ParseJSONResultsPlugin,
 	DeduplicateJoinsPlugin,
 	type sql,
+	type Selectable,
+	type Insertable,
+	type Updateable,
 } from 'kysely'
 import { LibsqlDialect } from '@libsql/kysely-libsql'
 import type { DB } from './database-schema'
-export { Kysely, type sql, type DB }
+export { Kysely }
+export type { sql, DB, Selectable, Insertable, Updateable }
 
 export const getDB = (env: {
 	TURSO_DATABASE_URL: string
