@@ -33,7 +33,10 @@ export function AppSidebar() {
 			<SidebarHeader>
 				{open ? (
 					<HStack>
-						<OrganizationSwitcher hidePersonal />
+						<OrganizationSwitcher
+							hidePersonal
+							afterSelectOrganizationUrl={'/'}
+						/>
 						<div className="flex-1" />
 						<SidebarTrigger />
 					</HStack>
