@@ -1,6 +1,5 @@
-import { OrganizationSwitcher, UserButton } from '@clerk/remix'
+import { OrganizationSwitcher, UserButton, useOrganization } from '@clerk/remix'
 import {
-	ChartLineIcon,
 	FileVideoIcon,
 	GoalIcon,
 	GroupIcon,
@@ -26,6 +25,7 @@ import {
 
 export function AppSidebar() {
 	const { open } = useSidebar()
+	const { organization } = useOrganization()
 
 	return (
 		<Sidebar collapsible="icon">
@@ -40,54 +40,68 @@ export function AppSidebar() {
 					<SidebarTrigger />
 				)}
 			</SidebarHeader>
+
 			<SidebarContent>
-				<SidebarGroup>
-					<SidebarGroupLabel>Advertiser</SidebarGroupLabel>
-					<SidebarGroupContent>
-						<SidebarMenu>
-							<SidebarMenuItem>
-								<SidebarMenuButton>
-									<GoalIcon />
-									キャンペーン
-								</SidebarMenuButton>
-							</SidebarMenuItem>
-							<SidebarMenuItem>
-								<SidebarMenuButton>
-									<GroupIcon />
-									広告グループ
-								</SidebarMenuButton>
-							</SidebarMenuItem>
-							<SidebarMenuItem>
-								<SidebarMenuButton>
-									<FileVideoIcon />
-									広告
-								</SidebarMenuButton>
-							</SidebarMenuItem>
-						</SidebarMenu>
-					</SidebarGroupContent>
-				</SidebarGroup>
-				<SidebarGroup>
-					<SidebarGroupLabel>Media</SidebarGroupLabel>
-					<SidebarGroupContent>
-						<SidebarMenu>
-							<SidebarMenuItem>
-								<SidebarMenuButton>
-									<NewspaperIcon />
-									メディア
-								</SidebarMenuButton>
-							</SidebarMenuItem>
-							<SidebarMenuItem>
-								<SidebarMenuButton>
-									<ScanIcon />
-									広告枠
-								</SidebarMenuButton>
-							</SidebarMenuItem>
-						</SidebarMenu>
-					</SidebarGroupContent>
-				</SidebarGroup>
+				{!!organization?.publicMetadata?.isAdvertiser && (
+					<SidebarGroup>
+						<SidebarGroupLabel>Advertiser</SidebarGroupLabel>
+						<SidebarGroupContent>
+							<SidebarMenu>
+								<SidebarMenuItem>
+									<SidebarMenuButton>
+										<GoalIcon />
+										キャンペーン
+									</SidebarMenuButton>
+								</SidebarMenuItem>
+								<SidebarMenuItem>
+									<SidebarMenuButton>
+										<GroupIcon />
+										広告グループ
+									</SidebarMenuButton>
+								</SidebarMenuItem>
+								<SidebarMenuItem>
+									<SidebarMenuButton>
+										<FileVideoIcon />
+										広告
+									</SidebarMenuButton>
+								</SidebarMenuItem>
+							</SidebarMenu>
+						</SidebarGroupContent>
+					</SidebarGroup>
+				)}
+
+				{!!organization?.publicMetadata?.isMedia && (
+					<SidebarGroup>
+						<SidebarGroupLabel>Media</SidebarGroupLabel>
+						<SidebarGroupContent>
+							<SidebarMenu>
+								<SidebarMenuItem>
+									<SidebarMenuButton>
+										<NewspaperIcon />
+										メディア
+									</SidebarMenuButton>
+								</SidebarMenuItem>
+								<SidebarMenuItem>
+									<SidebarMenuButton>
+										<ScanIcon />
+										広告枠
+									</SidebarMenuButton>
+								</SidebarMenuItem>
+							</SidebarMenu>
+						</SidebarGroupContent>
+					</SidebarGroup>
+				)}
 			</SidebarContent>
 			<SidebarFooter>
-				<UserButton showName={open} />
+				<UserButton
+					showName={open}
+					appearance={{
+						elements: {
+							rootBox: 'w-full justify-center',
+							userButtonTrigger: 'w-full',
+						},
+					}}
+				/>
 			</SidebarFooter>
 		</Sidebar>
 	)
