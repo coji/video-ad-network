@@ -7,7 +7,7 @@ export default function AppLayout() {
 		<div>
 			<SidebarProvider>
 				<AppSidebar />
-				<main className="p-2">
+				<main className="p-2 flex-1">
 					<Outlet />
 				</main>
 			</SidebarProvider>

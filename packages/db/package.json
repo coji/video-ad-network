@@ -13,7 +13,7 @@
 	},
 	"scripts": {
 		"db:migrate:reset": "tsx scripts/db_migrate_reset.ts",
-		"db:seed": "turso db shell http://127.0.0.1:8080 < prisma/seed.sql",
+		"db:seed": "tsx scripts/db_seed.ts",
 		"build": "tsc -b"
 	},
 	"keywords": [],
@@ -30,6 +30,7 @@
 		"zx": "8.2.2"
 	},
 	"dependencies": {
+		"@date-fns/tz": "1.2.0",
 		"@libsql/kysely-libsql": "catalog:",
 		"kysely": "catalog:"
 	}

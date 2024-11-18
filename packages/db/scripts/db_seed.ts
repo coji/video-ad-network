@@ -1,6 +1,7 @@
 import { getDB } from '~/index'
-import { UTCDate } from '@date-fns/utc'
-import { format } from 'date-fns'
+import { TZDate } from '@date-fns/tz'
+
+const tz = 'Asia/Tokyo'
 
 const seed = async () => {
 	const db = getDB({
@@ -8,44 +9,39 @@ const seed = async () => {
 		TURSO_AUTH_TOKEN: '',
 	})
 
-	const now = format(new UTCDate(), 'yyyy-MM-dd HH:mm:ss')
-
+	const now = TZDate.tz('UTC').toISOString() // 2024-11-18T08:59:20.605+00:00
 	// users
-	await db
+	const users = await db
 		.insertInto('users')
 		.values([
 			{
-				id: 'user1',
+				id: 'user_2p0icGPI17aD9h3NkSOE7S1NQXv',
 				email: 'user1@example.com',
 				createdAt: now,
 				updatedAt: now,
 			},
-			{
-				id: 'user2',
-				email: 'user2@example.com',
-				createdAt: now,
-				updatedAt: now,
-			},
 		])
+		.returningAll()
 		.execute()
 
 	// organizations
-	await db
+	const orgs = await db
 		.insertInto('organizations')
 		.values([
 			{
-				id: 'org1',
+				id: 'org_2p0ig9GEwwaSUAeYtXRQXecp8iB',
 				name: 'Tech Corp',
 				createdAt: now,
 				updatedAt: now,
 			},
 			{
-				id: 'org2',
+				id: 'org_2p0uzBZsCLmDvjPXbHQ0aHYqPfO',
 				name: 'News Ltd',
 				createdAt: now,
 				updatedAt: now,
 			},
 		])
+		.returningAll()
 		.execute()
 
 	// organization memberships
@@ -54,16 +50,16 @@ const seed = async () => {
 		.values([
 			{
 				id: 'mem1',
-				userId: 'user1',
-				organizationId: 'org1',
+				userId: users[0].id,
+				organizationId: orgs[0].id,
 				role: 'admin',
 				createdAt: now,
 				updatedAt: now,
 			},
 			{
 				id: 'mem2',
-				userId: 'user2',
-				organizationId: 'org2',
+				userId: users[0].id,
+				organizationId: orgs[1].id,
 				role: 'member',
 				createdAt: now,
 				updatedAt: now,
@@ -77,7 +73,7 @@ const seed = async () => {
 		.values([
 			{
 				id: 'media1',
-				organizationId: 'org1',
+				organizationId: orgs[0].id,
 				name: 'Tech Blog 1',
 				categories: JSON.stringify(['tech', 'blog']),
 				createdAt: now,
@@ -85,7 +81,7 @@ const seed = async () => {
 			},
 			{
 				id: 'media2',
-				organizationId: 'org2',
+				organizationId: orgs[1].id,
 				name: 'News',
 				categories: JSON.stringify(['entertainment']),
 				createdAt: now,
@@ -159,28 +155,28 @@ const seed = async () => {
 		])
 		.execute()
 
-	// Insert advertisers
+	// advertisers
 	await db
 		.insertInto('advertisers')
 		.values([
 			{
 				id: 'adv1',
-				name: 'Advertiser One',
-				organizationId: 'org1',
+				name: 'Tech Corp',
+				organizationId: orgs[0].id,
 				createdAt: now,
 				updatedAt: now,
 			},
 			{
 				id: 'adv2',
-				name: 'Advertiser Two',
-				organizationId: 'org2',
+				name: 'News Ltd',
+				organizationId: orgs[1].id,
 				createdAt: now,
 				updatedAt: now,
 			},
 		])
 		.execute()
 
-	// Insert campaigns
+	// campaigns
 	await db
 		.insertInto('campaigns')
 		.values([
@@ -188,8 +184,12 @@ const seed = async () => {
 				id: 'camp1',
 				name: 'Campaign One',
 				advertiserId: 'adv1',
-				startAt: '2023-10-01',
-				endAt: '2030-12-31',
+				startAt: new TZDate('2023-10-01 00:00', tz)
+					.withTimeZone('UTC')
+					.toISOString(),
+				endAt: new TZDate('2030-12-31 23:59', tz)
+					.withTimeZone('UTC')
+					.toISOString(),
 				budget: 50000,
 				budgetType: 'CPM',
 				deliveryPace: 'EVENLY',
@@ -203,8 +203,12 @@ const seed = async () => {
 				id: 'camp2',
 				name: 'Campaign Two',
 				advertiserId: 'adv2',
-				startAt: '2023-11-01',
-				endAt: '2030-01-31',
+				startAt: new TZDate('2023-11-01 00:00', tz)
+					.withTimeZone('UTC')
+					.toISOString(),
+				endAt: new TZDate('2030-01-31 23:59', tz)
+					.withTimeZone('UTC')
+					.toISOString(),
 				budget: 75000,
 				budgetType: 'CPM',
 				deliveryPace: 'AS_MUCH_AS_POSSIBLE',
@@ -217,7 +221,7 @@ const seed = async () => {
 		])
 		.execute()
 
-	// Insert adGroups
+	// ad groups
 	await db
 		.insertInto('adGroups')
 		.values([
@@ -263,7 +267,7 @@ const seed = async () => {
 		])
 		.execute()
 
-	// Insert ads
+	// ads
 	await db
 		.insertInto('ads')
 		.values([
@@ -309,7 +313,7 @@ const seed = async () => {
 		])
 		.execute()
 
-	// Insert companionBanners
+	// companionBanners
 	await db
 		.insertInto('companionBanners')
 		.values([
@@ -386,7 +390,7 @@ const seed = async () => {
 		])
 		.execute()
 
-	// Insert adEvents
+	// adEvents
 	await db
 		.insertInto('adEvents')
 		.values([
@@ -453,6 +457,8 @@ const seed = async () => {
 			},
 		])
 		.execute()
+
+	console.log('Seeded database successfully 🌱')
 }
 
 await seed()
