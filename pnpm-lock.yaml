@@ -283,6 +283,9 @@ importers:
       next-themes:
         specifier: 0.4.3
         version: 0.4.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      nprogress:
+        specifier: 0.2.0
+        version: 0.2.0
       react:
         specifier: 'catalog:'
         version: 18.3.1
@@ -317,6 +320,9 @@ importers:
       '@remix-run/dev':
         specifier: 'catalog:'
         version: 2.14.0(@remix-run/react@2.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3))(@types/node@22.9.0)(typescript@5.6.3)(vite@5.4.11(@types/node@22.9.0))(wrangler@3.87.0(@cloudflare/workers-types@4.20241112.0))
+      '@types/nprogress':
+        specifier: 0.2.3
+        version: 0.2.3
       '@types/react':
         specifier: 'catalog:'
         version: 18.3.12
@@ -2571,6 +2577,9 @@ packages:
   '@types/normalize-package-data@2.4.4':
     resolution: {integrity: sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==}
 
+  '@types/nprogress@0.2.3':
+    resolution: {integrity: sha512-k7kRA033QNtC+gLc4VPlfnue58CM1iQLgn1IMAU8VPHGOj7oIHPp9UlhedEnD/Gl8evoCjwkZjlBORtZ3JByUA==}
+
   '@types/prop-types@15.7.13':
     resolution: {integrity: sha512-hCZTSvwbzWGvhqxp/RqVqwU999pBf2vp7hzIjiYOsl8wqOmUxkQ6ddw1cV3l8811+kdUFus/q4d1Y3E3SyEifA==}
 
@@ -4551,6 +4560,9 @@ packages:
   npm-run-path@4.0.1:
     resolution: {integrity: sha512-S48WzZW777zhNIrn7gxOlISNAqi9ZC/uQFnRdbeIHhZhCA6UqpkOT8T1G7BvfdgP4Er8gF4sUbaS0i7QvIfCWw==}
     engines: {node: '>=8'}
+
+  nprogress@0.2.0:
+    resolution: {integrity: sha512-I19aIingLgR1fmhftnbWWO3dXc0hSxqHQHQb3H8m+K3TnEn/iSeTZZOyvKXWqQESMwuUVnatlCnZdLBZZt2VSA==}
 
   object-assign@4.1.1:
     resolution: {integrity: sha512-rJgTQnkUnH1sFw8yT6VSU3zD3sWmu6sZhIseY8VX+GRu3P6F7Fu+JNDoXfklElbLJSnc3FUQHVe4cU5hj+BcUg==}
@@ -8049,6 +8061,8 @@ snapshots:
 
   '@types/normalize-package-data@2.4.4': {}
 
+  '@types/nprogress@0.2.3': {}
+
   '@types/prop-types@15.7.13': {}
 
   '@types/react-dom@18.3.1':
@@ -10459,6 +10473,8 @@ snapshots:
   npm-run-path@4.0.1:
     dependencies:
       path-key: 3.1.1
+
+  nprogress@0.2.0: {}
 
   object-assign@4.1.1: {}
 

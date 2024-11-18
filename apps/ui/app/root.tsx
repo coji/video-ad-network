@@ -9,6 +9,7 @@ import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/cloudflare'
 import { rootAuthLoader } from '@clerk/remix/ssr.server'
 import { ClerkApp } from '@clerk/remix'
 import styles from './tailwind.css?url'
+import { PageLoadingProgress } from './components/page-loading-progress'
 
 export const links: LinksFunction = () => [
 	{ rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -41,6 +42,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 				<Links />
 			</head>
 			<body>
+				<PageLoadingProgress />
 				{children}
 				<ScrollRestoration />
 				<Scripts />

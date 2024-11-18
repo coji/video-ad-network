@@ -48,6 +48,7 @@
 		"isbot": "catalog:",
 		"lucide-react": "0.460.0",
 		"next-themes": "0.4.3",
+		"nprogress": "0.2.0",
 		"react": "catalog:",
 		"react-dom": "catalog:",
 		"react-twc": "1.4.2",
@@ -61,6 +62,7 @@
 	"devDependencies": {
 		"@cloudflare/workers-types": "catalog:",
 		"@remix-run/dev": "catalog:",
+		"@types/nprogress": "0.2.3",
 		"@types/react": "catalog:",
 		"@types/react-dom": "catalog:",
 		"autoprefixer": "catalog:",
