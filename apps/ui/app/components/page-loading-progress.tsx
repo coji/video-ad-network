@@ -7,7 +7,7 @@ export const PageLoadingProgress = () => {
 	const navigation = useNavigation()
 
 	useEffect(() => {
-		NProgress.configure({ showSpinner: false })
+		NProgress.configure({ showSpinner: true })
 		if (navigation.state !== 'idle') {
 			NProgress.start()
 		}
