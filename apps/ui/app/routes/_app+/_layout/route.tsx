@@ -8,7 +8,6 @@ export default function AppLayout() {
 			<SidebarProvider>
 				<AppSidebar />
 				<main className="p-2">
-					<SidebarTrigger />
 					<Outlet />
 				</main>
 			</SidebarProvider>
