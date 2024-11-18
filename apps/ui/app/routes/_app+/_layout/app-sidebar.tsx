@@ -24,6 +24,25 @@ import {
 	HStack,
 } from '~/components/ui'
 
+const SidebarMenuItemLink = ({
+	children,
+	to,
+}: {
+	children: ReactNode
+	to: string
+}) => (
+	<SidebarMenuItem>
+		<SidebarMenuButton asChild>
+			<NavLink
+				to={to}
+				className="aria-[current]:border-transparent aria-[current]:bg-primary aria-[current]:text-primary-foreground aria-[current]:shadow aria-[current]:hover:bg-primary/80"
+			>
+				{children}
+			</NavLink>
+		</SidebarMenuButton>
+	</SidebarMenuItem>
+)
+
 export function AppSidebar() {
 	const { open } = useSidebar()
 	const { organization } = useOrganization()
@@ -51,39 +70,18 @@ export function AppSidebar() {
 						<SidebarGroupLabel>Advertiser</SidebarGroupLabel>
 						<SidebarGroupContent>
 							<SidebarMenu>
-								<SidebarMenuItem>
-									<SidebarMenuButton asChild>
-										<NavLink
-											to="/advertiser/campaigns"
-											className="aria-[current]:font-bold aria-[current]:bg-slate-500 aria-[current]:text-white"
-										>
-											<GoalIcon />
-											キャンペーン
-										</NavLink>
-									</SidebarMenuButton>
-								</SidebarMenuItem>
-								<SidebarMenuItem>
-									<SidebarMenuButton asChild>
-										<NavLink
-											to="/advertiser/ad-groups"
-											className="aria-[current]:font-bold aria-[current]:bg-slate-500 aria-[current]:text-white"
-										>
-											<GroupIcon />
-											広告グループ
-										</NavLink>
-									</SidebarMenuButton>
-								</SidebarMenuItem>
-								<SidebarMenuItem>
-									<SidebarMenuButton asChild>
-										<NavLink
-											to="/advertiser/ads"
-											className="aria-[current]:font-bold aria-[current]:bg-slate-500 aria-[current]:text-white"
-										>
-											<FileVideoIcon />
-											広告
-										</NavLink>
-									</SidebarMenuButton>
-								</SidebarMenuItem>
+								<SidebarMenuItemLink to="/advertiser/campaigns">
+									<GoalIcon />
+									キャンペーン
+								</SidebarMenuItemLink>
+								<SidebarMenuItemLink to="/advertiser/ad-groups">
+									<GroupIcon />
+									広告グループ
+								</SidebarMenuItemLink>
+								<SidebarMenuItemLink to="/advertiser/ads">
+									<FileVideoIcon />
+									広告
+								</SidebarMenuItemLink>
 							</SidebarMenu>
 						</SidebarGroupContent>
 					</SidebarGroup>
@@ -94,28 +92,14 @@ export function AppSidebar() {
 						<SidebarGroupLabel>Media</SidebarGroupLabel>
 						<SidebarGroupContent>
 							<SidebarMenu>
-								<SidebarMenuItem>
-									<SidebarMenuButton asChild>
-										<NavLink
-											to="/media/medias"
-											className="aria-[current]:font-bold aria-[current]:bg-slate-500 aria-[current]:text-white"
-										>
-											<NewspaperIcon />
-											メディア
-										</NavLink>
-									</SidebarMenuButton>
-								</SidebarMenuItem>
-								<SidebarMenuItem>
-									<SidebarMenuButton asChild>
-										<NavLink
-											to="/media/ad-slots"
-											className="aria-[current]:font-bold aria-[current]:bg-slate-500 aria-[current]:text-white"
-										>
-											<ScanIcon />
-											広告枠
-										</NavLink>
-									</SidebarMenuButton>
-								</SidebarMenuItem>
+								<SidebarMenuItemLink to="/media/medias">
+									<NewspaperIcon />
+									メディア
+								</SidebarMenuItemLink>
+								<SidebarMenuItemLink to="/media/ad-slots">
+									<ScanIcon />
+									広告枠
+								</SidebarMenuItemLink>
 							</SidebarMenu>
 						</SidebarGroupContent>
 					</SidebarGroup>
