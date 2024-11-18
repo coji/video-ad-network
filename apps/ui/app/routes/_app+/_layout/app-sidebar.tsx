@@ -1,4 +1,5 @@
 import { OrganizationSwitcher, UserButton, useOrganization } from '@clerk/remix'
+import { NavLink } from '@remix-run/react'
 import {
 	FileVideoIcon,
 	GoalIcon,
@@ -48,21 +49,36 @@ export function AppSidebar() {
 						<SidebarGroupContent>
 							<SidebarMenu>
 								<SidebarMenuItem>
-									<SidebarMenuButton>
-										<GoalIcon />
-										キャンペーン
+									<SidebarMenuButton asChild>
+										<NavLink
+											to="/advertiser/campaigns"
+											className="aria-[current]:font-bold aria-[current]:bg-slate-500 aria-[current]:text-white"
+										>
+											<GoalIcon />
+											キャンペーン
+										</NavLink>
 									</SidebarMenuButton>
 								</SidebarMenuItem>
 								<SidebarMenuItem>
-									<SidebarMenuButton>
-										<GroupIcon />
-										広告グループ
+									<SidebarMenuButton asChild>
+										<NavLink
+											to="/advertiser/ad-groups"
+											className="aria-[current]:font-bold aria-[current]:bg-slate-500 aria-[current]:text-white"
+										>
+											<GroupIcon />
+											広告グループ
+										</NavLink>
 									</SidebarMenuButton>
 								</SidebarMenuItem>
 								<SidebarMenuItem>
-									<SidebarMenuButton>
-										<FileVideoIcon />
-										広告
+									<SidebarMenuButton asChild>
+										<NavLink
+											to="/advertiser/ads"
+											className="aria-[current]:font-bold aria-[current]:bg-slate-500 aria-[current]:text-white"
+										>
+											<FileVideoIcon />
+											広告
+										</NavLink>
 									</SidebarMenuButton>
 								</SidebarMenuItem>
 							</SidebarMenu>
@@ -76,15 +92,25 @@ export function AppSidebar() {
 						<SidebarGroupContent>
 							<SidebarMenu>
 								<SidebarMenuItem>
-									<SidebarMenuButton>
-										<NewspaperIcon />
-										メディア
+									<SidebarMenuButton asChild>
+										<NavLink
+											to="/media/medias"
+											className="aria-[current]:font-bold aria-[current]:bg-slate-500 aria-[current]:text-white"
+										>
+											<NewspaperIcon />
+											メディア
+										</NavLink>
 									</SidebarMenuButton>
 								</SidebarMenuItem>
 								<SidebarMenuItem>
-									<SidebarMenuButton>
-										<ScanIcon />
-										広告枠
+									<SidebarMenuButton asChild>
+										<NavLink
+											to="/media/ad-slots"
+											className="aria-[current]:font-bold aria-[current]:bg-slate-500 aria-[current]:text-white"
+										>
+											<ScanIcon />
+											広告枠
+										</NavLink>
 									</SidebarMenuButton>
 								</SidebarMenuItem>
 							</SidebarMenu>

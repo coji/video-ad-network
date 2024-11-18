@@ -18,7 +18,7 @@ export const loader = async ({
 export default function Index() {
 	return (
 		<div>
-			<h1>Index Route</h1>
+			<h1>ダッシュボード</h1>
 		</div>
 	)
 }
