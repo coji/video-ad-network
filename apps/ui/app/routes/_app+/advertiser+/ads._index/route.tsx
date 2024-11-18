@@ -56,7 +56,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
 					.fn('count', [eb.ref('companionBanners.id')])
 					.as('companionBannerCount'),
 			// サイズ
-			(eb) =>
+			() =>
 				sql`GROUP_CONCAT("companion_banners"."width" || 'x' || "companion_banners"."height")`.as(
 					'companionBannerSizes',
 				),
@@ -160,7 +160,7 @@ export default function AdsIndexPage() {
 									>
 										{ad.campaignStatus}
 									</Badge>
-								</TableCell>{' '}
+								</TableCell>
 							</TableRow>
 						))}
 					</TableBody>
