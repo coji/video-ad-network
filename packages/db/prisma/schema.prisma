@@ -18,7 +18,7 @@ model User {
   membersnhip OrganizationMembership[]
 
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   @@index([email])
   @@map("users")
@@ -32,7 +32,7 @@ model Organization {
   medias      Media[]                  @relation
 
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   @@index([name])
   @@map("organizations")
@@ -47,7 +47,7 @@ model OrganizationMembership {
   organization   Organization @relation(fields: [organizationId], references: [id])
 
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   @@index([userId])
   @@index([organizationId])
@@ -62,7 +62,7 @@ model Media {
   adSlots        AdSlot[]
 
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   organization Organization @relation(fields: [organizationId], references: [id])
 
@@ -79,7 +79,7 @@ model AdSlot {
   companionSlots CompanionSlot[]
 
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   @@index([mediaId])
   @@map("ad_slots")
@@ -94,7 +94,7 @@ model CompanionSlot {
   height   Int
 
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   @@index([adSlotId])
   @@map("companion_slots")
@@ -110,7 +110,7 @@ model Advertiser {
   ads            Ad[]
 
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   @@index([organizationId])
   @@map("advertisers")
@@ -133,7 +133,7 @@ model Campaign {
   advertiser Advertiser @relation(fields: [advertiserId], references: [id])
 
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   @@index([advertiserId])
   @@map("campaigns")
@@ -152,7 +152,7 @@ model AdGroup {
   ads                     Ad[]
 
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   advertiser Advertiser @relation(fields: [advertiserId], references: [id])
   campaign   Campaign   @relation(fields: [campaignId], references: [id])
@@ -176,7 +176,7 @@ model Ad {
   companionBanners CompanionBanner[]
 
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   advertiser Advertiser @relation(fields: [advertiserId], references: [id])
   adGroup    AdGroup    @relation(fields: [adGroupId], references: [id])
@@ -196,7 +196,7 @@ model CompanionBanner {
   ad              Ad      @relation(fields: [adId], references: [id])
 
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   @@index([adId])
   @@map("companion_banners")
@@ -219,7 +219,7 @@ model Click {
   clickThroughURL String   @map("click_through_url")
 
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   @@map("clicks")
 }
@@ -256,7 +256,7 @@ model DailyReport {
   reach        Int      @default(0)
 
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   @@unique([date, mediaId, adSlotId, advertiserId, campaignId, adGroupId, adId], name: "date_media_adslot_advertiser_campaign_adgroup_ad")
   @@index([date, mediaId])

@@ -17,7 +17,7 @@ export type Ad = {
     clickThroughUrl: string;
     description: string | null;
     createdAt: Generated<string>;
-    updatedAt: string;
+    updatedAt: Generated<string>;
 };
 export type AdEvent = {
     id: string;
@@ -46,7 +46,7 @@ export type AdGroup = {
     advertiserId: string;
     campaignId: string;
     createdAt: Generated<string>;
-    updatedAt: string;
+    updatedAt: Generated<string>;
 };
 export type AdSlot = {
     id: string;
@@ -54,14 +54,14 @@ export type AdSlot = {
     mediaId: string;
     type: string;
     createdAt: Generated<string>;
-    updatedAt: string;
+    updatedAt: Generated<string>;
 };
 export type Advertiser = {
     id: string;
     name: string;
     organizationId: string;
     createdAt: Generated<string>;
-    updatedAt: string;
+    updatedAt: Generated<string>;
 };
 export type Campaign = {
     id: string;
@@ -76,7 +76,7 @@ export type Campaign = {
     remainingBudget: Generated<number>;
     status: Generated<string>;
     createdAt: Generated<string>;
-    updatedAt: string;
+    updatedAt: Generated<string>;
 };
 export type Click = {
     id: string;
@@ -94,7 +94,7 @@ export type Click = {
     uid: string;
     clickThroughUrl: string;
     createdAt: Generated<string>;
-    updatedAt: string;
+    updatedAt: Generated<string>;
 };
 export type CompanionBanner = {
     id: string;
@@ -105,7 +105,7 @@ export type CompanionBanner = {
     mimeType: string | null;
     clickThroughUrl: string | null;
     createdAt: Generated<string>;
-    updatedAt: string;
+    updatedAt: Generated<string>;
 };
 export type CompanionSlot = {
     id: string;
@@ -114,7 +114,7 @@ export type CompanionSlot = {
     width: number;
     height: number;
     createdAt: Generated<string>;
-    updatedAt: string;
+    updatedAt: Generated<string>;
 };
 export type DailyReport = {
     date: string;
@@ -128,7 +128,7 @@ export type DailyReport = {
     clicks: Generated<number>;
     reach: Generated<number>;
     createdAt: Generated<string>;
-    updatedAt: string;
+    updatedAt: Generated<string>;
 };
 export type Media = {
     id: string;
@@ -136,13 +136,13 @@ export type Media = {
     categories: string | null;
     organizationId: string;
     createdAt: Generated<string>;
-    updatedAt: string;
+    updatedAt: Generated<string>;
 };
 export type Organization = {
     id: string;
     name: string;
     createdAt: Generated<string>;
-    updatedAt: string;
+    updatedAt: Generated<string>;
 };
 export type OrganizationMembership = {
     id: string;
@@ -150,13 +150,13 @@ export type OrganizationMembership = {
     organizationId: string;
     role: string;
     createdAt: Generated<string>;
-    updatedAt: string;
+    updatedAt: Generated<string>;
 };
 export type User = {
     id: string;
     email: string;
     createdAt: Generated<string>;
-    updatedAt: string;
+    updatedAt: Generated<string>;
 };
 export type DB = {
     adEvents: AdEvent;

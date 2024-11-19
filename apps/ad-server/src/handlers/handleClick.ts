@@ -1,5 +1,6 @@
 import type { Context } from 'hono'
 import { getDB } from '@video-ad-network/db'
+import { utcNow } from '~/functions/utc-now'
 
 export async function handleClick(c: Context) {
 	const {
@@ -47,13 +48,12 @@ export async function handleClick(c: Context) {
 			campaignId,
 			adGroupId,
 			adId,
-			timestamp: new Date().toISOString(),
+			timestamp: utcNow(),
 			ipAddress: ipAddress ?? '',
 			userAgent: userAgent ?? '',
 			isCompanion: isCompanion ? 1 : 0,
 			impressionId,
 			clickThroughUrl,
-			updatedAt: new Date().toISOString(),
 		})
 		.execute()
 
@@ -61,7 +61,7 @@ export async function handleClick(c: Context) {
 		.insertInto('adEvents')
 		.values({
 			id: crypto.randomUUID(),
-			eventTimestamp: new Date().toISOString(),
+			eventTimestamp: utcNow(),
 			mediaId,
 			adSlotId,
 			advertiserId,

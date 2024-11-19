@@ -4,6 +4,7 @@ import { handleVastRequest } from './handlers/handleVastRequest'
 import { handleClick } from './handlers/handleClick'
 import { getDB } from '@video-ad-network/db'
 import { PIXEL } from './functions/pixel'
+import { utcNow } from './functions/utc-now'
 
 interface Bindings {
 	TRACKER_ORIGIN: string
@@ -45,7 +46,7 @@ app.get('/v1/impression', async (c) => {
 		.insertInto('adEvents')
 		.values({
 			id: crypto.randomUUID(),
-			eventTimestamp: new Date().toISOString(),
+			eventTimestamp: utcNow(),
 			eventType: 'impression',
 			adSlotId,
 			mediaId,
@@ -85,7 +86,7 @@ app.get('/v1/progress', async (c) => {
 		.insertInto('adEvents')
 		.values({
 			id: crypto.randomUUID(),
-			eventTimestamp: new Date().toISOString(),
+			eventTimestamp: utcNow(),
 			eventType: 'progress',
 			adSlotId,
 			mediaId,

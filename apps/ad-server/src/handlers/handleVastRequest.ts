@@ -10,6 +10,7 @@ import {
 	generateVastXml,
 } from '~/functions/vast-utils'
 import { getCompanionBanners } from '~/functions/get-companion-banners'
+import { utcNow } from '~/functions/utc-now'
 
 export async function handleVastRequest(c: Context) {
 	const { mediaId, adSlotId } = validateVastRequest(c)
@@ -19,7 +20,7 @@ export async function handleVastRequest(c: Context) {
 
 	const db = getDB(c.env)
 	const frequencyData = getFrequencyData(c)
-	const now = Date.now()
+	const now = new Date()
 
 	const adSlot = await getAdSlot(db, mediaId, adSlotId)
 	if (!adSlot) {
@@ -27,7 +28,7 @@ export async function handleVastRequest(c: Context) {
 			.insertInto('adEvents')
 			.values({
 				id: crypto.randomUUID(),
-				eventTimestamp: new Date().toISOString(),
+				eventTimestamp: utcNow(now),
 				eventType: 'vast',
 				mediaId,
 				adSlotId,
@@ -42,7 +43,7 @@ export async function handleVastRequest(c: Context) {
 
 	const ad = await selectAd(
 		db,
-		now,
+		now.getTime(),
 		frequencyData,
 		adSlot.categories,
 		adSlot.mediaType,
@@ -53,7 +54,7 @@ export async function handleVastRequest(c: Context) {
 			.insertInto('adEvents')
 			.values({
 				id: crypto.randomUUID(),
-				eventTimestamp: new Date().toISOString(),
+				eventTimestamp: utcNow(now),
 				eventType: 'vast',
 				mediaId,
 				adSlotId,
@@ -70,7 +71,7 @@ export async function handleVastRequest(c: Context) {
 		.insertInto('adEvents')
 		.values({
 			id: crypto.randomUUID(),
-			eventTimestamp: new Date().toISOString(),
+			eventTimestamp: utcNow(now),
 			eventType: 'vast',
 			mediaId,
 			adSlotId,
@@ -86,7 +87,7 @@ export async function handleVastRequest(c: Context) {
 		.catch(console.error)
 
 	const companionBanners = await getCompanionBanners(db, ad.id)
-	updateFrequencyData(c, frequencyData, ad.id, now)
+	updateFrequencyData(c, frequencyData, ad.id, now.getTime())
 
 	const impressionId = crypto.randomUUID()
 	const adServingId = crypto.randomUUID()

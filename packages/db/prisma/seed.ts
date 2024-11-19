@@ -1,5 +1,6 @@
 import { getDB } from '~/index'
 import { TZDate } from '@date-fns/tz'
+import { format } from 'date-fns'
 import dotenv from 'dotenv'
 dotenv.config()
 const tz = 'Asia/Tokyo'
@@ -10,7 +11,6 @@ const seed = async () => {
 		TURSO_AUTH_TOKEN: '',
 	})
 
-	const now = TZDate.tz('UTC').toISOString() // 2024-11-18T08:59:20.605+00:00
 	// users
 	const users = await db
 		.insertInto('users')
@@ -18,8 +18,6 @@ const seed = async () => {
 			{
 				id: 'user_2p0icGPI17aD9h3NkSOE7S1NQXv',
 				email: 'user1@example.com',
-				createdAt: now,
-				updatedAt: now,
 			},
 		])
 		.returningAll()
@@ -32,14 +30,10 @@ const seed = async () => {
 			{
 				id: 'org_2p0ig9GEwwaSUAeYtXRQXecp8iB',
 				name: 'Tech Corp',
-				createdAt: now,
-				updatedAt: now,
 			},
 			{
 				id: 'org_2p0uzBZsCLmDvjPXbHQ0aHYqPfO',
 				name: 'News Ltd',
-				createdAt: now,
-				updatedAt: now,
 			},
 		])
 		.returningAll()
@@ -54,16 +48,12 @@ const seed = async () => {
 				userId: users[0].id,
 				organizationId: orgs[0].id,
 				role: 'admin',
-				createdAt: now,
-				updatedAt: now,
 			},
 			{
 				id: 'mem2',
 				userId: users[0].id,
 				organizationId: orgs[1].id,
 				role: 'member',
-				createdAt: now,
-				updatedAt: now,
 			},
 		])
 		.execute()
@@ -77,16 +67,12 @@ const seed = async () => {
 				organizationId: orgs[0].id,
 				name: 'Tech Blog 1',
 				categories: JSON.stringify(['tech', 'blog']),
-				createdAt: now,
-				updatedAt: now,
 			},
 			{
 				id: 'media2',
 				organizationId: orgs[1].id,
 				name: 'News',
 				categories: JSON.stringify(['entertainment']),
-				createdAt: now,
-				updatedAt: now,
 			},
 		])
 		.execute()
@@ -100,24 +86,18 @@ const seed = async () => {
 				mediaId: 'media1',
 				name: 'Tech Blog Video Slot',
 				type: 'video',
-				createdAt: now,
-				updatedAt: now,
 			},
 			{
 				id: 'slot2',
 				mediaId: 'media2',
 				name: 'News Site Audio Slot',
 				type: 'audio',
-				createdAt: now,
-				updatedAt: now,
 			},
 			{
 				id: 'slot3',
 				mediaId: 'media1',
 				name: 'Tech Blog Video Slot 2',
 				type: 'video',
-				createdAt: now,
-				updatedAt: now,
 			},
 		])
 		.execute()
@@ -132,8 +112,6 @@ const seed = async () => {
 				name: 'Companion Slot 1',
 				width: 300,
 				height: 250,
-				createdAt: now,
-				updatedAt: now,
 			},
 			{
 				id: 'compslot2',
@@ -141,8 +119,6 @@ const seed = async () => {
 				name: 'Companion Slot 2',
 				width: 300,
 				height: 250,
-				createdAt: now,
-				updatedAt: now,
 			},
 			{
 				id: 'compslot3',
@@ -150,8 +126,6 @@ const seed = async () => {
 				name: 'Companion Slot 3',
 				width: 728,
 				height: 90,
-				createdAt: now,
-				updatedAt: now,
 			},
 		])
 		.execute()
@@ -164,15 +138,11 @@ const seed = async () => {
 				id: 'adv1',
 				name: 'Tech Corp',
 				organizationId: orgs[0].id,
-				createdAt: now,
-				updatedAt: now,
 			},
 			{
 				id: 'adv2',
 				name: 'News Ltd',
 				organizationId: orgs[1].id,
-				createdAt: now,
-				updatedAt: now,
 			},
 		])
 		.execute()
@@ -185,39 +155,39 @@ const seed = async () => {
 				id: 'camp1',
 				name: 'Campaign One',
 				advertiserId: 'adv1',
-				startAt: new TZDate('2023-10-01 00:00', tz)
-					.withTimeZone('UTC')
-					.toISOString(),
-				endAt: new TZDate('2030-12-31 23:59', tz)
-					.withTimeZone('UTC')
-					.toISOString(),
+				startAt: format(
+					new TZDate('2023-10-01 00:00', tz).withTimeZone('UTC'),
+					'yyyy-MM-dd HH:mm:ss',
+				),
+				endAt: format(
+					new TZDate('2030-12-31 23:59', tz).withTimeZone('UTC'),
+					'yyyy-MM-dd HH:mm:ss',
+				),
 				budget: 50000,
 				budgetType: 'CPM',
 				deliveryPace: 'EVENLY',
 				spentBudget: 0,
 				remainingBudget: 50000,
 				status: 'ACTIVE',
-				createdAt: now,
-				updatedAt: now,
 			},
 			{
 				id: 'camp2',
 				name: 'Campaign Two',
 				advertiserId: 'adv2',
-				startAt: new TZDate('2023-11-01 00:00', tz)
-					.withTimeZone('UTC')
-					.toISOString(),
-				endAt: new TZDate('2030-01-31 23:59', tz)
-					.withTimeZone('UTC')
-					.toISOString(),
+				startAt: format(
+					new TZDate('2023-11-01 00:00', tz).withTimeZone('UTC'),
+					'yyyy-MM-dd HH:mm:ss',
+				),
+				endAt: format(
+					new TZDate('2030-01-31 23:59', tz).withTimeZone('UTC'),
+					'yyyy-MM-dd HH:mm:ss',
+				),
 				budget: 75000,
 				budgetType: 'CPM',
 				deliveryPace: 'AS_MUCH_AS_POSSIBLE',
 				spentBudget: 0,
 				remainingBudget: 75000,
 				status: 'ACTIVE',
-				createdAt: now,
-				updatedAt: now,
 			},
 		])
 		.execute()
@@ -236,8 +206,6 @@ const seed = async () => {
 				frequencyCapUnit: 'DAY',
 				advertiserId: 'adv1',
 				campaignId: 'camp1',
-				createdAt: now,
-				updatedAt: now,
 			},
 			{
 				id: 'ag2',
@@ -249,8 +217,6 @@ const seed = async () => {
 				frequencyCapUnit: 'HOUR',
 				advertiserId: 'adv2',
 				campaignId: 'camp2',
-				createdAt: now,
-				updatedAt: now,
 			},
 			{
 				id: 'ag3',
@@ -262,8 +228,6 @@ const seed = async () => {
 				frequencyCapUnit: 'HOUR',
 				advertiserId: 'adv2',
 				campaignId: 'camp2',
-				createdAt: now,
-				updatedAt: now,
 			},
 		])
 		.execute()
@@ -282,8 +246,6 @@ const seed = async () => {
 				mimeType: 'video/mp4',
 				clickThroughUrl: 'https://example.com/ad/1',
 				description: 'Beach',
-				createdAt: now,
-				updatedAt: now,
 			},
 			{
 				id: 'ad2',
@@ -295,8 +257,6 @@ const seed = async () => {
 				mimeType: 'audio/x-m4a',
 				clickThroughUrl: 'https://example.com/ad/2',
 				description: 'Zen Boost',
-				createdAt: now,
-				updatedAt: now,
 			},
 			{
 				id: 'ad3',
@@ -308,8 +268,6 @@ const seed = async () => {
 				mimeType: 'video/mp4',
 				clickThroughUrl: 'https://example.com/ad/3',
 				description: 'Mountain',
-				createdAt: now,
-				updatedAt: now,
 			},
 		])
 		.execute()
@@ -326,8 +284,6 @@ const seed = async () => {
 				height: 250,
 				mimeType: 'image/png',
 				clickThroughUrl: 'https://example.com/ad/1/banner',
-				createdAt: now,
-				updatedAt: now,
 			},
 			{
 				id: 'cb2',
@@ -337,8 +293,6 @@ const seed = async () => {
 				height: 250,
 				mimeType: 'image/png',
 				clickThroughUrl: 'https://example.com/ad/2/banner',
-				createdAt: now,
-				updatedAt: now,
 			},
 			{
 				id: 'cb3',
@@ -348,8 +302,6 @@ const seed = async () => {
 				height: 90,
 				mimeType: 'image/png',
 				clickThroughUrl: 'https://example.com/ad/3/banner',
-				createdAt: now,
-				updatedAt: now,
 			},
 		])
 		.execute()
@@ -373,8 +325,6 @@ const seed = async () => {
 				impressionId: '550e8400-e29b-41d4-a716-446655440000',
 				uid: 'uid1',
 				clickThroughUrl: 'https://example.com/ad/1',
-				createdAt: now,
-				updatedAt: now,
 			},
 			{
 				id: 'click2',
@@ -391,8 +341,6 @@ const seed = async () => {
 				impressionId: '550e8400-e29b-41d4-a716-446655440002',
 				uid: 'uid2',
 				clickThroughUrl: 'https://example.com/ad/2',
-				createdAt: now,
-				updatedAt: now,
 			},
 		])
 		.execute()
@@ -403,7 +351,6 @@ const seed = async () => {
 		.values([
 			{
 				id: 'ae1',
-				eventTimestamp: '2023-10-10 10:00:00',
 				eventType: 'impression',
 				adId: 'ad1',
 				adSlotId: 'slot1',
@@ -416,7 +363,6 @@ const seed = async () => {
 			},
 			{
 				id: 'ae2',
-				eventTimestamp: '2023-10-10 10:05:00',
 				eventType: 'progress',
 				adId: 'ad2',
 				adSlotId: 'slot2',
@@ -445,8 +391,6 @@ const seed = async () => {
 				impressions: 1000,
 				clicks: 50,
 				reach: 750,
-				createdAt: now,
-				updatedAt: now,
 			},
 			{
 				date: '2023-10-10',
@@ -459,8 +403,6 @@ const seed = async () => {
 				impressions: 2000,
 				clicks: 100,
 				reach: 1500,
-				createdAt: now,
-				updatedAt: now,
 			},
 		])
 		.execute()
