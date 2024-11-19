@@ -4,7 +4,7 @@ compatibility_flags = [ "nodejs_compat" ]
 assets = { directory = "./public", binding = "ASSETS" }
 
 [vars]
-TRACKER_ORIGIN = "https://video-ad-network-tracker.fly.dev"
+TRACKER_ORIGIN = "https://ad-server.van.techtalk.jp"
 
 # [[r2_buckets]]
 # binding = "MY_BUCKET"
