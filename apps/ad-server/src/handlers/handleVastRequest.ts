@@ -23,6 +23,20 @@ export async function handleVastRequest(c: Context) {
 
 	const adSlot = await getAdSlot(db, mediaId, adSlotId)
 	if (!adSlot) {
+		await db
+			.insertInto('adEvents')
+			.values({
+				id: crypto.randomUUID(),
+				eventTimestamp: new Date().toISOString(),
+				eventType: 'vast',
+				mediaId,
+				adSlotId,
+				ipAddress: c.req.header('X-Forwarded-For') || 'unknown',
+				userAgent: c.req.header('User-Agent') || 'unknown',
+				uid: '', // Populate as needed
+			})
+			.execute()
+			.catch(console.error)
 		return c.notFound()
 	}
 
@@ -35,15 +49,56 @@ export async function handleVastRequest(c: Context) {
 		adSlot.companionSizes,
 	)
 	if (!ad) {
+		await db
+			.insertInto('adEvents')
+			.values({
+				id: crypto.randomUUID(),
+				eventTimestamp: new Date().toISOString(),
+				eventType: 'vast',
+				mediaId,
+				adSlotId,
+				ipAddress: c.req.header('X-Forwarded-For') || 'unknown',
+				userAgent: c.req.header('User-Agent') || 'unknown',
+				uid: '', // Populate as needed
+			})
+			.execute()
+			.catch(console.error)
 		return c.notFound()
 	}
+
+	await db
+		.insertInto('adEvents')
+		.values({
+			id: crypto.randomUUID(),
+			eventTimestamp: new Date().toISOString(),
+			eventType: 'vast',
+			mediaId,
+			adSlotId,
+			advertiserId: ad.advertiserId,
+			campaignId: ad.campaignId,
+			adGroupId: ad.adGroupId,
+			adId: ad.id,
+			ipAddress: c.req.header('X-Forwarded-For') || 'unknown',
+			userAgent: c.req.header('User-Agent') || 'unknown',
+			uid: '', // Populate as needed
+		})
+		.execute()
+		.catch(console.error)
 
 	const companionBanners = await getCompanionBanners(db, ad.id)
 	updateFrequencyData(c, frequencyData, ad.id, now)
 
 	const impressionId = crypto.randomUUID()
 	const adServingId = crypto.randomUUID()
-	const trackers = generateTrackers(c, ad.id, mediaId, adSlotId, impressionId)
+	const trackers = generateTrackers(c, {
+		media_id: mediaId,
+		ad_slot_id: adSlotId,
+		advertiser_id: ad.advertiserId,
+		campaign_id: ad.campaignId,
+		ad_group_id: ad.adGroupId,
+		ad_id: ad.id,
+		impression_id: impressionId,
+	})
 	const vastXml = generateVastXml(ad, companionBanners, adServingId, trackers)
 
 	return new Response(vastXml, {

@@ -2,19 +2,20 @@ import type { Context } from 'hono'
 import { getDB } from '@video-ad-network/db'
 
 export async function handleClick(c: Context) {
-	const adId = c.req.query('ad_id')
-	const adSlotId = c.req.query('ad_slot_id')
-	const mediaId = c.req.query('media_id')
+	const {
+		media_id: mediaId,
+		ad_slot_id: adSlotId,
+		advertiser_id: advertiserId,
+		campaign_id: campaignId,
+		ad_group_id: adGroupId,
+		ad_id: adId,
+		impression_id: impressionId,
+		companion_id: companionId,
+	} = c.req.query()
 	const isCompanion = c.req.query('is_companion') === 'true'
-	const companionId = c.req.query('companion_id')
-	const impressionId = c.req.query('impression_id')
 	const ipAddress = c.req.header('CF-Connecting-IP')
 	const userAgent = c.req.header('User-Agent')
 	const db = getDB(c.env)
-
-	if (!adId || !adSlotId || !mediaId || !impressionId) {
-		return c.text('Missing required parameters', 400)
-	}
 
 	// リダイレクト先を取得
 	let clickThroughUrl: string
@@ -40,9 +41,12 @@ export async function handleClick(c: Context) {
 		.values({
 			id: crypto.randomUUID(),
 			uid: 'uid!',
-			adId,
-			adSlotId,
 			mediaId,
+			adSlotId,
+			advertiserId,
+			campaignId,
+			adGroupId,
+			adId,
 			timestamp: new Date().toISOString(),
 			ipAddress: ipAddress ?? '',
 			userAgent: userAgent ?? '',
@@ -52,6 +56,26 @@ export async function handleClick(c: Context) {
 			updatedAt: new Date().toISOString(),
 		})
 		.execute()
+
+	await db
+		.insertInto('adEvents')
+		.values({
+			id: crypto.randomUUID(),
+			eventTimestamp: new Date().toISOString(),
+			mediaId,
+			adSlotId,
+			advertiserId,
+			campaignId,
+			adGroupId,
+			adId,
+			impressionId,
+			eventType: 'click',
+			ipAddress: c.req.header('X-Forwarded-For') || 'unknown',
+			userAgent: c.req.header('User-Agent') || 'unknown',
+			uid: '', // Populate as needed
+		})
+		.execute()
+		.catch(console.error)
 
 	return clickThroughUrl !== ''
 		? c.redirect(clickThroughUrl)

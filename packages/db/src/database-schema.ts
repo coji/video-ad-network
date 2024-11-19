@@ -23,10 +23,13 @@ export type AdEvent = {
     id: string;
     eventTimestamp: Generated<string>;
     eventType: string;
-    adId: string;
-    adSlotId: string;
-    mediaId: string;
-    impressionId: string;
+    mediaId: string | null;
+    adSlotId: string | null;
+    advertiserId: string | null;
+    campaignId: string | null;
+    adGroupId: string | null;
+    adId: string | null;
+    impressionId: string | null;
     progress: number | null;
     ipAddress: string;
     userAgent: string;
@@ -77,9 +80,12 @@ export type Campaign = {
 };
 export type Click = {
     id: string;
-    adId: string;
     adSlotId: string;
     mediaId: string;
+    advertiserId: string;
+    campaignId: string;
+    adGroupId: string;
+    adId: string;
     timestamp: Generated<string>;
     ipAddress: string;
     userAgent: string;

@@ -1,6 +1,5 @@
 import type { FrequencyData } from './frequency-cap'
-import type { DB } from '@video-ad-network/db'
-import type { Kysely } from 'kysely'
+import type { DB, Kysely } from '@video-ad-network/db'
 
 export interface AdCandidate {
 	id: string
@@ -15,6 +14,9 @@ export interface AdCandidate {
 	frequencyCapImpressions: number
 	frequencyCapWindow: number
 	frequencyCapUnit: string
+	advertiserId: string
+	adGroupId: string
+	campaignId: string
 }
 
 function getCapWindowStart(
@@ -46,6 +48,7 @@ async function fetchAds(
 		.innerJoin('companionBanners', 'companionBanners.adId', 'ads.id')
 		.innerJoin('adGroups', 'adGroups.id', 'ads.adGroupId')
 		.innerJoin('campaigns', 'campaigns.id', 'adGroups.campaignId')
+		.innerJoin('advertisers', 'advertisers.id', 'campaigns.advertiserId')
 		.where('ads.type', '==', mediaType)
 		.where(
 			'companionBanners.width',
@@ -65,6 +68,9 @@ async function fetchAds(
 			'adGroups.frequencyCapImpressions',
 			'adGroups.frequencyCapWindow',
 			'adGroups.frequencyCapUnit',
+			'advertisers.id as advertiserId',
+			'campaigns.id as campaignId',
+			'adGroups.id as adGroupId',
 		])
 		.where('campaigns.status', '==', 'ACTIVE')
 		.orderBy('adGroups.bidPriceCpm', 'desc')

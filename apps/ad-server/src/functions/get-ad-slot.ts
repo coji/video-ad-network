@@ -1,5 +1,4 @@
-import type { Kysely } from 'kysely'
-import type { DB } from '@video-ad-network/db'
+import type { DB, Kysely } from '@video-ad-network/db'
 
 export const getAdSlot = async (
 	db: Kysely<DB>,

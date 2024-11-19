@@ -360,9 +360,12 @@ const seed = async () => {
 		.values([
 			{
 				id: 'click1',
-				adId: 'ad1',
 				adSlotId: 'adslot1',
 				mediaId: 'media1',
+				advertiserId: 'adv1',
+				campaignId: 'camp1',
+				adGroupId: 'ag1',
+				adId: 'ad1',
 				ipAddress: '192.168.1.1',
 				userAgent:
 					'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
@@ -375,9 +378,12 @@ const seed = async () => {
 			},
 			{
 				id: 'click2',
-				adId: 'ad2',
 				adSlotId: 'adslot2',
 				mediaId: 'media2',
+				advertiserId: 'adv2',
+				campaignId: 'camp2',
+				adGroupId: 'ag2',
+				adId: 'ad2',
 				ipAddress: '192.168.1.3',
 				userAgent:
 					'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.1 Safari/605.1.15',

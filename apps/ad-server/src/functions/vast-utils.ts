@@ -68,77 +68,55 @@ const buildUrl = (
 
 export function generateTrackers(
 	c: Context,
-	ad_id: string,
-	media_id: string,
-	ad_slot_id: string,
-	impression_id: string,
+	params: {
+		media_id: string
+		ad_slot_id: string
+		advertiser_id: string
+		campaign_id: string
+		ad_group_id: string
+		ad_id: string
+		impression_id: string
+	},
 ): Trackers {
 	const origin = new URL(c.req.url).origin
 	const trackerOrigin = c.env.TRACKER_ORIGIN
 
 	return {
 		click: buildUrl(origin, '/v1/click', {
-			ad_id,
-			media_id,
-			ad_slot_id,
+			...params,
 			is_companion: 'false',
-			impression_id,
 		}),
 		companionClick: (companion_id: string) =>
 			buildUrl(origin, '/v1/click', {
-				ad_id,
-				media_id,
-				ad_slot_id,
+				...params,
 				is_companion: 'true',
 				companion_id,
-				impression_id,
 			}),
 		impression: buildUrl(trackerOrigin, '/v1/impression', {
-			ad_id,
-			media_id,
-			ad_slot_id,
-			impression_id,
+			...params,
 		}),
 		start: buildUrl(trackerOrigin, '/v1/progress', {
 			progress: '0',
-			ad_id,
-			media_id,
-			ad_slot_id,
-			impression_id,
+			...params,
 		}),
 		firstQuartile: buildUrl(trackerOrigin, '/v1/progress', {
 			progress: '25',
-			ad_id,
-			media_id,
-			ad_slot_id,
-			impression_id,
+			...params,
 		}),
 		midpoint: buildUrl(trackerOrigin, '/v1/progress', {
 			progress: '50',
-			ad_id,
-			media_id,
-			ad_slot_id,
-			impression_id,
+			...params,
 		}),
 		thirdQuartile: buildUrl(trackerOrigin, '/v1/progress', {
 			progress: '75',
-			ad_id,
-			media_id,
-			ad_slot_id,
-			impression_id,
+			...params,
 		}),
 		complete: buildUrl(trackerOrigin, '/v1/progress', {
 			progress: '100',
-			ad_id,
-			media_id,
-			ad_slot_id,
-			impression_id,
+			...params,
 		}),
 		error: buildUrl(trackerOrigin, '/v1/error', {
-			ad_id,
-			media_id,
-			ad_slot_id,
-			impression_id,
+			...params,
 		}),
 	}
 }

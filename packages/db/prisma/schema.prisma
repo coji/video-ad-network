@@ -204,9 +204,12 @@ model CompanionBanner {
 
 model Click {
   id              String   @id
-  adId            String   @map("ad_id")
   adSlotId        String   @map("ad_slot_id")
   mediaId         String   @map("media_id")
+  advertiserId    String   @map("advertiser_id")
+  campaignId      String   @map("campaign_id")
+  adGroupId       String   @map("ad_group_id")
+  adId            String   @map("ad_id")
   timestamp       DateTime @default(now())
   ipAddress       String   @map("ip_address")
   userAgent       String   @map("user_agent")
@@ -225,10 +228,13 @@ model AdEvent {
   id             String   @id
   eventTimestamp DateTime @default(now()) @map("event_timestamp")
   eventType      String   @map("event_type") // "impression" または "progress"
-  adId           String   @map("ad_id")
-  adSlotId       String   @map("ad_slot_id")
-  mediaId        String   @map("media_id")
-  impressionId   String   @map("impression_id")
+  mediaId        String?  @map("media_id")
+  adSlotId       String?  @map("ad_slot_id")
+  advertiserId   String?  @map("advertiser_id")
+  campaignId     String?  @map("campaign_id")
+  adGroupId      String?  @map("ad_group_id")
+  adId           String?  @map("ad_id")
+  impressionId   String?  @map("impression_id")
   progress       Int?     @map("progress") // 進捗（進捗イベントの場合）
   ipAddress      String   @map("ip_address")
   userAgent      String   @map("user_agent")

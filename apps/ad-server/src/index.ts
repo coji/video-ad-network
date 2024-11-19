@@ -30,14 +30,15 @@ app.get('/v1/click', handleClick)
 
 // Impressionエンドポイント
 app.get('/v1/impression', async (c) => {
-	const { ad_id, media_id, ad_slot_id, impression_id } = c.req.query()
-
-	if (!ad_id || !media_id || !ad_slot_id || !impression_id) {
-		return c.body(PIXEL, 200, {
-			'Content-Type': 'image/gif',
-			'Cache-Control': 'no-store, no-cache, must-revalidate, private',
-		})
-	}
+	const {
+		media_id: mediaId,
+		ad_slot_id: adSlotId,
+		advertiser_id: advertiserId,
+		campaign_id: campaignId,
+		ad_group_id: adGroupId,
+		ad_id: adId,
+		impression_id: impressionId,
+	} = c.req.query()
 
 	const db = getDB(c.env)
 	await db
@@ -46,10 +47,13 @@ app.get('/v1/impression', async (c) => {
 			id: crypto.randomUUID(),
 			eventTimestamp: new Date().toISOString(),
 			eventType: 'impression',
-			adId: ad_id,
-			adSlotId: ad_slot_id,
-			mediaId: media_id,
-			impressionId: impression_id,
+			adSlotId,
+			mediaId,
+			advertiserId,
+			campaignId,
+			adGroupId,
+			adId,
+			impressionId,
 			ipAddress: c.req.header('X-Forwarded-For') || 'unknown',
 			userAgent: c.req.header('User-Agent') || 'unknown',
 			uid: '', // Populate as needed
@@ -65,14 +69,16 @@ app.get('/v1/impression', async (c) => {
 
 // Progressエンドポイント
 app.get('/v1/progress', async (c) => {
-	const { ad_id, media_id, ad_slot_id, progress, impression_id } = c.req.query()
-
-	if (!ad_id || !media_id || !ad_slot_id || !progress || !impression_id) {
-		return c.body(PIXEL, 200, {
-			'Content-Type': 'image/gif',
-			'Cache-Control': 'no-store, no-cache, must-revalidate, private',
-		})
-	}
+	const {
+		media_id: mediaId,
+		ad_slot_id: adSlotId,
+		advertiser_id: advertiserId,
+		campaign_id: campaignId,
+		ad_group_id: adGroupId,
+		ad_id: adId,
+		impression_id: impressionId,
+		progress,
+	} = c.req.query()
 
 	const db = getDB(c.env)
 	await db
@@ -81,10 +87,13 @@ app.get('/v1/progress', async (c) => {
 			id: crypto.randomUUID(),
 			eventTimestamp: new Date().toISOString(),
 			eventType: 'progress',
-			adId: ad_id,
-			adSlotId: ad_slot_id,
-			mediaId: media_id,
-			impressionId: impression_id,
+			adSlotId,
+			mediaId,
+			advertiserId,
+			campaignId,
+			adGroupId,
+			adId,
+			impressionId,
 			progress: Number(progress),
 			ipAddress: c.req.header('X-Forwarded-For') || 'unknown',
 			userAgent: c.req.header('User-Agent') || 'unknown',
