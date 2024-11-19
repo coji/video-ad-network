@@ -49,6 +49,7 @@ async function fetchAds(
 		.innerJoin('adGroups', 'adGroups.id', 'ads.adGroupId')
 		.innerJoin('campaigns', 'campaigns.id', 'adGroups.campaignId')
 		.innerJoin('advertisers', 'advertisers.id', 'campaigns.advertiserId')
+		.where('campaigns.status', '==', 'ACTIVE')
 		.where('ads.type', '==', mediaType)
 		.where(
 			'companionBanners.width',
