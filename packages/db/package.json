@@ -12,8 +12,6 @@
 		"./*": "./dist/src/*"
 	},
 	"scripts": {
-		"db:migrate:reset": "tsx scripts/db_migrate_reset.ts",
-		"db:seed": "tsx scripts/db_seed.ts",
 		"build": "tsc -b"
 	},
 	"keywords": [],
@@ -23,6 +21,7 @@
 		"@date-fns/utc": "2.1.0",
 		"@types/node": "22.9.0",
 		"date-fns": "4.1.0",
+		"dotenv": "16.4.5",
 		"prisma": "catalog:",
 		"prisma-kysely": "catalog:",
 		"tsx": "catalog:",
@@ -33,5 +32,8 @@
 		"@date-fns/tz": "1.2.0",
 		"@libsql/kysely-libsql": "catalog:",
 		"kysely": "catalog:"
+	},
+	"prisma": {
+		"seed": "tsx prisma/seed.ts"
 	}
 }

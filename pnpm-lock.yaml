@@ -150,6 +150,21 @@ importers:
       '@cloudflare/workers-types':
         specifier: 'catalog:'
         version: 4.20241112.0
+      '@hono/vite-build':
+        specifier: 1.1.0
+        version: 1.1.0(hono@4.6.10)
+      '@hono/vite-dev-server':
+        specifier: 0.17.0
+        version: 0.17.0(hono@4.6.10)(miniflare@3.20241106.0)(wrangler@3.87.0(@cloudflare/workers-types@4.20241112.0))
+      cloudflare-workeres:
+        specifier: link:@hono/vite-build/cloudflare-workeres
+        version: link:@hono/vite-build/cloudflare-workeres
+      vite:
+        specifier: 5.4.11
+        version: 5.4.11(@types/node@22.9.0)
+      vite-tsconfig-paths:
+        specifier: 5.1.2
+        version: 5.1.2(typescript@5.6.3)(vite@5.4.11(@types/node@22.9.0))
       wrangler:
         specifier: 'catalog:'
         version: 3.87.0(@cloudflare/workers-types@4.20241112.0)
@@ -400,6 +415,9 @@ importers:
       date-fns:
         specifier: 4.1.0
         version: 4.1.0
+      dotenv:
+        specifier: 16.4.5
+        version: 16.4.5
       prisma:
         specifier: 'catalog:'
         version: 5.22.0
@@ -3277,6 +3295,10 @@ packages:
 
   dotenv@16.0.3:
     resolution: {integrity: sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==}
+    engines: {node: '>=12'}
+
+  dotenv@16.4.5:
+    resolution: {integrity: sha512-ZmdL2rui+eB2YwhsWzjInR8LldtZHGDoQ1ugH85ppHKwpUHL7j7rN0Ti9NCnGiQbhaZ11FpR+7ao1dNsmduNUg==}
     engines: {node: '>=12'}
 
   duplexify@3.7.1:
@@ -8821,6 +8843,8 @@ snapshots:
       tslib: 2.8.1
 
   dotenv@16.0.3: {}
+
+  dotenv@16.4.5: {}
 
   duplexify@3.7.1:
     dependencies:

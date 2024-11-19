@@ -1,6 +1,6 @@
 name = "video-ad-network"
-compatibility_date = "2024-09-25"
-# compatibility_flags = [ "nodejs_compat" ]
+compatibility_date = "2024-09-26"
+compatibility_flags = [ "nodejs_compat" ]
 assets = { directory = "./public", binding = "ASSETS" }
 
 [vars]

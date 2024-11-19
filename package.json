@@ -13,7 +13,7 @@
 		"deploy": "run-s deploy:*",
 		"deploy:ad-server": "pnpm run --filter @video-ad-network/ad-server deploy",
 		"deploy:tracker": "fly deploy -c infra/flyio/tracker/fly.toml --dockerfile infra/flyio/tracker/Dockerfile",
-		"db:reset": "docker compose down && rm -Rf ./data/sqld && docker compose up -d && pnpm run --filter @video-ad-network/db db:migrate:reset && pnpm run --filter @video-ad-network/db db:seed"
+		"deploy:ui": "pnpm run --filter @video-ad-network/ui deploy"
 	},
 	"keywords": [],
 	"author": "",

@@ -1,11 +1,12 @@
 import { getDB } from '~/index'
 import { TZDate } from '@date-fns/tz'
-
+import dotenv from 'dotenv'
+dotenv.config()
 const tz = 'Asia/Tokyo'
 
 const seed = async () => {
 	const db = getDB({
-		TURSO_DATABASE_URL: 'http://localhost:8080',
+		TURSO_DATABASE_URL: process.env.DATABASE_URL ?? '',
 		TURSO_AUTH_TOKEN: '',
 	})
 

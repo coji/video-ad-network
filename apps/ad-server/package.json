@@ -2,8 +2,10 @@
 	"name": "@video-ad-network/ad-server",
 	"type": "module",
 	"scripts": {
-		"dev": "wrangler dev --show-interactive-dev-session false src/index.ts",
-		"build": "cp ../../packages/ad-sdk/dist/ad-sdk.js public/js/",
+		"dev": "vite dev",
+		"build": "pnpm run build:sdk && pnpm run build:api",
+		"build:sdk": "cp ../../packages/ad-sdk/dist/ad-sdk.js public/js",
+		"build:api": "vite build",
 		"deploy": "wrangler deploy --minify src/index.ts",
 		"typegen": "wrangler types --env-interface CloudflareBindings",
 		"format": "biome format .",
@@ -17,6 +19,11 @@
 	"devDependencies": {
 		"@biomejs/biome": "catalog:",
 		"@cloudflare/workers-types": "catalog:",
+		"@hono/vite-build": "1.1.0",
+		"@hono/vite-dev-server": "0.17.0",
+		"cloudflare-workeres": "link:@hono/vite-build/cloudflare-workeres",
+		"vite": "5.4.11",
+		"vite-tsconfig-paths": "5.1.2",
 		"wrangler": "catalog:"
 	}
 }

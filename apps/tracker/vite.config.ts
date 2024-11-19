@@ -7,4 +7,7 @@ export default defineConfig({
 		devServer({ entry: 'src/index.ts' }),
 		build({ entry: './src/index.ts' }),
 	],
+	server: {
+		port: 5174,
+	},
 })
