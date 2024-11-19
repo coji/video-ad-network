@@ -93,48 +93,48 @@ export function generateTrackers(
 				companion_id,
 				impression_id,
 			}),
-		impression: buildUrl(trackerOrigin, '/impression', {
+		impression: buildUrl(trackerOrigin, '/v1/impression', {
 			ad_id,
 			media_id,
 			ad_slot_id,
 			impression_id,
 		}),
-		start: buildUrl(trackerOrigin, '/progress', {
+		start: buildUrl(trackerOrigin, '/v1/progress', {
 			progress: '0',
 			ad_id,
 			media_id,
 			ad_slot_id,
 			impression_id,
 		}),
-		firstQuartile: buildUrl(trackerOrigin, '/progress', {
+		firstQuartile: buildUrl(trackerOrigin, '/v1/progress', {
 			progress: '25',
 			ad_id,
 			media_id,
 			ad_slot_id,
 			impression_id,
 		}),
-		midpoint: buildUrl(trackerOrigin, '/progress', {
+		midpoint: buildUrl(trackerOrigin, '/v1/progress', {
 			progress: '50',
 			ad_id,
 			media_id,
 			ad_slot_id,
 			impression_id,
 		}),
-		thirdQuartile: buildUrl(trackerOrigin, '/progress', {
+		thirdQuartile: buildUrl(trackerOrigin, '/v1/progress', {
 			progress: '75',
 			ad_id,
 			media_id,
 			ad_slot_id,
 			impression_id,
 		}),
-		complete: buildUrl(trackerOrigin, '/progress', {
+		complete: buildUrl(trackerOrigin, '/v1/progress', {
 			progress: '100',
 			ad_id,
 			media_id,
 			ad_slot_id,
 			impression_id,
 		}),
-		error: buildUrl(trackerOrigin, '/error', {
+		error: buildUrl(trackerOrigin, '/v1/error', {
 			ad_id,
 			media_id,
 			ad_slot_id,
