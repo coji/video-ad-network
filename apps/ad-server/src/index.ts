@@ -1,11 +1,9 @@
 import { Hono } from 'hono'
-import type { D1Database } from '@cloudflare/workers-types'
 import { cors } from 'hono/cors'
 import { handleVastRequest } from './handlers/handleVastRequest'
 import { handleClick } from './handlers/handleClick'
 
 interface Bindings {
-	DB: D1Database
 	TRACKER_ORIGIN: string
 }
 
