@@ -10,11 +10,11 @@ const tz = 'Asia/Tokyo'
  * @returns
  */
 export const formatDateTime = (
-	input: string,
-	formatStr = 'yyyy-MM-dd HH:mm',
+  input: string,
+  formatStr = 'yyyy-MM-dd HH:mm',
 ) => {
-	const isoString = `${input.replace(' ', 'T')}Z`
-	const utcDate = new TZDate(isoString, 'utc')
-	const tzDate = utcDate.withTimeZone(tz)
-	return format(tzDate, formatStr)
+  const isoString = `${input.replace(' ', 'T')}Z`
+  const utcDate = new TZDate(isoString, 'utc')
+  const tzDate = utcDate.withTimeZone(tz)
+  return format(tzDate, formatStr)
 }
