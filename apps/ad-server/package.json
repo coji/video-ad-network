@@ -14,17 +14,17 @@
 	"dependencies": {
 		"@video-ad-network/ad-sdk": "workspace:*",
 		"@video-ad-network/db": "workspace:*",
-		"date-fns": "4.1.0",
+		"date-fns": "catalog:",
 		"hono": "catalog:"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "catalog:",
 		"@cloudflare/workers-types": "catalog:",
-		"@hono/vite-build": "1.1.0",
-		"@hono/vite-dev-server": "0.17.0",
+		"@hono/vite-build": "catalog:",
+		"@hono/vite-dev-server": "catalog:",
 		"cloudflare-workeres": "link:@hono/vite-build/cloudflare-workeres",
-		"vite": "5.4.11",
-		"vite-tsconfig-paths": "5.1.2",
+		"vite": "catalog:",
+		"vite-tsconfig-paths": "catalog:",
 		"wrangler": "catalog:"
 	}
 }
