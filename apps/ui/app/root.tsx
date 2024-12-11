@@ -1,13 +1,8 @@
-import { ClerkApp } from '@clerk/remix'
-import { rootAuthLoader } from '@clerk/remix/ssr.server'
-import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/cloudflare'
-import {
-  Links,
-  Meta,
-  Outlet,
-  Scripts,
-  ScrollRestoration,
-} from '@remix-run/react'
+import { ClerkProvider } from '@clerk/react-router'
+import { rootAuthLoader } from '@clerk/react-router/ssr.server'
+import type { LinksFunction } from 'react-router'
+import { Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router'
+import type { Route } from './+types/root'
 import { PageLoadingProgress } from './components/page-loading-progress'
 import styles from './tailwind.css?url'
 
@@ -28,7 +23,7 @@ export const links: LinksFunction = () => [
   },
 ]
 
-export const loader = (args: LoaderFunctionArgs) => {
+export const loader = (args: Route.LoaderArgs) => {
   return rootAuthLoader(args)
 }
 
@@ -50,8 +45,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
     </html>
   )
 }
-const App = () => {
-  return <Outlet />
+
+const App = ({ loaderData }: Route.ComponentProps) => {
+  return (
+    <ClerkProvider loaderData={loaderData}>
+      <Outlet />
+    </ClerkProvider>
+  )
 }
 
-export default ClerkApp(App)
+export default App

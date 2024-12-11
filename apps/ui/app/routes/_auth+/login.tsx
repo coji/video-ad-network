@@ -1,7 +1,7 @@
-import { SignIn } from '@clerk/remix'
-import { getAuth } from '@clerk/remix/ssr.server'
-import type { LoaderFunctionArgs } from '@remix-run/cloudflare'
-import { redirect } from '@remix-run/react'
+import { SignIn } from '@clerk/react-router'
+import { getAuth } from '@clerk/react-router/ssr.server'
+import type { LoaderFunctionArgs } from 'react-router'
+import { redirect } from 'react-router'
 
 export const loader = async ({
   request,

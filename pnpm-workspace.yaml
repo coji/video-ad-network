@@ -2,44 +2,41 @@ packages:
   - ./apps/*
   - ./packages/*
 catalog:
-  "@biomejs/biome": 1.9.4
-  "@clerk/remix": 4.3.5
-  "@cloudflare/workers-types": 4.20241205.0
-  "@date-fns/tz": 1.2.0
-  "@date-fns/utc": 2.1.0
-  "@google-cloud/bigquery": 7.9.1
-  "@hono/node-server": 1.13.7
-  "@hono/vite-build": 1.1.1
-  "@hono/vite-dev-server": 0.17.0
-  "@libsql/kysely-libsql": 0.4.1
-  "@radix-ui/react-accordion": 1.2.1
-  "@radix-ui/react-alert-dialog": 1.1.2
-  "@radix-ui/react-aspect-ratio": 1.1.0
-  "@radix-ui/react-avatar": 1.1.1
-  "@radix-ui/react-checkbox": 1.1.2
-  "@radix-ui/react-dialog": 1.1.2
-  "@radix-ui/react-dropdown-menu": 2.1.2
-  "@radix-ui/react-label": 2.1.0
-  "@radix-ui/react-popover": 1.1.2
-  "@radix-ui/react-select": 2.1.2
-  "@radix-ui/react-separator": 1.1.0
-  "@radix-ui/react-slot": 1.1.0
-  "@radix-ui/react-switch": 1.1.1
-  "@radix-ui/react-tabs": 1.1.1
-  "@radix-ui/react-toggle": 1.1.0
-  "@radix-ui/react-tooltip": 1.1.4
-  "@remix-run/cloudflare": 2.15.1
-  "@remix-run/dev": 2.15.1
-  "@remix-run/react": 2.15.1
-  "@remix-run/route-config": 2.15.1
-  "@remix-run/routes-option-adapter": 2.15.1
-  "@remix-run/server-runtime": 2.15.1
-  "@types/node": 22.10.1
-  "@types/nprogress": 0.2.3
-  "@types/react": 19.0.1
-  "@types/react-dom": 19.0.2
-  "@typescript-eslint/eslint-plugin": 6.7.4
-  "@typescript-eslint/parser": 6.7.4
+  '@biomejs/biome': 1.9.4
+  '@clerk/react-router': '0.1.0'
+  '@cloudflare/workers-types': 4.20241205.0
+  '@date-fns/tz': 1.2.0
+  '@date-fns/utc': 2.1.0
+  '@google-cloud/bigquery': 7.9.1
+  '@hono/node-server': 1.13.7
+  '@hono/vite-build': 1.1.1
+  '@hono/vite-dev-server': 0.17.0
+  '@libsql/kysely-libsql': 0.4.1
+  '@radix-ui/react-accordion': 1.2.1
+  '@radix-ui/react-alert-dialog': 1.1.2
+  '@radix-ui/react-aspect-ratio': 1.1.0
+  '@radix-ui/react-avatar': 1.1.1
+  '@radix-ui/react-checkbox': 1.1.2
+  '@radix-ui/react-dialog': 1.1.2
+  '@radix-ui/react-dropdown-menu': 2.1.2
+  '@radix-ui/react-label': 2.1.0
+  '@radix-ui/react-popover': 1.1.2
+  '@radix-ui/react-select': 2.1.2
+  '@radix-ui/react-separator': 1.1.0
+  '@radix-ui/react-slot': 1.1.0
+  '@radix-ui/react-switch': 1.1.1
+  '@radix-ui/react-tabs': 1.1.1
+  '@radix-ui/react-toggle': 1.1.0
+  '@radix-ui/react-tooltip': 1.1.4
+  '@react-router/cloudflare': 7.0.2
+  '@react-router/dev': 7.0.2
+  '@react-router/remix-routes-option-adapter': 7.0.2
+  '@types/node': 22.10.1
+  '@types/nprogress': 0.2.3
+  '@types/react': 19.0.1
+  '@types/react-dom': 19.0.2
+  '@typescript-eslint/eslint-plugin': 6.7.4
+  '@typescript-eslint/parser': 6.7.4
   autoprefixer: 10.4.20
   class-variance-authority: 0.7.1
   clsx: 2.1.1
@@ -64,6 +61,7 @@ catalog:
   react: 19.0.0
   react-dom: 19.0.0
   react-twc: 1.4.2
+  react-router: 7.0.2
   recharts: 2.14.1
   remix-flat-routes: 0.6.5
   sonner: 1.7.1

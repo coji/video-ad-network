@@ -4,10 +4,10 @@
  * For more information, see https://remix.run/file-conventions/entry.server
  */
 
-import type { AppLoadContext, EntryContext } from '@remix-run/cloudflare'
-import { RemixServer } from '@remix-run/react'
 import { isbot } from 'isbot'
 import { renderToReadableStream } from 'react-dom/server'
+import type { AppLoadContext, EntryContext } from 'react-router'
+import { ServerRouter } from 'react-router'
 
 const ABORT_DELAY = 5000
 
@@ -15,7 +15,7 @@ export default async function handleRequest(
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
-  remixContext: EntryContext,
+  reactRouterContext: EntryContext,
   // This is ignored so we can keep it in the template for visibility.  Feel
   // free to delete this parameter in your app if you're not using it!
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -26,8 +26,8 @@ export default async function handleRequest(
   const timeoutId = setTimeout(() => controller.abort(), ABORT_DELAY)
 
   const body = await renderToReadableStream(
-    <RemixServer
-      context={remixContext}
+    <ServerRouter
+      context={reactRouterContext}
       url={request.url}
       abortDelay={ABORT_DELAY}
     />,

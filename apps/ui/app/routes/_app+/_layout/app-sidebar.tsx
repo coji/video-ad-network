@@ -1,5 +1,8 @@
-import { OrganizationSwitcher, UserButton, useOrganization } from '@clerk/remix'
-import { NavLink } from '@remix-run/react'
+import {
+  OrganizationSwitcher,
+  UserButton,
+  useOrganization,
+} from '@clerk/react-router'
 import {
   FileVideoIcon,
   GoalIcon,
@@ -8,6 +11,7 @@ import {
   ScanIcon,
 } from 'lucide-react'
 import type { ReactNode } from 'react'
+import { NavLink } from 'react-router'
 import {
   HStack,
   Sidebar,

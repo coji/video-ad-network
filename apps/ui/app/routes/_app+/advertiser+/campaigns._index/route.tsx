@@ -1,7 +1,6 @@
-import { getAuth } from '@clerk/remix/ssr.server'
-import { redirect, type LoaderFunctionArgs } from '@remix-run/cloudflare'
-import { useLoaderData } from '@remix-run/react'
+import { getAuth } from '@clerk/react-router/ssr.server'
 import { getDB } from '@video-ad-network/db'
+import { redirect } from 'react-router'
 import {
   Badge,
   Card,
@@ -17,8 +16,9 @@ import {
   TableRow,
 } from '~/components/ui'
 import { formatDateTime } from '~/lib/datetime'
+import type { Route } from './+types/route'
 
-export const loader = async (args: LoaderFunctionArgs) => {
+export const loader = async (args: Route.LoaderArgs) => {
   const { userId, orgId } = await getAuth(args)
   if (!userId || !orgId) {
     throw redirect('/login')
@@ -36,8 +36,9 @@ export const loader = async (args: LoaderFunctionArgs) => {
   return { campaigns }
 }
 
-export default function CampaignIndexPage() {
-  const { campaigns } = useLoaderData<typeof loader>()
+export default function CampaignIndexPage({
+  loaderData: { campaigns },
+}: Route.ComponentProps) {
   return (
     <Card>
       <CardHeader>
