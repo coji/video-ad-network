@@ -1,6 +1,4 @@
-import { getAuth } from '@clerk/react-router/ssr.server'
 import { getDB } from '@video-ad-network/db'
-import { redirect } from 'react-router'
 import {
   Badge,
   Card,
@@ -15,13 +13,11 @@ import {
   TableHeader,
   TableRow,
 } from '~/components/ui'
+import { requireOrgUser } from '~/services/auth.server'
 import type { Route } from './+types/route'
 
 export const loader = async (args: Route.LoaderArgs) => {
-  const { userId, orgId } = await getAuth(args)
-  if (!userId || !orgId) {
-    throw redirect('/login')
-  }
+  const user = await requireOrgUser(args)
 
   const db = getDB(args.context.cloudflare.env)
   const adGroups = await db
@@ -40,7 +36,7 @@ export const loader = async (args: Route.LoaderArgs) => {
       'campaigns.name as campaignName',
       'campaigns.status as campaignStatus',
     ])
-    .where('advertisers.organizationId', '==', orgId)
+    .where('advertisers.organizationId', '==', user.orgId)
     .limit(100)
     .execute()
 

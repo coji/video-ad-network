@@ -1,19 +1,15 @@
 import { SignIn } from '@clerk/react-router'
-import { getAuth } from '@clerk/react-router/ssr.server'
-import type { LoaderFunctionArgs } from 'react-router'
 import { redirect } from 'react-router'
+import { getUser } from '~/services/auth.server'
+import type { Route } from './+types/login'
 
-export const loader = async ({
-  request,
-  params,
-  context,
-}: LoaderFunctionArgs) => {
-  const auth = await getAuth({ request, params, context })
-  if (auth.userId) {
-    // すでにログイン済み
+export const loader = async (args: Route.LoaderArgs) => {
+  const user = await getUser(args)
+  if (user) {
+    // すでにログインしてる
     throw redirect('/')
   }
-  return {}
+  return null
 }
 
 export default function Index() {

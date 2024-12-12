@@ -1,7 +1,5 @@
-import { getAuth } from '@clerk/react-router/ssr.server'
 import { getDB, sql } from '@video-ad-network/db'
 import { ExternalLinkIcon } from 'lucide-react'
-import { redirect } from 'react-router'
 import {
   Badge,
   Button,
@@ -22,13 +20,11 @@ import {
   TableHeader,
   TableRow,
 } from '~/components/ui'
+import { requireOrgUser } from '~/services/auth.server'
 import type { Route } from './+types/route'
 
 export const loader = async (args: Route.LoaderArgs) => {
-  const { userId, orgId } = await getAuth(args)
-  if (!userId || !orgId) {
-    throw redirect('/login')
-  }
+  const user = await requireOrgUser(args)
 
   const db = getDB(args.context.cloudflare.env)
   const ads = await db
@@ -61,7 +57,7 @@ export const loader = async (args: Route.LoaderArgs) => {
           'companionBannerSizes',
         ),
     ])
-    .where('advertisers.organizationId', '==', orgId)
+    .where('advertisers.organizationId', '==', user.orgId)
     .groupBy('ads.id')
     .limit(100)
     .execute()

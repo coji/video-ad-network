@@ -1,27 +1,26 @@
 {
-	"name": "video-ad-network",
-	"version": "1.0.0",
-	"description": "",
-	"main": "index.js",
-	"type": "module",
-	"scripts": {
-		"dev": "turbo dev",
-		"build": "turbo build",
-		"lint": "turbo lint",
-		"format": "turbo format",
-		"test": "turbo test",
-		"deploy": "run-s deploy:*",
-		"deploy:ad-server": "pnpm run --filter @video-ad-network/ad-server deploy",
-		"deploy:tracker": "fly deploy -c infra/flyio/tracker/fly.toml --dockerfile infra/flyio/tracker/Dockerfile",
-		"deploy:ui": "pnpm run --filter @video-ad-network/ui deploy"
-	},
-	"keywords": [],
-	"author": "",
-	"license": "ISC",
-	"devDependencies": {
-		"concurrently": "catalog:",
-		"npm-run-all": "catalog:",
-		"turbo": "catalog:"
-	},
-	"packageManager": "pnpm@9.12.3"
+  "name": "video-ad-network",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "format": "turbo format",
+    "test": "turbo test",
+    "deploy": "run-s deploy:*",
+    "deploy:ad-server": "pnpm run --filter @video-ad-network/ad-server deploy",
+    "deploy:ui": "pnpm run --filter @video-ad-network/ui deploy"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "catalog:",
+    "npm-run-all": "catalog:",
+    "turbo": "catalog:"
+  },
+  "packageManager": "pnpm@9.12.3"
 }
