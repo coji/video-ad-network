@@ -1,30 +1,32 @@
 {
-	"name": "@video-ad-network/ad-server",
-	"type": "module",
-	"scripts": {
-		"dev": "vite dev",
-		"build": "pnpm run build:sdk && pnpm run build:api",
-		"build:sdk": "cp ../../packages/ad-sdk/dist/ad-sdk.js public/js",
-		"build:api": "vite build",
-		"deploy": "wrangler deploy --minify src/index.ts",
-		"typegen": "wrangler types --env-interface CloudflareBindings",
-		"format": "biome format .",
-		"lint": "biome lint ."
-	},
-	"dependencies": {
-		"@video-ad-network/ad-sdk": "workspace:*",
-		"@video-ad-network/db": "workspace:*",
-		"date-fns": "catalog:",
-		"hono": "catalog:"
-	},
-	"devDependencies": {
-		"@biomejs/biome": "catalog:",
-		"@cloudflare/workers-types": "catalog:",
-		"@hono/vite-build": "catalog:",
-		"@hono/vite-dev-server": "catalog:",
-		"cloudflare-workeres": "link:@hono/vite-build/cloudflare-workeres",
-		"vite": "catalog:",
-		"vite-tsconfig-paths": "catalog:",
-		"wrangler": "catalog:"
-	}
+  "name": "@video-ad-network/ad-server",
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "pnpm run build:sdk && pnpm run build:api",
+    "build:sdk": "cp ../../packages/ad-sdk/dist/ad-sdk.js public/js",
+    "build:api": "vite build",
+    "deploy": "wrangler deploy --minify src/index.ts",
+    "typegen": "wrangler types --env-interface CloudflareBindings",
+    "format": "prettier --check .",
+    "lint": "biome lint ."
+  },
+  "dependencies": {
+    "@video-ad-network/ad-sdk": "workspace:*",
+    "@video-ad-network/db": "workspace:*",
+    "date-fns": "catalog:",
+    "hono": "catalog:"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "catalog:",
+    "@cloudflare/workers-types": "catalog:",
+    "@hono/vite-build": "catalog:",
+    "@hono/vite-dev-server": "catalog:",
+    "cloudflare-workeres": "link:@hono/vite-build/cloudflare-workeres",
+    "prettier": "3.4.2",
+    "prettier-plugin-organize-imports": "4.1.0",
+    "vite": "catalog:",
+    "vite-tsconfig-paths": "catalog:",
+    "wrangler": "catalog:"
+  }
 }

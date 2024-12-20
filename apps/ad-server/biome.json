@@ -1,34 +1,17 @@
 {
-	"$schema": "https://biomejs.dev/schemas/1.9.0/schema.json",
-	"vcs": {
-		"enabled": true,
-		"clientKind": "git",
-		"useIgnoreFile": true
-	},
-	"linter": {
-		"ignore": [
-			"public/js/**",
-			".wrangler/**",
-			"./src/services/database-schema.ts"
-		]
-	},
-	"formatter": {
-		"ignore": [
-			"public/js/**",
-			".wrangler/**",
-			"./src/services/database-schema.ts"
-		]
-	},
-	"javascript": {
-		"formatter": {
-			"quoteStyle": "single",
-			"semicolons": "asNeeded",
-			"trailingCommas": "all"
-		}
-	},
-	"json": {
-		"formatter": {
-			"trailingCommas": "none"
-		}
-	}
+  "$schema": "https://biomejs.dev/schemas/1.9.0/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "linter": {
+    "ignore": [
+      "dist/**",
+      "public/js/**",
+      ".wrangler/**",
+      "worker-configuration.d.ts",
+      "./src/services/database-schema.ts"
+    ]
+  }
 }
