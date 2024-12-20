@@ -7,7 +7,6 @@ catalog:
   '@cloudflare/workers-types': 4.20241218.0
   '@date-fns/tz': 1.2.0
   '@date-fns/utc': 2.1.0
-  '@google-cloud/bigquery': 7.9.1
   '@hono/node-server': 1.13.7
   '@hono/vite-build': 1.2.0
   '@hono/vite-dev-server': 0.17.0
