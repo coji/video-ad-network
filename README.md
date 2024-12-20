@@ -1,3 +1,4 @@
+
 # Video Ad Network Project
 
 ## 目次
@@ -6,33 +7,30 @@
 2. [プロジェクト構造](#プロジェクト構造)
 3. [必要条件](#必要条件)
 4. [セットアップ](#セットアップ)
-5. [D1データベースの設定（ad-server）](#d1データベースの設定ad-server)
-6. [BigQuery の初期設定（tracker）](#bigquery-の初期設定tracker)
-7. [Fly.io での tracker アプリケーションのセットアップ](#flyio-での-tracker-アプリケーションのセットアップ)
-8. [開発](#開発)
-9. [ビルド](#ビルド)
-10. [リンティングとフォーマット](#リンティングとフォーマット)
-11. [テスト](#テスト)
-12. [デプロイ](#デプロイ)
-13. [貢献](#貢献)
-14. [ライセンス](#ライセンス)
+5. [データベースの設定（ad-server）](#データベースの設定ad-server)
+6. [Clerk の初期設定 (ui)](#clerk-の初期設定-ui)
+7. [開発](#開発)
+8. [ビルド](#ビルド)
+9. [リンティングとフォーマット](#リンティングとフォーマット)
+10. [テスト](#テスト)
+11. [デプロイ](#デプロイ)
+12. [貢献](#貢献)
+13. [ライセンス](#ライセンス)
 
 ## 概要
 
-このプロジェクトは、ビデオ広告ネットワークのためのマイクロサービスアーキテクチャを採用したシステムです。広告配信、トラッキング、SDKなどの機能を提供します。主要コンポーネントには、Cloudflare Workers上で動作する広告配信サーバー、Fly.io上でホストされるトラッキングサーバー、そしてクライアント側で使用する広告SDKが含まれます。
+このプロジェクトは、ビデオ広告ネットワークのためのマイクロサービスアーキテクチャを採用したシステムです。広告配信サーバー、管理用UI、SDKなどの機能を提供します。主要コンポーネントには、Cloudflare Workers上で動作する広告配信サーバー、Remix製の管理用UI、そしてクライアント側で使用する広告SDKが含まれます。
 
 ## プロジェクト構造
 
 ```txt
 video-ad-network/
 ├── apps/
-│   ├── ad-server/      # Cloudflare Workers 上の広告配信サーバー
-│   └── tracker/        # Fly.io 上のトラッキングサーバー
+│   └── ad-server/      # Cloudflare Workers 上の広告配信サーバー
+│   └── ui/             # 管理用UI
 ├── packages/
 │   └── ad-sdk/         # クライアント側の広告 SDK
-├── infra/
-│   └── flyio/
-│       └── tracker/    # Fly.io 関連の設定ファイル
+│   └── db/             # データベース関連
 └── README.md           # このファイル
 ```
 
@@ -40,9 +38,9 @@ video-ad-network/
 
 - Node.js (バージョン 20 以上)
 - pnpm (バージョン 9.11.0 以上)
-- Cloudflare アカウント (ad-server 用)
-- Google Cloud アカウント (BigQuery 用)
-- Fly.io アカウント (tracker 用)
+- Cloudflare アカウント (ad-server, ui用)
+- Turso アカウント (データベース用)
+- Clerk アカウント (認証用)
 
 ## セットアップ
 
@@ -61,54 +59,75 @@ video-ad-network/
 
 3. 各コンポーネントの設定を行います（以下のセクションを参照）。
 
-## D1データベースの設定（ad-server）
+## データベースの設定（ad-server）
 
-ad-serverアプリケーションでは、Cloudflare D1データベースを使用しています。ローカル開発環境でD1データベースを設定するには、以下の手順に従ってください：
+ad-serverアプリケーションでは、Tursoデータベースを使用しています。
 
-1. Cloudflare アカウントをお持ちでない場合は、作成してください。
-
-2. Wrangler CLI をインストールしていない場合は、以下のコマンドでインストールします:
+1. Turso CLI をインストールします:
 
    ```sh
-   pnpm add -g wrangler
+   curl -sSfL https://get.tur.so/install.sh | bash
    ```
 
-3. Wrangler で Cloudflare にログインします:
+2. Tursoにログインします:
 
    ```sh
-   wrangler login
+   turso auth login
    ```
 
-4. プロジェクトのルートディレクトリにいることを確認します。
-
-5. ローカルD1データベースを作成します:
+3. データベースを作成します:
 
    ```sh
-   pnpm --filter @video-ad-network/ad-server exec wrangler d1 create video-ad-network
+   turso db create video-ad-network
    ```
 
-6. `apps/ad-server/wrangler.toml`ファイルにD1データベースの設定を追加します:
+4. データベースのURLとトークンを取得します:
 
-   ```toml
-   [[d1_databases]]
-   binding = "DB"
-   database_name = "video-ad-network"
-   database_id = "<your_database_id>"
+   ```sh
+   turso db show video-ad-network --url
+   turso db tokens create video-ad-network
    ```
 
-   `<your_database_id>` は、データベース作成時に表示された ID に置き換えてください。
+5. `apps/ad-server/.dev.vars.example` を `apps/ad-server/.dev.vars` にリネームし、取得したURLとトークンを設定します:
 
-7. マイグレーションを実行します:
+   ```sh
+   TURSO_DATABASE_URL = "取得したURL"
+   TURSO_AUTH_TOKEN = "取得したトークン"
+   ```
+
+6. 本番環境用のデータベースを作成します。(本番環境用は別のリージョンのデータベースにするのがお勧めです)
+
+    ```sh
+   turso db create video-ad-network-prod --region nrt
+   ```
+
+7. 本番環境用のデータベースのURLとトークンを取得します。
+
+    ```sh
+   turso db show video-ad-network-prod --url
+   turso db tokens create video-ad-network-prod
+   ```
+
+8. 取得したURLとトークンを`apps/ad-server/wrangler.toml`に設定します。
+
+    ```sh
+    [vars]
+    TRACKER_ORIGIN = "https://ad-server.van.techtalk.jp"
+    TURSO_DATABASE_URL = "<your_production_database_url>" # ここ
+    TURSO_AUTH_TOKEN = "<your_production_auth_token>" # ここ
+    ```
+
+9. マイグレーションを実行します:
 
    ```sh
    pnpm --filter @video-ad-network/ad-server run db:migration:local
    ```
 
-8. シードデータを挿入します:
+10. シードデータを挿入します:
 
-   ```sh
-   pnpm --filter @video-ad-network/ad-server run db:seed:local
-   ```
+    ```sh
+    pnpm --filter @video-ad-network/ad-server run db:seed:local
+    ```
 
 注意: 本番環境にデプロイする際は、以下のコマンドを使用してください：
 
@@ -117,89 +136,29 @@ pnpm --filter @video-ad-network/ad-server run db:migration:remote
 pnpm --filter @video-ad-network/ad-server run db:seed:remote
 ```
 
-## BigQuery の初期設定（tracker）
+## Clerk の初期設定 (ui)
 
-tracker アプリケーションは BigQuery を使用してデータを保存します。以下の手順で BigQuery の初期設定を行ってください：
+uiアプリケーションでは、認証にClerkを使用しています。以下の手順でClerkの初期設定を行ってください：
 
-1. Google Cloud Console (https://console.cloud.google.com/) にアクセスし、新しいプロジェクトを作成するか、既存のプロジェクトを選択します。
+1. Clerkのアカウントを作成し、アプリケーションを作成します。
+2. アプリケーションダッシュボードから、`Publishable Key` と `Secret Key` を取得します。
+3. `apps/ui/.dev.vars.example`を`apps/ui/.dev.vars`にリネームし、取得したキーを設定します。
 
-2. 左側のメニューから「APIとサービス」>「ライブラリ」に移動し、"BigQuery API" を検索して有効にします。
+    ```sh
+    CLERK_PUBLISHABLE_KEY="取得したPublishable Key"
+    CLERK_SECRET_KEY="取得したSecret Key"
+    ```
 
-3. 左側のメニューから「IAMと管理」>「サービスアカウント」に移動し、新しいサービスアカウントを作成します。
+4. `apps/ui/wrangler.toml`に本番用のキーを設定します。
 
-4. サービスアカウントに「BigQuery 管理者」ロールを付与します。
-
-5. サービスアカウントの詳細ページで「鍵を作成」をクリックし、JSONキーをダウンロードします。
-
-6. プロジェクトのルートディレクトリに `.env` ファイルを作成し、以下の環境変数を設定します：
-
-   ```sh
-   BQ_SERVICE_ACCOUNT_CREDENTIALS=<one-line-json-content>
-   ```
-
-   `<one-line-json-content>` は、ダウンロードしたJSONキーファイルの内容を1行にしたものです。以下の手順で作成できます：
-
-   a. JSONファイルの内容をテキストエディタで開きます。
-
-   b. 全ての改行を削除し、内容を1行にします。
-
-   c. ダブルクォーテーション（"）の前にバックスラッシュ（\）を追加してエスケープします。
-
-   d. 結果として得られた1行のJSONを `BQ_SERVICE_ACCOUNT_CREDENTIALS` の値として使用します。
-
-   例：
-
-   ```sh
-   BQ_SERVICE_ACCOUNT_CREDENTIALS={"type":"service_account","project_id":"xxxxxx","private_key_id":"xxxxxxxxxxxxxxxxxxx","private_key":"-----BEGIN PRIVATE KEY-----\\nMIIE\\n-----END PRIVATE KEY-----\\n","client_email":"xxxxxxxxxxxxxxxxxxxxx@xxxxxxxxxxxxxxxxxxxxx.iam.gserviceaccount.com","client_id":"xxxxxxxxxxxxxxxxxxxxx","auth_uri":"https://accounts.google.com/o/oauth2/auth","token_uri":"https://oauth2.googleapis.com/token","auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs","client_x509_cert_url":"https://www.googleapis.com/robot/v1/metadata/x509/xxxxxxxxxx%40xxxxxxxxxx.iam.gserviceaccount.com","universe_domain":"googleapis.com"}
-   ```
-
-7. Google Cloud SDK をインストールしていない場合は、公式ドキュメント (https://cloud.google.com/sdk/docs/install) に従ってインストールしてください。
-
-8. BigQuery でデータセットを作成します。データセット名とプロジェクトIDは、アプリケーションのコードで指定されているものを使用してください。例：
-
-   ```sh
-   bq mk --dataset your-project-id:your-dataset-name
-   ```
-
-   `your-project-id` と `your-dataset-name` は、実際の値に置き換えてください。
-
-注意: プロジェクトIDとデータセット名がアプリケーションコード内で正しく設定されていることを確認してください。これらの値は環境変数ではなく、直接コード内で指定される場合があります。
-
-## Fly.io での tracker アプリケーションのセットアップ
-
-tracker アプリケーションを Fly.io にデプロイするには、以下の手順を実行してください：
-
-1. Fly.io アカウントをお持ちでない場合は、https://fly.io/ で作成してください。
-
-2. Fly CLI をインストールします。インストール方法は、オペレーティングシステムによって異なります。詳細は公式ドキュメント (https://fly.io/docs/hands-on/install-flyctl/) を参照してください。
-
-3. Fly.io にログインします：
-
-   ```sh
-   fly auth login
-   ```
-
-4. プロジェクトのルートディレクトリに移動します。
-
-5. tracker アプリケーション用の新しい Fly.io アプリを作成します：
-
-   ```sh
-   fly apps create video-ad-network-tracker
-   ```
-
-6. 必要なシークレットを設定します：
-
-   ```sh
-   fly secrets set BQ_SERVICE_ACCOUNT_CREDENTIALS="$(cat path/to/your/service-account-key.json)"
-   ```
-
-   `path/to/your/service-account-key.json` は、実際のサービスアカウントキーファイルのパスに置き換えてください。
-
-7. `infra/flyio/tracker/fly.toml` ファイルを確認し、必要に応じて設定を調整します。特に、アプリ名が正しいことを確認してください：
-
-   ```toml
-   app = "video-ad-network-tracker"
-   ```
+    ```sh
+    [vars]
+    TRACKER_ORIGIN = "https://ad-server.van.techtalk.jp"
+    CLERK_PUBLISHABLE_KEY = "<your_production_publishable_key>" # ここ
+    CLERK_SECRET_KEY = "<your_production_secret_key>" # ここ
+    TURSO_DATABASE_URL = "<your_production_database_url>"
+    TURSO_AUTH_TOKEN = "<your_production_auth_token>"
+    ```
 
 ## 開発
 
@@ -219,10 +178,10 @@ pnpm run dev
 pnpm --filter @video-ad-network/ad-server run dev
 ```
 
-### tracker
+### ui
 
 ```sh
-pnpm --filter @video-ad-network/tracker run dev
+pnpm --filter @video-ad-network/ui run dev
 ```
 
 ### ad-sdk
@@ -249,10 +208,10 @@ pnpm run build
 pnpm --filter @video-ad-network/ad-server run build
 ```
 
-### tracker
+### ui
 
 ```sh
-pnpm --filter @video-ad-network/tracker run build
+pnpm --filter @video-ad-network/ui run build
 ```
 
 ### ad-sdk
@@ -297,10 +256,10 @@ pnpm run test
 pnpm --filter @video-ad-network/ad-server run test
 ```
 
-### tracker
+### ui
 
 ```sh
-pnpm --filter @video-ad-network/tracker run test
+pnpm --filter @video-ad-network/ui run test
 ```
 
 ### ad-sdk
@@ -317,7 +276,7 @@ pnpm --filter @video-ad-network/ad-sdk run test
 pnpm run deploy
 ```
 
-これにより、`ad-server`と`tracker`の両方が順番にデプロイされます。
+これにより、`ad-server`と`ui`の両方が順番にデプロイされます。
 
 個別のアプリケーションをデプロイする場合は、以下のコマンドを使用します：
 
@@ -329,13 +288,13 @@ pnpm run deploy:ad-server
 
 このコマンドは、Cloudflare Workers に ad-server をデプロイします。デプロイ前に、Cloudflare の認証情報が正しく設定されていることを確認してください。
 
-### tracker のデプロイ
+### ui のデプロイ
 
 ```sh
-pnpm run deploy:tracker
+pnpm run deploy:ui
 ```
 
-このコマンドは、Fly.io に tracker をデプロイします。デプロイ前に、Fly.io の設定とシークレットが正しく設定されていることを確認してください。
+このコマンドは、Cloudflare Workers に ui をデプロイします。デプロイ前に、Cloudflare の認証情報が正しく設定されていることを確認してください。
 
 注意: 初回デプロイ時や設定変更時には、追加の手順や確認が必要な場合があります。各プラットフォーム（Cloudflare Workers, Fly.io）のドキュメントを参照してください。
 
