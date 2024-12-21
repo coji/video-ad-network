@@ -47,7 +47,7 @@
     "nprogress": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "react-router": "^7.0.0",
+    "react-router": "catalog:",
     "react-twc": "catalog:",
     "recharts": "catalog:",
     "remix-flat-routes": "catalog:",

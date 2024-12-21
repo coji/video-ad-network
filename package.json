@@ -10,6 +10,7 @@
     "lint": "turbo lint",
     "format": "turbo format",
     "test": "turbo test",
+    "validate": "turbo validate",
     "deploy": "run-s deploy:*",
     "deploy:ad-server": "pnpm run --filter @video-ad-network/ad-server deploy",
     "deploy:ui": "pnpm run --filter @video-ad-network/ui deploy"

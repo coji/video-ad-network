@@ -1,37 +1,41 @@
 {
-	"$schema": "https://turbo.build/schema.json",
-	"globalDependencies": [".env"],
-	"tasks": {
-		"build": {
-			"dependsOn": ["^build"],
-			"outputs": ["dist/**", "build/**"]
-		},
-		"deploy": {
-			"dependsOn": ["^deploy"],
-			"outputs": [],
-			"cache": false
-		},
-		"deploy#apps/ad-server": {
-			"dependsOn": ["build#packages/ad-sdk"],
-			"outputs": []
-		},
-		"dev": {
-			"dependsOn": [],
-			"outputs": ["dist/**"],
-			"cache": false,
-			"persistent": true
-		},
-		"lint": {
-			"dependsOn": ["^lint"],
-			"cache": false
-		},
-		"format": {
-			"dependsOn": ["^format"],
-			"cache": false
-		},
-		"test": {
-			"dependsOn": ["^test"],
-			"cache": false
-		}
-	}
+  "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": [".env"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", "build/**"]
+    },
+    "deploy": {
+      "dependsOn": ["^deploy"],
+      "outputs": [],
+      "cache": false
+    },
+    "deploy#apps/ad-server": {
+      "dependsOn": ["build#packages/ad-sdk"],
+      "outputs": []
+    },
+    "dev": {
+      "dependsOn": [],
+      "outputs": ["dist/**"],
+      "cache": false,
+      "persistent": true
+    },
+    "lint": {
+      "dependsOn": ["^lint"],
+      "cache": false
+    },
+    "format": {
+      "dependsOn": ["^format"],
+      "cache": false
+    },
+    "test": {
+      "dependsOn": ["^test"],
+      "cache": false
+    },
+    "validate": {
+      "dependsOn": ["^validate"],
+      "cache": false
+    }
+  }
 }
