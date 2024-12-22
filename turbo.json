@@ -6,14 +6,14 @@
       "dependsOn": ["^build"],
       "outputs": ["dist/**", "build/**"]
     },
+    "build#apps/ad-server": {
+      "dependsOn": ["build#packages/ad-sdk"],
+      "outputs": ["dist/apps/ad-server/**"]
+    },
     "deploy": {
       "dependsOn": ["^deploy"],
       "outputs": [],
       "cache": false
-    },
-    "deploy#apps/ad-server": {
-      "dependsOn": ["build#packages/ad-sdk"],
-      "outputs": []
     },
     "dev": {
       "dependsOn": [],
