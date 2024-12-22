@@ -510,6 +510,12 @@ importers:
       dotenv:
         specifier: 'catalog:'
         version: 16.4.7
+      prettier:
+        specifier: 3.4.2
+        version: 3.4.2
+      prettier-plugin-organize-imports:
+        specifier: 4.1.0
+        version: 4.1.0(prettier@3.4.2)(typescript@5.7.2)
       prisma:
         specifier: 'catalog:'
         version: 6.1.0

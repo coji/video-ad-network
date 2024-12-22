@@ -1,39 +1,42 @@
 {
-	"name": "@video-ad-network/db",
-	"version": "1.0.0",
-	"description": "",
-	"type": "module",
-	"main": "dist/index.js",
-	"types": "dist/index.d.ts",
-	"exports": {
-		".": {
-			"import": "./dist/src/index.js"
-		},
-		"./*": "./dist/src/*"
-	},
-	"scripts": {
-		"build": "tsc -b"
-	},
-	"keywords": [],
-	"author": "",
-	"license": "ISC",
-	"devDependencies": {
-		"@date-fns/utc": "catalog:",
-		"@types/node": "catalog:",
-		"date-fns": "catalog:",
-		"dotenv": "catalog:",
-		"prisma": "catalog:",
-		"prisma-kysely": "catalog:",
-		"tsx": "catalog:",
-		"typescript": "catalog:",
-		"zx": "catalog:"
-	},
-	"dependencies": {
-		"@date-fns/tz": "catalog:",
-		"@libsql/kysely-libsql": "catalog:",
-		"kysely": "catalog:"
-	},
-	"prisma": {
-		"seed": "tsx prisma/seed.ts"
-	}
+  "name": "@video-ad-network/db",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/src/index.js"
+    },
+    "./*": "./dist/src/*"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "format": "prettier --check ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@date-fns/utc": "catalog:",
+    "@types/node": "catalog:",
+    "date-fns": "catalog:",
+    "dotenv": "catalog:",
+    "prettier": "3.4.2",
+    "prettier-plugin-organize-imports": "4.1.0",
+    "prisma": "catalog:",
+    "prisma-kysely": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:",
+    "zx": "catalog:"
+  },
+  "dependencies": {
+    "@date-fns/tz": "catalog:",
+    "@libsql/kysely-libsql": "catalog:",
+    "kysely": "catalog:"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  }
 }
