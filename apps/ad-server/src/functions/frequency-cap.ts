@@ -1,5 +1,5 @@
 import type { Context } from 'hono'
-import { getCookie, setCookie } from 'hono/cookie'
+import { getCookie, type setCookie } from 'hono/cookie'
 
 export interface FrequencyData {
   [adGroupId: string]: {
@@ -8,7 +8,7 @@ export interface FrequencyData {
   }
 }
 
-export function parseFrequencyData(
+export function deserializeFrequencyData(
   cookieValue: string | undefined,
 ): FrequencyData {
   if (!cookieValue) return {}
@@ -19,7 +19,7 @@ export function parseFrequencyData(
   }
 }
 
-export function stringifyFrequencyData(data: FrequencyData): string {
+export function serializeFrequencyData(data: FrequencyData): string {
   return JSON.stringify(data)
 }
 
@@ -32,29 +32,7 @@ export const FREQUENCY_COOKIE_OPTIONS: Parameters<typeof setCookie>[3] = {
 
 export function getFrequencyData(c: Context): FrequencyData {
   const frequencyDataCookie = getCookie(c, 'ad_frequency')
-  return parseFrequencyData(frequencyDataCookie)
-}
-
-export function updateFrequencyData(
-  c: Context,
-  frequencyData: FrequencyData,
-  adGroupId: string,
-  now: number,
-  windowStartTime: number,
-): void {
-  if (!frequencyData[adGroupId]) {
-    frequencyData[adGroupId] = { count: 1, windowStartTime }
-  } else {
-    frequencyData[adGroupId].count++
-    // ウィンドウ開始時刻は変更しない
-  }
-
-  setCookie(
-    c,
-    'ad_frequency',
-    stringifyFrequencyData(frequencyData),
-    FREQUENCY_COOKIE_OPTIONS,
-  )
+  return deserializeFrequencyData(frequencyDataCookie)
 }
 
 function getCapWindowStart(
@@ -75,7 +53,7 @@ function getCapWindowStart(
 }
 
 // 広告がフリークエンシーキャップの条件を満たしているかを判定
-export function isAdSelectableWithFrequencyCap(
+export function canSelectAd(
   adFrequency: { count: number; windowStartTime: number } | undefined,
   frequencyCapImpressions: number,
   frequencyCapWindow: number,
@@ -87,7 +65,9 @@ export function isAdSelectableWithFrequencyCap(
     return true
 
   // フリークエンシーデータが存在しない場合は選択可能
-  if (!adFrequency) return true
+  if (!adFrequency) {
+    return true
+  }
 
   const capWindowStart = getCapWindowStart(
     currentTime,
@@ -102,15 +82,16 @@ export function isAdSelectableWithFrequencyCap(
   }
 
   // 現在のカウントがキャップ未満であれば選択可能
-  if (adFrequency.count < frequencyCapImpressions) return true
+  if (adFrequency.count < frequencyCapImpressions) {
+    return true
+  }
 
   // それ以外は選択不可
   return false
 }
 
 // 広告選択後にフリークエンシーデータを更新
-export function handleAdSelection(
-  c: Context,
+export function incrementFrequencyCount(
   frequencyData: FrequencyData,
   adGroupId: string,
   frequencyCapWindow: number,
@@ -130,15 +111,6 @@ export function handleAdSelection(
     // ウィンドウをリセット
     frequencyData[adGroupId] = { count: 1, windowStartTime: currentTime }
   } else {
-    // カウントをインクリメント
     frequencyData[adGroupId].count += 1
   }
-
-  // クッキーを更新
-  setCookie(
-    c,
-    'ad_frequency',
-    stringifyFrequencyData(frequencyData),
-    FREQUENCY_COOKIE_OPTIONS,
-  )
 }

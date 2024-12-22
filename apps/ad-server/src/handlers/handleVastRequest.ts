@@ -1,10 +1,12 @@
 import { getDB } from '@video-ad-network/db'
 import type { Context } from 'hono'
+import { getCookie, setCookie } from 'hono/cookie'
 import { saveAdEvent } from '~/functions/ad-events'
 import { selectAd } from '~/functions/ad-selection'
 import {
-  getFrequencyData,
-  updateFrequencyData,
+  deserializeFrequencyData,
+  incrementFrequencyCount,
+  serializeFrequencyData,
 } from '~/functions/frequency-cap'
 import { getAdSlot } from '~/functions/get-ad-slot'
 import { getCompanionBanners } from '~/functions/get-companion-banners'
@@ -14,6 +16,13 @@ import {
   validateVastRequest,
 } from '~/functions/vast-utils'
 
+function getRequestContext(c: Context) {
+  return {
+    ip: c.req.header('X-Forwarded-For') || 'unknown',
+    userAgent: c.req.header('User-Agent') || 'unknown',
+  }
+}
+
 export async function handleVastRequest(c: Context) {
   const { mediaId, adSlotId } = validateVastRequest(c)
   if (!mediaId || !adSlotId) {
@@ -21,7 +30,8 @@ export async function handleVastRequest(c: Context) {
   }
 
   const db = getDB(c.env)
-  const frequencyData = getFrequencyData(c)
+  const { ip, userAgent } = getRequestContext(c)
+  const frequencyData = deserializeFrequencyData(getCookie(c, 'ad_frequency'))
   const now = new Date()
 
   const adSlot = await getAdSlot(db, mediaId, adSlotId)
@@ -29,8 +39,8 @@ export async function handleVastRequest(c: Context) {
     await saveAdEvent(db, 'vast', {
       mediaId,
       adSlotId,
-      ipAddress: c.req.header('X-Forwarded-For') || 'unknown',
-      userAgent: c.req.header('User-Agent') || 'unknown',
+      ipAddress: ip,
+      userAgent,
       uid: '', // Populate as needed
     })
     return c.notFound()
@@ -48,8 +58,8 @@ export async function handleVastRequest(c: Context) {
     await saveAdEvent(db, 'vast', {
       mediaId,
       adSlotId,
-      ipAddress: c.req.header('X-Forwarded-For') || 'unknown',
-      userAgent: c.req.header('User-Agent') || 'unknown',
+      ipAddress: ip,
+      userAgent,
       uid: '', // Populate as needed
     })
     return c.notFound()
@@ -62,13 +72,20 @@ export async function handleVastRequest(c: Context) {
     campaignId: ad.campaignId,
     adGroupId: ad.adGroupId,
     adId: ad.id,
-    ipAddress: c.req.header('X-Forwarded-For') || 'unknown',
-    userAgent: c.req.header('User-Agent') || 'unknown',
+    ipAddress: ip,
+    userAgent,
     uid: '', // Populate as needed,
   })
 
   const companionBanners = await getCompanionBanners(db, ad.id)
-  updateFrequencyData(c, frequencyData, ad.id, now.getTime(), now.getTime())
+
+  incrementFrequencyCount(
+    frequencyData,
+    ad.adGroupId,
+    ad.frequencyCapWindow,
+    ad.frequencyCapUnit,
+    now.getTime(),
+  )
 
   const impressionId = crypto.randomUUID()
   const adServingId = crypto.randomUUID()
@@ -82,6 +99,8 @@ export async function handleVastRequest(c: Context) {
     impression_id: impressionId,
   })
   const vastXml = generateVastXml(ad, companionBanners, adServingId, trackers)
+
+  setCookie(c, 'ad_frequency', serializeFrequencyData(frequencyData))
 
   return c.body(vastXml, 200, {
     'Content-Type': 'application/xml',

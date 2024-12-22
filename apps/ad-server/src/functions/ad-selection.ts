@@ -1,6 +1,6 @@
 import type { DB, Kysely } from '@video-ad-network/db'
 import type { FrequencyData } from './frequency-cap'
-import { isAdSelectableWithFrequencyCap } from './frequency-cap'
+import { canSelectAd } from './frequency-cap'
 
 export interface AdCandidate {
   id: string
@@ -74,8 +74,8 @@ export async function selectAd(
 
   // Filter out ads that have reached their frequency cap
   const selectableAds = allAds.filter((ad) => {
-    return isAdSelectableWithFrequencyCap(
-      frequencyData[ad.id],
+    return canSelectAd(
+      frequencyData[ad.adGroupId],
       ad.frequencyCapImpressions,
       ad.frequencyCapWindow,
       ad.frequencyCapUnit,
