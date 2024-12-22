@@ -68,7 +68,7 @@ export async function handleVastRequest(c: Context) {
   })
 
   const companionBanners = await getCompanionBanners(db, ad.id)
-  updateFrequencyData(c, frequencyData, ad.id, now.getTime())
+  updateFrequencyData(c, frequencyData, ad.id, now.getTime(), now.getTime())
 
   const impressionId = crypto.randomUUID()
   const adServingId = crypto.randomUUID()
