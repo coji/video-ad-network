@@ -82,19 +82,19 @@ const seed = async () => {
     .insertInto('adSlots')
     .values([
       {
-        id: 'slot1',
+        id: 'adslot1',
         mediaId: 'media1',
         name: 'Tech Blog Video Slot',
         type: 'video',
       },
       {
-        id: 'slot2',
+        id: 'adslot2',
         mediaId: 'media2',
         name: 'News Site Audio Slot',
         type: 'audio',
       },
       {
-        id: 'slot3',
+        id: 'adslot3',
         mediaId: 'media1',
         name: 'Tech Blog Video Slot 2',
         type: 'video',
@@ -108,21 +108,21 @@ const seed = async () => {
     .values([
       {
         id: 'compslot1',
-        adSlotId: 'slot1',
+        adSlotId: 'adslot1',
         name: 'Companion Slot 1',
         width: 300,
         height: 250,
       },
       {
         id: 'compslot2',
-        adSlotId: 'slot2',
+        adSlotId: 'adslot2',
         name: 'Companion Slot 2',
         width: 300,
         height: 250,
       },
       {
         id: 'compslot3',
-        adSlotId: 'slot3',
+        adSlotId: 'adslot3',
         name: 'Companion Slot 3',
         width: 728,
         height: 90,
@@ -202,8 +202,8 @@ const seed = async () => {
         categories: null,
         bidPriceCpm: 2000,
         frequencyCapImpressions: 10,
-        frequencyCapWindow: 7,
-        frequencyCapUnit: 'DAY',
+        frequencyCapWindow: 1,
+        frequencyCapUnit: 'MINUTE',
         advertiserId: 'adv1',
         campaignId: 'camp1',
       },

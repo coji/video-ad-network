@@ -110,16 +110,6 @@ export async function selectAd(
     }
 
     if (canShow) {
-      if (adFrequency) {
-        if (adFrequency.count < ad.frequencyCapImpressions) {
-          frequencyData[ad.id].count += 1
-        } else {
-          frequencyData[ad.id] = { count: 1, lastSeen: currentTime }
-        }
-      } else {
-        frequencyData[ad.id] = { count: 1, lastSeen: currentTime }
-      }
-
       return ad
     }
   }
