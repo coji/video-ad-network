@@ -6,6 +6,7 @@ import {
   handleProgress,
   handleVastRequest,
 } from './handlers'
+import { uidMiddleware } from './middlewares/uid'
 
 interface Bindings {
   TRACKER_ORIGIN: string
@@ -15,6 +16,7 @@ interface Bindings {
 
 const app = new Hono<{ Bindings: Bindings }>()
 
+app.use('*', uidMiddleware)
 app.use(
   '/v1/vast',
   cors({
