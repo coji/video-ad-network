@@ -1,12 +1,5 @@
 import type { Context } from 'hono'
-import { getCookie, setCookie } from 'hono/cookie'
 import type { AdCandidate } from './ad-selection'
-import {
-  FREQUENCY_COOKIE_OPTIONS,
-  parseFrequencyData,
-  stringifyFrequencyData,
-  type FrequencyData,
-} from './frequency-cap'
 import type { CompanionBanner } from './get-companion-banners'
 
 // AdSystemの定数を定義
@@ -29,29 +22,6 @@ export function validateVastRequest(c: Context) {
   const mediaId = c.req.query('media_id')
   const adSlotId = c.req.query('ad_slot_id')
   return { mediaId, adSlotId }
-}
-
-export function getFrequencyData(c: Context) {
-  const frequencyDataCookie = getCookie(c, 'ad_frequency')
-  return parseFrequencyData(frequencyDataCookie)
-}
-
-export function updateFrequencyData(
-  c: Context,
-  frequencyData: FrequencyData,
-  adId: string,
-  now: number,
-) {
-  frequencyData[adId] = frequencyData[adId] || { count: 0, lastSeen: now }
-  frequencyData[adId].count += 1
-  frequencyData[adId].lastSeen = now
-
-  setCookie(
-    c,
-    'ad_frequency',
-    stringifyFrequencyData(frequencyData),
-    FREQUENCY_COOKIE_OPTIONS,
-  )
 }
 
 const buildUrl = (

@@ -1,14 +1,16 @@
 import { getDB } from '@video-ad-network/db'
 import type { Context } from 'hono'
+import { saveAdEvent } from '~/functions/ad-events'
 import { selectAd } from '~/functions/ad-selection'
+import {
+  getFrequencyData,
+  updateFrequencyData,
+} from '~/functions/frequency-cap'
 import { getAdSlot } from '~/functions/get-ad-slot'
 import { getCompanionBanners } from '~/functions/get-companion-banners'
-import { utcNow } from '~/functions/utc-now'
 import {
   generateTrackers,
   generateVastXml,
-  getFrequencyData,
-  updateFrequencyData,
   validateVastRequest,
 } from '~/functions/vast-utils'
 
@@ -24,20 +26,13 @@ export async function handleVastRequest(c: Context) {
 
   const adSlot = await getAdSlot(db, mediaId, adSlotId)
   if (!adSlot) {
-    await db
-      .insertInto('adEvents')
-      .values({
-        id: crypto.randomUUID(),
-        eventTimestamp: utcNow(now),
-        eventType: 'vast',
-        mediaId,
-        adSlotId,
-        ipAddress: c.req.header('X-Forwarded-For') || 'unknown',
-        userAgent: c.req.header('User-Agent') || 'unknown',
-        uid: '', // Populate as needed
-      })
-      .execute()
-      .catch(console.error)
+    await saveAdEvent(db, 'vast', {
+      mediaId,
+      adSlotId,
+      ipAddress: c.req.header('X-Forwarded-For') || 'unknown',
+      userAgent: c.req.header('User-Agent') || 'unknown',
+      uid: '', // Populate as needed
+    })
     return c.notFound()
   }
 
@@ -50,41 +45,27 @@ export async function handleVastRequest(c: Context) {
     adSlot.companionSizes,
   )
   if (!ad) {
-    await db
-      .insertInto('adEvents')
-      .values({
-        id: crypto.randomUUID(),
-        eventTimestamp: utcNow(now),
-        eventType: 'vast',
-        mediaId,
-        adSlotId,
-        ipAddress: c.req.header('X-Forwarded-For') || 'unknown',
-        userAgent: c.req.header('User-Agent') || 'unknown',
-        uid: '', // Populate as needed
-      })
-      .execute()
-      .catch(console.error)
-    return c.notFound()
-  }
-
-  await db
-    .insertInto('adEvents')
-    .values({
-      id: crypto.randomUUID(),
-      eventTimestamp: utcNow(now),
-      eventType: 'vast',
+    await saveAdEvent(db, 'vast', {
       mediaId,
       adSlotId,
-      advertiserId: ad.advertiserId,
-      campaignId: ad.campaignId,
-      adGroupId: ad.adGroupId,
-      adId: ad.id,
       ipAddress: c.req.header('X-Forwarded-For') || 'unknown',
       userAgent: c.req.header('User-Agent') || 'unknown',
       uid: '', // Populate as needed
     })
-    .execute()
-    .catch(console.error)
+    return c.notFound()
+  }
+
+  await saveAdEvent(db, 'vast', {
+    mediaId,
+    adSlotId,
+    advertiserId: ad.advertiserId,
+    campaignId: ad.campaignId,
+    adGroupId: ad.adGroupId,
+    adId: ad.id,
+    ipAddress: c.req.header('X-Forwarded-For') || 'unknown',
+    userAgent: c.req.header('User-Agent') || 'unknown',
+    uid: '', // Populate as needed,
+  })
 
   const companionBanners = await getCompanionBanners(db, ad.id)
   updateFrequencyData(c, frequencyData, ad.id, now.getTime())

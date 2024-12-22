@@ -1,5 +1,6 @@
 import type { DB, Kysely } from '@video-ad-network/db'
 import type { FrequencyData } from './frequency-cap'
+import { isAdSelectableWithFrequencyCap } from './frequency-cap'
 
 export interface AdCandidate {
   id: string
@@ -17,23 +18,6 @@ export interface AdCandidate {
   advertiserId: string
   adGroupId: string
   campaignId: string
-}
-
-function getCapWindowStart(
-  currentTime: number,
-  window: number,
-  unit: string,
-): number {
-  switch (unit) {
-    case 'MINUTE':
-      return currentTime - window * 60 * 1000
-    case 'HOUR':
-      return currentTime - window * 60 * 60 * 1000
-    case 'DAY':
-      return currentTime - window * 24 * 60 * 60 * 1000
-    default:
-      return currentTime - 24 * 60 * 60 * 1000
-  }
 }
 
 async function fetchAds(
@@ -79,40 +63,31 @@ async function fetchAds(
 }
 
 export async function selectAd(
-  db: Kysely<DB>, // Added db parameter
+  db: Kysely<DB>,
   currentTime: number,
   frequencyData: FrequencyData,
   categories: string[] | null,
   mediaType: string,
   companionSizes: { width: number; height: number }[],
 ): Promise<AdCandidate | null> {
-  const ads = await fetchAds(db, categories, mediaType, companionSizes)
+  const allAds = await fetchAds(db, categories, mediaType, companionSizes)
 
-  for (const ad of ads) {
-    const adFrequency = frequencyData[ad.id]
-    let canShow = false
+  // Filter out ads that have reached their frequency cap
+  const selectableAds = allAds.filter((ad) => {
+    return isAdSelectableWithFrequencyCap(
+      frequencyData[ad.id],
+      ad.frequencyCapImpressions,
+      ad.frequencyCapWindow,
+      ad.frequencyCapUnit,
+      currentTime,
+    )
+  })
 
-    if (!adFrequency) {
-      canShow = true
-    } else {
-      if (adFrequency.count < ad.frequencyCapImpressions) {
-        canShow = true
-      } else {
-        const capWindowStart = getCapWindowStart(
-          currentTime,
-          ad.frequencyCapWindow,
-          ad.frequencyCapUnit,
-        )
-        if (adFrequency.lastSeen < capWindowStart) {
-          canShow = true
-        }
-      }
-    }
-
-    if (canShow) {
-      return ad
-    }
+  // Select a random ad from the list of selectable ads
+  if (selectableAds.length > 0) {
+    return selectableAds[Math.floor(Math.random() * selectableAds.length)]
   }
 
+  // If no ads are selectable, return null
   return null
 }
