@@ -102,10 +102,7 @@ export async function handleVastRequest(c: Context) {
   })
   const vastXml = generateVastXml(ad, companionBanners, adServingId, trackers)
 
-  return new Response(vastXml, {
-    status: 200,
-    headers: {
-      'Content-Type': 'application/xml',
-    },
+  return c.body(vastXml, 200, {
+    'Content-Type': 'application/xml',
   })
 }
