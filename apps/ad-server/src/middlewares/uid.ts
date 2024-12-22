@@ -23,6 +23,9 @@ export const uidMiddleware: MiddlewareHandler = async (c, next) => {
   // レスポンスに 'uid' Cookie を設定
   setCookie(c, 'uid', uid, cookieOptions)
 
+  // コンテキストに 'uid' を設定
+  c.set('uid', uid)
+
   // 次のハンドラーに制御を移す
   await next()
 }

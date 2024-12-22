@@ -30,6 +30,7 @@ export async function handleVastRequest(c: Context) {
   }
 
   const db = getDB(c.env)
+  const uid = c.get('uid') as string
   const { ip, userAgent } = getRequestContext(c)
   const frequencyData = deserializeFrequencyData(getCookie(c, 'ad_frequency'))
   const now = new Date()
@@ -41,7 +42,7 @@ export async function handleVastRequest(c: Context) {
       adSlotId,
       ipAddress: ip,
       userAgent,
-      uid: '', // Populate as needed
+      uid,
     })
     return c.notFound()
   }
@@ -60,7 +61,7 @@ export async function handleVastRequest(c: Context) {
       adSlotId,
       ipAddress: ip,
       userAgent,
-      uid: '', // Populate as needed
+      uid,
     })
     return c.notFound()
   }
@@ -74,7 +75,7 @@ export async function handleVastRequest(c: Context) {
     adId: ad.id,
     ipAddress: ip,
     userAgent,
-    uid: '', // Populate as needed,
+    uid,
   })
 
   const companionBanners = await getCompanionBanners(db, ad.id)

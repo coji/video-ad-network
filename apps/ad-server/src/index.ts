@@ -14,7 +14,11 @@ interface Bindings {
   TURSO_AUTH_TOKEN: string
 }
 
-const app = new Hono<{ Bindings: Bindings }>()
+interface UIDState {
+  uid: string
+}
+
+const app = new Hono<{ Bindings: Bindings; State: UIDState }>()
 
 app.use('*', uidMiddleware)
 app.use(

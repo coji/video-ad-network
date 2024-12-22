@@ -15,6 +15,7 @@ export async function handleImpression(c: Context) {
   } = c.req.query()
 
   const db = getDB(c.env)
+  const uid = c.get('uid') as string
   await saveAdEvent(db, 'impression', {
     adSlotId,
     mediaId,
@@ -25,7 +26,7 @@ export async function handleImpression(c: Context) {
     impressionId,
     ipAddress: c.req.header('X-Forwarded-For') || 'unknown',
     userAgent: c.req.header('User-Agent') || 'unknown',
-    uid: '',
+    uid,
   }).catch(console.error)
 
   return c.body(PIXEL, 200, {

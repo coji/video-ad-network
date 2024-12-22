@@ -16,6 +16,7 @@ export async function handleProgress(c: Context) {
   } = c.req.query()
 
   const db = getDB(c.env)
+  const uid = c.get('uid') as string
   await saveAdEvent(db, 'progress', {
     adSlotId,
     mediaId,
@@ -27,7 +28,7 @@ export async function handleProgress(c: Context) {
     progress: String(progress),
     ipAddress: c.req.header('X-Forwarded-For') || 'unknown',
     userAgent: c.req.header('User-Agent') || 'unknown',
-    uid: '',
+    uid,
   })
 
   return c.body(PIXEL, 200, {

@@ -17,7 +17,9 @@ export async function handleClick(c: Context) {
   const isCompanion = c.req.query('is_companion') === 'true'
   const ipAddress = c.req.header('CF-Connecting-IP')
   const userAgent = c.req.header('User-Agent')
+
   const db = getDB(c.env)
+  const uid = c.get('uid') as string
 
   // リダイレクト先を取得
   let clickThroughUrl: string
@@ -69,7 +71,7 @@ export async function handleClick(c: Context) {
     impressionId,
     ipAddress: ipAddress ?? 'unknown',
     userAgent: userAgent ?? 'unknown',
-    uid: '', // Populate as needed
+    uid,
   }).catch(console.error)
 
   return clickThroughUrl !== ''
