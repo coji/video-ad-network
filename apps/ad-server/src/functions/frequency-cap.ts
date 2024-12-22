@@ -25,9 +25,10 @@ export function stringifyFrequencyData(data: FrequencyData): string {
   return JSON.stringify(data)
 }
 
+console.log(process.env)
 export const FREQUENCY_COOKIE_OPTIONS: Parameters<typeof setCookie>[3] = {
   maxAge: 365 * 24 * 60 * 60, // 1年間
   httpOnly: true,
-  secure: true,
+  secure: process.env.NODE_ENV !== 'development',
   sameSite: 'Lax',
 }
