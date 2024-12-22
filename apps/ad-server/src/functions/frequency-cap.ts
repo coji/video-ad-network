@@ -26,7 +26,7 @@ export function stringifyFrequencyData(data: FrequencyData): string {
 }
 
 export const FREQUENCY_COOKIE_OPTIONS: Parameters<typeof setCookie>[3] = {
-  maxAge: 30 * 24 * 60 * 60, // 30日間
+  maxAge: 10 * 365 * 24 * 60 * 60, // 10年間
   httpOnly: true,
   secure: true,
   sameSite: 'Lax',
