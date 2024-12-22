@@ -1,29 +1,31 @@
 {
-	"name": "@video-ad-network/ad-sdk",
-	"version": "1.0.0",
-	"description": "",
-	"type": "module",
-	"main": "dist/ad-sdk.js",
-	"scripts": {
-		"dev": "vite --mode development --open /example/index.html",
-		"build": "vite build",
-		"build:dev": "tsc && vite build --mode development",
-		"preview": "vite preview",
-		"lint": "biome lint .",
-		"format": "biome format .",
-		"test": "vitest"
-	},
-	"keywords": [],
-	"author": "",
-	"license": "ISC",
-	"devDependencies": {
-		"@biomejs/biome": "catalog:",
-		"@types/node": "catalog:",
-		"typescript": "catalog:",
-		"vite": "catalog:",
-		"vitest": "catalog:"
-	},
-	"dependencies": {
-		"fast-xml-parser": "catalog:"
-	}
+  "name": "@video-ad-network/ad-sdk",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "dist/ad-sdk.js",
+  "scripts": {
+    "dev": "vite --mode development --open /example/index.html",
+    "build": "vite build",
+    "build:dev": "tsc && vite build --mode development",
+    "preview": "vite preview",
+    "lint": "biome lint .",
+    "format": "prettier --check .",
+    "test": "vitest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@biomejs/biome": "catalog:",
+    "@types/node": "catalog:",
+    "prettier": "3.4.2",
+    "prettier-plugin-organize-imports": "4.1.0",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:"
+  },
+  "dependencies": {
+    "fast-xml-parser": "catalog:"
+  }
 }

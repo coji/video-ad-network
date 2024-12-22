@@ -1,59 +1,60 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ad SDK Example</title>
     <style>
-        #ad-container {
-          background-color: #f0f0f0;
-          margin: 20px auto;
-        }
-        #companion-container {
-          width: 300px;
-          height: 250px;
-          background-color: #e0e0e0;
-          margin: 20px auto;
-        }
-        button {
-          display: block;
-          margin: 20px auto;
-        }
+      #ad-container {
+        background-color: #f0f0f0;
+        margin: 20px auto;
+      }
+      #companion-container {
+        width: 300px;
+        height: 250px;
+        background-color: #e0e0e0;
+        margin: 20px auto;
+      }
+      button {
+        display: block;
+        margin: 20px auto;
+      }
     </style>
-</head>
-<body>
-  <h1>Ad SDK Example</h1>
-  <div id="ad-container"></div>
+  </head>
+  <body>
+    <h1>Ad SDK Example</h1>
+    <div id="ad-container"></div>
 
-  <button id="play" type="button">Play</button>
+    <button id="play" type="button">Play</button>
 
-  <div id="companion-container"></div>
+    <div id="companion-container"></div>
 
+    <script type="module">
+      import { initializeAdSDK, play, pause, setVolume } from '../src/index.ts'
 
-  <script type="module">
-    import { initializeAdSDK, play, pause, setVolume } from '../src/index.ts';
+      async function loadAd() {
+        const searchParams = new URLSearchParams(window.location.search)
+        const mediaId = searchParams.get('mediaId') ?? 'media1'
+        const adSlotId = searchParams.get('adSlotId') ?? 'slot1'
 
-    async function loadAd() {
-      const searchParams = new URLSearchParams(window.location.search);
-      const mediaId = searchParams.get('mediaId') ?? 'media1';
-      const adSlotId = searchParams.get('adSlotId') ?? 'slot1';
+        const adContainer = document.getElementById('ad-container')
+        const companionContainer = document.getElementById(
+          'companion-container',
+        )
+        const playButton = document.getElementById('play')
 
-      const adContainer = document.getElementById('ad-container');
-      const companionContainer = document.getElementById('companion-container');
-      const playButton = document.getElementById('play');
+        try {
+          const adState = await initializeAdSDK({
+            mediaId,
+            adSlotId,
+            containerElement: adContainer,
+            companionContainer: companionContainer,
+          })
+          console.log('Ad State:', adState)
 
-      try {
-        const adState = await initializeAdSDK({
-          mediaId,
-          adSlotId,
-          containerElement: adContainer,
-          companionContainer: companionContainer
-        });
-        console.log('Ad State:', adState);
-
-        playButton.addEventListener('click', () => {
-            play(adState);
-        })
+          playButton.addEventListener('click', () => {
+            play(adState)
+          })
 
           // 広告の再生
           // play(adState);
@@ -70,13 +71,12 @@
           // setTimeout(() => {
           //     play(adState);
           // }, 10000);
-
-      } catch (error) {
-        console.error('Error loading ad:', error);
+        } catch (error) {
+          console.error('Error loading ad:', error)
+        }
       }
-    }
 
-    loadAd();
-  </script>
-</body>
+      loadAd()
+    </script>
+  </body>
 </html>

@@ -1,2 +1,2 @@
 export { initializeAdSDK } from './init'
-export { play, pause, setVolume } from './player'
+export { pause, play, setVolume } from './player'
