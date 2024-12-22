@@ -1,5 +1,6 @@
 import { getDB } from '@video-ad-network/db'
 import type { Context } from 'hono'
+import { saveAdEvent } from '~/functions/ad-events'
 import { utcNow } from '~/functions/utc-now'
 
 export async function handleClick(c: Context) {
@@ -56,26 +57,20 @@ export async function handleClick(c: Context) {
       clickThroughUrl,
     })
     .execute()
-
-  await db
-    .insertInto('adEvents')
-    .values({
-      id: crypto.randomUUID(),
-      eventTimestamp: utcNow(),
-      mediaId,
-      adSlotId,
-      advertiserId,
-      campaignId,
-      adGroupId,
-      adId,
-      impressionId,
-      eventType: 'click',
-      ipAddress: c.req.header('X-Forwarded-For') || 'unknown',
-      userAgent: c.req.header('User-Agent') || 'unknown',
-      uid: '', // Populate as needed
-    })
-    .execute()
     .catch(console.error)
+
+  saveAdEvent(db, 'click', {
+    mediaId,
+    adSlotId,
+    advertiserId,
+    campaignId,
+    adGroupId,
+    adId,
+    impressionId,
+    ipAddress: ipAddress ?? 'unknown',
+    userAgent: userAgent ?? 'unknown',
+    uid: '', // Populate as needed
+  }).catch(console.error)
 
   return clickThroughUrl !== ''
     ? c.redirect(clickThroughUrl)

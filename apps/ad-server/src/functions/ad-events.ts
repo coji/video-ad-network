@@ -18,5 +18,4 @@ export async function saveAdEvent(
       uid: eventData.uid || '',
     })
     .execute()
-    .catch(console.error)
 }
