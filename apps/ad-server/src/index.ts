@@ -1,10 +1,11 @@
-import { getDB } from '@video-ad-network/db'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
-import { PIXEL } from './functions/pixel'
-import { utcNow } from './functions/utc-now'
-import { handleClick } from './handlers/handleClick'
-import { handleVastRequest } from './handlers/handleVastRequest'
+import {
+  handleClick,
+  handleImpression,
+  handleProgress,
+  handleVastRequest,
+} from './handlers'
 
 interface Bindings {
   TRACKER_ORIGIN: string
@@ -28,85 +29,7 @@ app.use(
 
 app.get('/v1/vast', handleVastRequest)
 app.get('/v1/click', handleClick)
-
-// Impressionエンドポイント
-app.get('/v1/impression', async (c) => {
-  const {
-    media_id: mediaId,
-    ad_slot_id: adSlotId,
-    advertiser_id: advertiserId,
-    campaign_id: campaignId,
-    ad_group_id: adGroupId,
-    ad_id: adId,
-    impression_id: impressionId,
-  } = c.req.query()
-
-  const db = getDB(c.env)
-  await db
-    .insertInto('adEvents')
-    .values({
-      id: crypto.randomUUID(),
-      eventTimestamp: utcNow(),
-      eventType: 'impression',
-      adSlotId,
-      mediaId,
-      advertiserId,
-      campaignId,
-      adGroupId,
-      adId,
-      impressionId,
-      ipAddress: c.req.header('X-Forwarded-For') || 'unknown',
-      userAgent: c.req.header('User-Agent') || 'unknown',
-      uid: '', // Populate as needed
-    })
-    .execute()
-    .catch(console.error)
-
-  return c.body(PIXEL, 200, {
-    'Content-Type': 'image/gif',
-    'Cache-Control': 'no-store, no-cache, must-revalidate, private',
-  })
-})
-
-// Progressエンドポイント
-app.get('/v1/progress', async (c) => {
-  const {
-    media_id: mediaId,
-    ad_slot_id: adSlotId,
-    advertiser_id: advertiserId,
-    campaign_id: campaignId,
-    ad_group_id: adGroupId,
-    ad_id: adId,
-    impression_id: impressionId,
-    progress,
-  } = c.req.query()
-
-  const db = getDB(c.env)
-  await db
-    .insertInto('adEvents')
-    .values({
-      id: crypto.randomUUID(),
-      eventTimestamp: utcNow(),
-      eventType: 'progress',
-      adSlotId,
-      mediaId,
-      advertiserId,
-      campaignId,
-      adGroupId,
-      adId,
-      impressionId,
-      progress: Number(progress),
-      ipAddress: c.req.header('X-Forwarded-For') || 'unknown',
-      userAgent: c.req.header('User-Agent') || 'unknown',
-      uid: '', // Populate as needed
-    })
-    .execute()
-    .catch(console.error)
-
-  return c.body(PIXEL, 200, {
-    'Content-Type': 'image/gif',
-    'Cache-Control': 'no-store, no-cache, must-revalidate, private',
-  })
-})
+app.get('/v1/impression', handleImpression)
+app.get('/v1/progress', handleProgress)
 
 export default app
