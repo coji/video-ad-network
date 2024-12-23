@@ -1,0 +1,8 @@
+
+CLERK_PUBLISHABLE_KEY=pk_test_your_clerk_publishable_key
+CLERK_SECRET_KEY=sk_test_your_clerk_secret_key
+
+TURSO_DATABASE_URL=file:../../data/dev.db
+
+
+

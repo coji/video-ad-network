@@ -1,1 +1,2 @@
 TRACKER_ORIGIN = "http://localhost:5173"
+TURSO_DATABASE_URL=file:../../data/dev.db
