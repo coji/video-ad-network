@@ -5,6 +5,7 @@ import { saveAdEvent } from '~/functions/ad-events'
 import { selectAd } from '~/functions/ad-selection'
 import {
   deserializeFrequencyData,
+  FREQUENCY_COOKIE_OPTIONS,
   incrementFrequencyCount,
   serializeFrequencyData,
 } from '~/functions/frequency-cap'
@@ -101,7 +102,12 @@ export async function handleVastRequest(c: Context) {
   })
   const vastXml = generateVastXml(ad, companionBanners, adServingId, trackers)
 
-  setCookie(c, 'ad_frequency', serializeFrequencyData(frequencyData))
+  setCookie(
+    c,
+    'ad_frequency',
+    serializeFrequencyData(frequencyData),
+    FREQUENCY_COOKIE_OPTIONS,
+  )
 
   return c.body(vastXml, 200, {
     'Content-Type': 'application/xml',

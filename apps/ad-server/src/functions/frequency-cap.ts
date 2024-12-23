@@ -24,10 +24,11 @@ export function serializeFrequencyData(data: FrequencyData): string {
 }
 
 export const FREQUENCY_COOKIE_OPTIONS: Parameters<typeof setCookie>[3] = {
-  maxAge: 365 * 24 * 60 * 60, // 1年間
-  httpOnly: true,
-  secure: process.env.NODE_ENV !== 'development',
-  sameSite: 'Lax',
+  httpOnly: true, // JavaScript からのアクセスを防止
+  secure: true, // HTTPS のみ送信
+  sameSite: 'None' as const, // 3rd パーティー Cookie のため 'None' を設定
+  path: '/', // Cookie の有効パス
+  maxAge: 60 * 60 * 24 * 365, // 1 年間有効
 }
 
 export function getFrequencyData(c: Context): FrequencyData {
