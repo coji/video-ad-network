@@ -61,7 +61,7 @@ export async function handleClick(c: Context) {
     .execute()
     .catch(console.error)
 
-  saveAdEvent(db, 'click', {
+  await saveAdEvent(db, 'click', {
     mediaId,
     adSlotId,
     advertiserId,
