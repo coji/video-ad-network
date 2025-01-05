@@ -488,9 +488,6 @@ importers:
 
   packages/db:
     dependencies:
-      '@date-fns/tz':
-        specifier: 'catalog:'
-        version: 1.2.0
       '@libsql/kysely-libsql':
         specifier: 'catalog:'
         version: 0.4.1(kysely@0.27.5)
@@ -498,6 +495,9 @@ importers:
         specifier: 'catalog:'
         version: 0.27.5
     devDependencies:
+      '@date-fns/tz':
+        specifier: 'catalog:'
+        version: 1.2.0
       '@date-fns/utc':
         specifier: 'catalog:'
         version: 2.1.0
@@ -9299,7 +9299,7 @@ snapshots:
 
   eval@0.1.8:
     dependencies:
-      '@types/node': 22.10.2
+      '@types/node': 22.10.5
       require-like: 0.1.2
 
   event-target-shim@5.0.1: {}

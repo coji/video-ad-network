@@ -19,6 +19,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@date-fns/tz": "catalog:",
     "@date-fns/utc": "catalog:",
     "@types/node": "catalog:",
     "date-fns": "catalog:",
@@ -32,7 +33,6 @@
     "zx": "catalog:"
   },
   "dependencies": {
-    "@date-fns/tz": "catalog:",
     "@libsql/kysely-libsql": "catalog:",
     "kysely": "catalog:"
   },
