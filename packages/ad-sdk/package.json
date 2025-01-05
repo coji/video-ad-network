@@ -18,8 +18,8 @@
   "devDependencies": {
     "@biomejs/biome": "catalog:",
     "@types/node": "catalog:",
-    "prettier": "3.4.2",
-    "prettier-plugin-organize-imports": "4.1.0",
+    "prettier": "catalog:",
+    "prettier-plugin-organize-imports": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:"

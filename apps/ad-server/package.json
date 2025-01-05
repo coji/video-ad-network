@@ -23,8 +23,8 @@
     "@hono/vite-build": "catalog:",
     "@hono/vite-dev-server": "catalog:",
     "cloudflare-workeres": "link:@hono/vite-build/cloudflare-workeres",
-    "prettier": "3.4.2",
-    "prettier-plugin-organize-imports": "4.1.0",
+    "prettier": "catalog:",
+    "prettier-plugin-organize-imports": "catalog:",
     "vite": "catalog:",
     "vite-tsconfig-paths": "catalog:",
     "wrangler": "catalog:"
