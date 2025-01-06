@@ -20,6 +20,7 @@ CREATE TABLE "organization_memberships" (
     "user_id" TEXT NOT NULL,
     "organization_id" TEXT NOT NULL,
     "role" TEXT NOT NULL,
+    "permissions" TEXT NOT NULL,
     "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "organization_memberships_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,

@@ -52,8 +52,10 @@
     "recharts": "catalog:",
     "remix-flat-routes": "catalog:",
     "sonner": "catalog:",
+    "svix": "1.45.1",
     "tailwind-merge": "catalog:",
     "tailwindcss-animate": "catalog:",
+    "ts-pattern": "5.6.0",
     "vaul": "catalog:"
   },
   "devDependencies": {

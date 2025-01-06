@@ -15,7 +15,7 @@ generator kysely {
 model User {
   id          String                   @unique // Clerk's user ID
   email       String                   @unique
-  membersnhip OrganizationMembership[]
+  membership  OrganizationMembership[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
@@ -43,6 +43,7 @@ model OrganizationMembership {
   userId         String       @map("user_id")
   organizationId String       @map("organization_id")
   role           String
+  permissions    String       // JSON Array
   user           User         @relation(fields: [userId], references: [id])
   organization   Organization @relation(fields: [organizationId], references: [id])
 

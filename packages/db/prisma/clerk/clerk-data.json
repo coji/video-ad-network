@@ -1,0 +1,56 @@
+{
+  "users": [
+    {
+      "id": "user_2rFPe5ONBdHtQleFAfBVUx43uR8",
+      "email": "user2@example.com"
+    },
+    {
+      "id": "user_2rFPcBRylFehcsm00sWYJTN6DAo",
+      "email": "user1@example.com"
+    },
+    {
+      "id": "user_2p0icGPI17aD9h3NkSOE7S1NQXv",
+      "email": "coji@techtalk.jp"
+    }
+  ],
+  "organizations": [
+    {
+      "id": "org_2p0uzBZsCLmDvjPXbHQ0aHYqPfO",
+      "name": "News Ltd"
+    },
+    {
+      "id": "org_2p0ig9GEwwaSUAeYtXRQXecp8iB",
+      "name": "Tech Corp"
+    }
+  ],
+  "organizationMemberships": [
+    {
+      "id": "orgmem_2rFQ7SNgWXqFA8ch4BwzE3gRzA5",
+      "userId": "user_2rFPe5ONBdHtQleFAfBVUx43uR8",
+      "organizationId": "org_2p0ig9GEwwaSUAeYtXRQXecp8iB",
+      "role": "org:member",
+      "permissions": "[\"org:sys_memberships:read\"]"
+    },
+    {
+      "id": "orgmem_2rFQ5amG0LDDIKqeGZvWMFBkXMR",
+      "userId": "user_2rFPcBRylFehcsm00sWYJTN6DAo",
+      "organizationId": "org_2p0uzBZsCLmDvjPXbHQ0aHYqPfO",
+      "role": "org:member",
+      "permissions": "[\"org:sys_memberships:read\"]"
+    },
+    {
+      "id": "orgmem_2p0uz6at2koOGpCOihsbjpOUT43",
+      "userId": "user_2p0icGPI17aD9h3NkSOE7S1NQXv",
+      "organizationId": "org_2p0uzBZsCLmDvjPXbHQ0aHYqPfO",
+      "role": "org:admin",
+      "permissions": "[\"org:sys_profile:manage\",\"org:sys_profile:delete\",\"org:sys_memberships:read\",\"org:sys_memberships:manage\",\"org:sys_domains:read\",\"org:sys_domains:manage\"]"
+    },
+    {
+      "id": "orgmem_2p0ig7lAoxamTFV3CxM8kL0aLpO",
+      "userId": "user_2p0icGPI17aD9h3NkSOE7S1NQXv",
+      "organizationId": "org_2p0ig9GEwwaSUAeYtXRQXecp8iB",
+      "role": "org:admin",
+      "permissions": "[\"org:sys_profile:manage\",\"org:sys_profile:delete\",\"org:sys_memberships:read\",\"org:sys_memberships:manage\",\"org:sys_domains:read\",\"org:sys_domains:manage\"]"
+    }
+  ]
+}
