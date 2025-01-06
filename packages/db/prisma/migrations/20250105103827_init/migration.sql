@@ -3,7 +3,7 @@ CREATE TABLE "users" (
     "id" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" DATETIME NOT NULL
+    "updated_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- CreateTable
@@ -11,7 +11,7 @@ CREATE TABLE "organizations" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "name" TEXT NOT NULL,
     "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" DATETIME NOT NULL
+    "updated_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- CreateTable
@@ -21,7 +21,7 @@ CREATE TABLE "organization_memberships" (
     "organization_id" TEXT NOT NULL,
     "role" TEXT NOT NULL,
     "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" DATETIME NOT NULL,
+    "updated_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "organization_memberships_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "organization_memberships_organization_id_fkey" FOREIGN KEY ("organization_id") REFERENCES "organizations" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
@@ -33,7 +33,7 @@ CREATE TABLE "medias" (
     "categories" TEXT,
     "organization_id" TEXT NOT NULL,
     "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" DATETIME NOT NULL,
+    "updated_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "medias_organization_id_fkey" FOREIGN KEY ("organization_id") REFERENCES "organizations" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
@@ -44,7 +44,7 @@ CREATE TABLE "ad_slots" (
     "media_id" TEXT NOT NULL,
     "type" TEXT NOT NULL,
     "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" DATETIME NOT NULL,
+    "updated_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "ad_slots_media_id_fkey" FOREIGN KEY ("media_id") REFERENCES "medias" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
@@ -56,7 +56,7 @@ CREATE TABLE "companion_slots" (
     "width" INTEGER NOT NULL,
     "height" INTEGER NOT NULL,
     "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" DATETIME NOT NULL,
+    "updated_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "companion_slots_ad_slot_id_fkey" FOREIGN KEY ("ad_slot_id") REFERENCES "ad_slots" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
@@ -66,7 +66,7 @@ CREATE TABLE "advertisers" (
     "name" TEXT NOT NULL,
     "organization_id" TEXT NOT NULL,
     "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" DATETIME NOT NULL,
+    "updated_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "advertisers_organization_id_fkey" FOREIGN KEY ("organization_id") REFERENCES "organizations" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
@@ -84,7 +84,7 @@ CREATE TABLE "campaigns" (
     "remaining_budget" DECIMAL NOT NULL DEFAULT 0,
     "status" TEXT NOT NULL DEFAULT 'ACTIVE',
     "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" DATETIME NOT NULL,
+    "updated_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "campaigns_advertiser_id_fkey" FOREIGN KEY ("advertiser_id") REFERENCES "advertisers" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
@@ -100,7 +100,7 @@ CREATE TABLE "ad_groups" (
     "advertiser_id" TEXT NOT NULL,
     "campaign_id" TEXT NOT NULL,
     "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" DATETIME NOT NULL,
+    "updated_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "ad_groups_advertiser_id_fkey" FOREIGN KEY ("advertiser_id") REFERENCES "advertisers" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "ad_groups_campaign_id_fkey" FOREIGN KEY ("campaign_id") REFERENCES "campaigns" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
@@ -119,7 +119,7 @@ CREATE TABLE "ads" (
     "click_through_url" TEXT NOT NULL,
     "description" TEXT,
     "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" DATETIME NOT NULL,
+    "updated_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "ads_advertiser_id_fkey" FOREIGN KEY ("advertiser_id") REFERENCES "advertisers" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "ads_ad_group_id_fkey" FOREIGN KEY ("ad_group_id") REFERENCES "ad_groups" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
@@ -134,16 +134,19 @@ CREATE TABLE "companion_banners" (
     "mime_type" TEXT,
     "click_through_url" TEXT,
     "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" DATETIME NOT NULL,
+    "updated_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "companion_banners_ad_id_fkey" FOREIGN KEY ("ad_id") REFERENCES "ads" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
 CREATE TABLE "clicks" (
     "id" TEXT NOT NULL PRIMARY KEY,
-    "ad_id" TEXT NOT NULL,
     "ad_slot_id" TEXT NOT NULL,
     "media_id" TEXT NOT NULL,
+    "advertiser_id" TEXT NOT NULL,
+    "campaign_id" TEXT NOT NULL,
+    "ad_group_id" TEXT NOT NULL,
+    "ad_id" TEXT NOT NULL,
     "timestamp" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "ip_address" TEXT NOT NULL,
     "user_agent" TEXT NOT NULL,
@@ -152,7 +155,7 @@ CREATE TABLE "clicks" (
     "uid" TEXT NOT NULL,
     "click_through_url" TEXT NOT NULL,
     "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" DATETIME NOT NULL
+    "updated_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- CreateTable
@@ -160,10 +163,13 @@ CREATE TABLE "ad_events" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "event_timestamp" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "event_type" TEXT NOT NULL,
-    "ad_id" TEXT NOT NULL,
-    "ad_slot_id" TEXT NOT NULL,
-    "media_id" TEXT NOT NULL,
-    "impression_id" TEXT NOT NULL,
+    "media_id" TEXT,
+    "ad_slot_id" TEXT,
+    "advertiser_id" TEXT,
+    "campaign_id" TEXT,
+    "ad_group_id" TEXT,
+    "ad_id" TEXT,
+    "impression_id" TEXT,
     "progress" INTEGER,
     "ip_address" TEXT NOT NULL,
     "user_agent" TEXT NOT NULL,
@@ -183,7 +189,7 @@ CREATE TABLE "daily_reports" (
     "clicks" INTEGER NOT NULL DEFAULT 0,
     "reach" INTEGER NOT NULL DEFAULT 0,
     "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" DATETIME NOT NULL
+    "updated_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- CreateIndex
