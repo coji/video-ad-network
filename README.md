@@ -90,12 +90,13 @@ ad-serverアプリケーションでは、本番環境では分散SQLiteデー�
    TURSO_AUTH_TOKEN=your_auth_token_here
    ```
 
-2. ui アプリのローカル開発環境での環境変数設定を行います。`apps/ui/.dev.vars.example` を `apps/ui/.dev.vars` にコピーし、取得した clerk のキーを設定します。Clerk webhook secret は組織やユーザの追加・削除を動作テストするときに必要になりますが、ここを設定しなくてもその部分以外は動作はします。
+2. ui アプリのローカル開発環境での環境変数設定を行います。`apps/ui/.dev.vars.example` を `apps/ui/.dev.vars` にコピーし、取得した React Router 用の Clerk のキーを設定します。Clerk webhook secret は組織やユーザの追加・削除を動作テストするときに必要になりますが、ここを設定しなくてもその部分以外は動作はします。
 
     ```sh
     TURSO_DATABASE_URL=file:../../data/dev.db
     TURSO_AUTH_TOKEN=your_turso_auth_token
 
+    VITE_CLERK_PUBLISHABLE_KEY="取得したPublishable Key"
     CLERK_SECRET_KEY="取得したSecret Key"
     CLERK_WEBHOOK_SECRET="取得した Webhook Secret Key"
     ```
