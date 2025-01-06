@@ -33,6 +33,7 @@
     "zx": "catalog:"
   },
   "dependencies": {
+    "@clerk/react-router": "0.1.5",
     "@libsql/kysely-libsql": "catalog:",
     "kysely": "catalog:"
   },

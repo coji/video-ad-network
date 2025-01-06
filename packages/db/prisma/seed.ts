@@ -2,6 +2,7 @@ import { TZDate } from '@date-fns/tz'
 import { format } from 'date-fns'
 import dotenv from 'dotenv'
 import { getDB } from '~/index'
+import { importClerkObjects } from './clerk/import-clark-objects'
 dotenv.config()
 const tz = 'Asia/Tokyo'
 
@@ -11,52 +12,8 @@ const seed = async () => {
     TURSO_AUTH_TOKEN: '',
   })
 
-  // users
-  const users = await db
-    .insertInto('users')
-    .values([
-      {
-        id: 'user_2p0icGPI17aD9h3NkSOE7S1NQXv',
-        email: 'user1@example.com',
-      },
-    ])
-    .returningAll()
-    .execute()
-
-  // organizations
-  const orgs = await db
-    .insertInto('organizations')
-    .values([
-      {
-        id: 'org_2p0ig9GEwwaSUAeYtXRQXecp8iB',
-        name: 'Tech Corp',
-      },
-      {
-        id: 'org_2p0uzBZsCLmDvjPXbHQ0aHYqPfO',
-        name: 'News Ltd',
-      },
-    ])
-    .returningAll()
-    .execute()
-
-  // organization memberships
-  await db
-    .insertInto('organizationMemberships')
-    .values([
-      {
-        id: 'mem1',
-        userId: users[0].id,
-        organizationId: orgs[0].id,
-        role: 'admin',
-      },
-      {
-        id: 'mem2',
-        userId: users[0].id,
-        organizationId: orgs[1].id,
-        role: 'member',
-      },
-    ])
-    .execute()
+  const { users, organizations, organizationMemberships } =
+    await importClerkObjects(db)
 
   // medias
   await db
@@ -64,13 +21,13 @@ const seed = async () => {
     .values([
       {
         id: 'media1',
-        organizationId: orgs[0].id,
+        organizationId: organizations[0].id,
         name: 'Tech Blog 1',
         categories: JSON.stringify(['tech', 'blog']),
       },
       {
         id: 'media2',
-        organizationId: orgs[1].id,
+        organizationId: organizations[1].id,
         name: 'News',
         categories: JSON.stringify(['entertainment']),
       },
@@ -137,12 +94,12 @@ const seed = async () => {
       {
         id: 'adv1',
         name: 'Tech Corp',
-        organizationId: orgs[0].id,
+        organizationId: organizations[0].id,
       },
       {
         id: 'adv2',
         name: 'News Ltd',
-        organizationId: orgs[1].id,
+        organizationId: organizations[1].id,
       },
     ])
     .execute()

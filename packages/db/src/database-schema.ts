@@ -149,6 +149,7 @@ export type OrganizationMembership = {
     userId: string;
     organizationId: string;
     role: string;
+    permissions: string;
     createdAt: Generated<string>;
     updatedAt: Generated<string>;
 };

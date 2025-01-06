@@ -1,8 +1,7 @@
 
 CLERK_PUBLISHABLE_KEY=pk_test_your_clerk_publishable_key
 CLERK_SECRET_KEY=sk_test_your_clerk_secret_key
+CLERK_WEBHOOK_SECRET=whsec_your_clerk_webhook_secret
 
 TURSO_DATABASE_URL=file:../../data/dev.db
-
-
-
+TURSO_AUTH_TOKEN=your_turso_auth_token
