@@ -42,6 +42,7 @@ export const createOrgamizationMembershipOps = (db: Kysely<DB>) => {
         organizationId: organization.id,
         userId: user.id,
         role: event.data.role,
+        permissions: JSON.stringify(event.data.permissions),
       })
       .onConflict((oc) =>
         oc.column('id').doUpdateSet((eb) => ({
