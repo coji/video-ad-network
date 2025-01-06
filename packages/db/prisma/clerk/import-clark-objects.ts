@@ -3,7 +3,7 @@ import type { DB, Kysely } from '~/index'
 import clerkObjects from './clerk-data.json'
 
 export const importClerkObjects = async (db: Kysely<DB>) => {
-  if (clerkObjects.users.length < 2) {
+  if (clerkObjects.users.length < 1) {
     throw new Error(
       'At least two users are required. You should create users on clerk: https://clerk.com/',
     )
@@ -13,7 +13,7 @@ export const importClerkObjects = async (db: Kysely<DB>) => {
       'At least one organization is required. You should create organizations on clerk: https://clerk.com/',
     )
   }
-  if (clerkObjects.organizationMemberships.length < 2) {
+  if (clerkObjects.organizationMemberships.length < 1) {
     throw new Error(
       'At least one organization membership is required. You should create organization memberships on clerk: https://clerk.com/',
     )
