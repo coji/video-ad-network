@@ -6,20 +6,18 @@
 1. [概要](#概要)
 2. [プロジェクト構造](#プロジェクト構造)
 3. [必要条件](#必要条件)
-4. [セットアップ](#セットアップ)
-5. [データベースの設定（ad-server）](#データベースの設定ad-server)
-6. [Clerk の初期設定 (ui)](#clerk-の初期設定-ui)
-7. [開発](#開発)
-8. [ビルド](#ビルド)
-9. [リンティングとフォーマット](#リンティングとフォーマット)
-10. [テスト](#テスト)
-11. [デプロイ](#デプロイ)
-12. [貢献](#貢献)
-13. [ライセンス](#ライセンス)
+4. [開発環境の設定](#開発環境の設定)
+5. [開発](#開発)
+6. [ビルド](#ビルド)
+7. [リンティングとフォーマット](#リンティングとフォーマット)
+8. [テスト](#テスト)
+9. [デプロイ](#デプロイ)
+10. [貢献](#貢献)
+11. [ライセンス](#ライセンス)
 
 ## 概要
 
-このプロジェクトは、ビデオ広告ネットワークのためのマイクロサービスアーキテクチャを採用したシステムです。広告配信サーバー、管理用UI、SDKなどの機能を提供します。主要コンポーネントには、Cloudflare Workers上で動作する広告配信サーバー、Remix製の管理用UI、そしてクライアント側で使用する広告SDKが含まれます。
+このプロジェクトは、動画・音声広告ネットワークのためのマイクロサービスアーキテクチャを採用したシステムです。広告配信サーバー、管理用UI、SDKなどの機能を提供します。主要コンポーネントには、Cloudflare Workers上で動作する広告配信サーバー、React Router v7製の管理用UI、そしてクライアント側で使用する広告SDKが含まれます。
 
 ## プロジェクト構造
 
@@ -36,13 +34,15 @@ video-ad-network/
 
 ## 必要条件
 
-- Node.js (バージョン 20 以上)
-- pnpm (バージョン 9.11.0 以上)
-- Cloudflare アカウント (ad-server, ui用)
-- Turso アカウント (データベース用)
-- Clerk アカウント (認証用)
+- Node.js (バージョン 20 以上) [mise](https://zenn.dev/light_planck/articles/mise-node-20240603) を使ってインストールするのをオススメします。
+- pnpm (バージョン 9.11.0 以上) Node.js インストール後に `npm i -g pnpm` でインストールしてください。
+- [Cloudflare](https://www.cloudflare.com/ja-jp/) アカウント (広告配信サーバー, 管理UI用)
+- [Turso](https://turso.tech/) アカウント (データベース)
+- [Clerk](https://clerk.com/) アカウント (管理UI認証用)
 
-## セットアップ
+## 開発環境の設定
+
+### コードベースの準備
 
 1. リポジトリをクローンします:
 
@@ -59,9 +59,175 @@ video-ad-network/
 
 3. 各コンポーネントの設定を行います（以下のセクションを参照）。
 
-## データベースの設定（ad-server）
+### Clerk Development 環境の準備 (開発チームごとに、初回のみ必要)
 
-ad-serverアプリケーションでは、Tursoデータベースを使用しています。
+Clerk でアカウントを作成し、今回のアプリケーションを新たに作成します。
+ローカル開発環境での初期 organization / user を作成するために、Clerk アプリケーション作成直後に準備されている "Development" インスタンスで以下の設定を行います。
+
+1. Users で開発者全員のユーザアカウントを招待/作成します。
+2. Enable Organizations (Default ability to delete, Allow users to create organizations を無効に)
+3. 開発環境での seed データとして使うため、Organization を適当な名前で２つ作成します。slug は空欄で構いません。
+4. 作成した２つの Organization それぞれの設定にて、 public organization metadata に以下を設定することで、管理UIでの広告主メニュー・媒体社メニューそれぞれを有効にします。
+
+    ```json
+    {
+      "isMedia": true,
+      "isAdvertiser": true
+    }
+    ```
+
+5. 作成した Organization それぞれで、1. で作成した開発者個人のユーザアカウントを member として追加します。role は Admin にしてください。
+
+### 開発時環境変数を設定
+
+ad-serverアプリケーションでは、本番環境では分散SQLiteデータベースである Turso を使用しますが、ローカル開発環境では SQLite を使用します。ここではローカル開発環境での準備を行います。
+
+1. ad-server アプリのローカル開発環境での環境変数設定を行います。 `apps/ad-server/.dev.vars.example` を `apps/ad-server/.dev.vars` にコピーします。
+
+   ```sh
+   TRACKER_ORIGIN = "http://localhost:5173"
+   TURSO_DATABASE_URL=file:../../data/dev.db
+   TURSO_AUTH_TOKEN=your_auth_token_here
+   ```
+
+2. ui アプリのローカル開発環境での環境変数設定を行います。`apps/ui/.dev.vars.example` を `apps/ui/.dev.vars` にコピーし、取得した clerk のキーを設定します。Clerk webhook secret は組織やユーザの追加・削除を動作テストするときに必要になりますが、ここを設定しなくてもその部分以外は動作はします。
+
+    ```sh
+    TURSO_DATABASE_URL=file:../../data/dev.db
+    TURSO_AUTH_TOKEN=your_turso_auth_token
+
+    CLERK_SECRET_KEY="取得したSecret Key"
+    CLERK_WEBHOOK_SECRET="取得した Webhook Secret Key"
+    ```
+
+3. データベースモジュールのローカル開発環境での環境変数設定を行います。`packages/db/.env.example` を `packages/db/.env` にコピーし、取得した Clerk のキーを設定します。seed データの作成のために Clerk のキーが必要になります。
+
+    ```sh
+    DATABASE_URL=file:../../data/dev.db
+    CLERK_SECRET_KEY="取得したSecret Key"
+    ```
+
+### ローカル開発用データベースの準備
+
+ローカル開発用の SQLite データベースの準備するには、以下のコマンドを実行します:
+
+```sh
+pnpm -C packages/db exec prisma migrate reset
+```
+
+## 開発
+
+プロジェクト全体の開発サーバーを起動するには、以下のコマンドを実行します:
+
+```sh
+pnpm run dev
+```
+
+これにより、ローカルにて、すべてのアプリケーションの開発サーバーが並行して起動されます。
+
+起動したら以下のURLをブラウザで開いて動作確認をしてください。
+
+http://localhost:5173/index.html
+
+各アプリケーションの開発サーバーを個別に起動する場合は、以下のコマンドを使用します:
+
+### ad-server
+
+```sh
+pnpm --filter @video-ad-network/ad-server run dev
+```
+
+### ui
+
+```sh
+pnpm --filter @video-ad-network/ui run dev
+```
+
+### ad-sdk
+
+```sh
+pnpm --filter @video-ad-network/ad-sdk run dev
+```
+
+## ビルド
+
+プロジェクト全体をビルドするには、以下のコマンドを実行します:
+
+```sh
+pnpm run build
+```
+
+これにより、Turboを使用して全てのアプリケーションがビルドされます。
+
+各アプリケーションを個別にビルドする場合は、以下のコマンドを使用します:
+
+### ビルド: ad-server
+
+```sh
+pnpm --filter @video-ad-network/ad-server run build
+```
+
+### ビルド: ui
+
+```sh
+pnpm --filter @video-ad-network/ui run build
+```
+
+### ビルド: ad-sdk
+
+```sh
+pnpm --filter @video-ad-network/ad-sdk run build
+```
+
+## リンティングとフォーマット
+
+コードのリンティングとフォーマットを行うには、以下のコマンドを実行します:
+
+### リンティング
+
+```sh
+pnpm run lint
+```
+
+### フォーマット
+
+```sh
+pnpm run format
+```
+
+これらのコマンドは、Turboを使用してすべてのパッケージとアプリケーションに対してリンティングとフォーマットを実行します。
+
+## テスト
+
+プロジェクト全体のテストを実行するには、以下のコマンドを使用します:
+
+```sh
+pnpm run test
+```
+
+これにより、Turboを使用して全てのアプリケーションのテストが実行されます。
+
+各アプリケーションのテストを個別に実行する場合は、以下のコマンドを使用します:
+
+### テスト: ad-server
+
+```sh
+pnpm --filter @video-ad-network/ad-server run test
+```
+
+### テスト: ui
+
+```sh
+pnpm --filter @video-ad-network/ui run test
+```
+
+### テスト: ad-sdk
+
+```sh
+pnpm --filter @video-ad-network/ad-sdk run test
+```
+
+## 本番環境の設定
 
 1. Turso CLI をインストールします:
 
@@ -88,189 +254,9 @@ ad-serverアプリケーションでは、Tursoデータベースを使用して
    turso db tokens create video-ad-network
    ```
 
-5. `apps/ad-server/.dev.vars.example` を `apps/ad-server/.dev.vars` にリネームし、取得したURLとトークンを設定します:
-
-   ```sh
-   TURSO_DATABASE_URL = "取得したURL"
-   TURSO_AUTH_TOKEN = "取得したトークン"
-   ```
-
-6. 本番環境用のデータベースを作成します。(本番環境用は別のリージョンのデータベースにするのがお勧めです)
-
-    ```sh
-   turso db create video-ad-network-prod --region nrt
-   ```
-
-7. 本番環境用のデータベースのURLとトークンを取得します。
-
-    ```sh
-   turso db show video-ad-network-prod --url
-   turso db tokens create video-ad-network-prod
-   ```
-
-8. 取得したURLとトークンを`apps/ad-server/wrangler.toml`に設定します。
-
-    ```sh
-    [vars]
-    TRACKER_ORIGIN = "https://ad-server.van.techtalk.jp"
-    TURSO_DATABASE_URL = "<your_production_database_url>" # ここ
-    TURSO_AUTH_TOKEN = "<your_production_auth_token>" # ここ
-    ```
-
-9. マイグレーションを実行します:
-
-   ```sh
-   pnpm --filter @video-ad-network/ad-server run db:migration:local
-   ```
-
-10. シードデータを挿入します:
-
-    ```sh
-    pnpm --filter @video-ad-network/ad-server run db:seed:local
-    ```
-
-注意: 本番環境にデプロイする際は、以下のコマンドを使用してください：
-
-```sh
-pnpm --filter @video-ad-network/ad-server run db:migration:remote
-pnpm --filter @video-ad-network/ad-server run db:seed:remote
-```
-
-## Clerk の初期設定 (ui)
-
-uiアプリケーションでは、認証にClerkを使用しています。以下の手順でClerkの初期設定を行ってください：
-
-1. Clerkのアカウントを作成し、アプリケーションを作成します。
-2. アプリケーションダッシュボードから、`Publishable Key` と `Secret Key` を取得します。
-3. `apps/ui/.dev.vars.example`を`apps/ui/.dev.vars`にリネームし、取得したキーを設定します。
-
-    ```sh
-    CLERK_PUBLISHABLE_KEY="取得したPublishable Key"
-    CLERK_SECRET_KEY="取得したSecret Key"
-    ```
-
-4. `apps/ui/wrangler.toml`に本番用のキーを設定します。
-
-    ```sh
-    [vars]
-    TRACKER_ORIGIN = "https://ad-server.van.techtalk.jp"
-    CLERK_PUBLISHABLE_KEY = "<your_production_publishable_key>" # ここ
-    CLERK_SECRET_KEY = "<your_production_secret_key>" # ここ
-    TURSO_DATABASE_URL = "<your_production_database_url>"
-    TURSO_AUTH_TOKEN = "<your_production_auth_token>"
-    ```
-
-## 開発
-
-プロジェクト全体の開発サーバーを起動するには、以下のコマンドを実行します：
-
-```sh
-pnpm run dev
-```
-
-これにより、Turboを使用して全てのアプリケーションの開発サーバーが並行して起動されます。
-
-各アプリケーションの開発サーバーを個別に起動する場合は、以下のコマンドを使用します：
-
-### ad-server
-
-```sh
-pnpm --filter @video-ad-network/ad-server run dev
-```
-
-### ui
-
-```sh
-pnpm --filter @video-ad-network/ui run dev
-```
-
-### ad-sdk
-
-```sh
-pnpm --filter @video-ad-network/ad-sdk run dev
-```
-
-## ビルド
-
-プロジェクト全体をビルドするには、以下のコマンドを実行します：
-
-```sh
-pnpm run build
-```
-
-これにより、Turboを使用して全てのアプリケーションがビルドされます。
-
-各アプリケーションを個別にビルドする場合は、以下のコマンドを使用します：
-
-### ad-server
-
-```sh
-pnpm --filter @video-ad-network/ad-server run build
-```
-
-### ui
-
-```sh
-pnpm --filter @video-ad-network/ui run build
-```
-
-### ad-sdk
-
-```sh
-pnpm --filter @video-ad-network/ad-sdk run build
-```
-
-## リンティングとフォーマット
-
-コードのリンティングとフォーマットを行うには、以下のコマンドを実行します：
-
-### リンティング
-
-```sh
-pnpm run lint
-```
-
-### フォーマット
-
-```sh
-pnpm run format
-```
-
-これらのコマンドは、Turboを使用してすべてのパッケージとアプリケーションに対してリンティングとフォーマットを実行します。
-
-## テスト
-
-プロジェクト全体のテストを実行するには、以下のコマンドを使用します：
-
-```sh
-pnpm run test
-```
-
-これにより、Turboを使用して全てのアプリケーションのテストが実行されます。
-
-各アプリケーションのテストを個別に実行する場合は、以下のコマンドを使用します：
-
-### ad-server
-
-```sh
-pnpm --filter @video-ad-network/ad-server run test
-```
-
-### ui
-
-```sh
-pnpm --filter @video-ad-network/ui run test
-```
-
-### ad-sdk
-
-```sh
-pnpm --filter @video-ad-network/ad-sdk run test
-```
-
 ## デプロイ
 
-プロジェクト全体をデプロイするには、以下のコマンドを実行します：
+プロジェクト全体をデプロイするには、以下のコマンドを実行します:
 
 ```sh
 pnpm run deploy
@@ -278,7 +264,7 @@ pnpm run deploy
 
 これにより、`ad-server`と`ui`の両方が順番にデプロイされます。
 
-個別のアプリケーションをデプロイする場合は、以下のコマンドを使用します：
+個別のアプリケーションをデプロイする場合は、以下のコマンドを使用します:
 
 ### ad-server のデプロイ
 
@@ -300,7 +286,7 @@ pnpm run deploy:ui
 
 ## 貢献
 
-プロジェクトへの貢献は大歓迎です。以下の手順に従ってください：
+プロジェクトへの貢献は大歓迎です。以下の手順に従ってください:
 
 1. このリポジトリをフォークします。
 2. 新しいブランチを作成します（`git checkout -b feature/AmazingFeature`）。

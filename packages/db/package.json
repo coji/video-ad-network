@@ -38,6 +38,6 @@
     "kysely": "catalog:"
   },
   "prisma": {
-    "seed": "tsx prisma/seed.ts"
+    "seed": "tsx --env-file .env prisma/seed.ts"
   }
 }

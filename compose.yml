@@ -1,7 +1,0 @@
-services:
-  sqld:
-    image: ghcr.io/libsql/sqld:latest
-    ports:
-      - "8080:8080"
-    volumes:
-      - ./data/sqld:/var/lib/sqld
