@@ -29,7 +29,7 @@ model Organization {
   name        String                   @unique
   membership  OrganizationMembership[]
   advertisers Advertiser[]             @relation
-  medias      Media[]                  @relation
+  media       Media[]                  @relation
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
@@ -68,7 +68,7 @@ model Media {
   organization Organization @relation(fields: [organizationId], references: [id])
 
   @@index([organizationId])
-  @@map("medias")
+  @@map("media")
 }
 
 model AdSlot {

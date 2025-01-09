@@ -170,7 +170,7 @@ export type DB = {
     companionBanners: CompanionBanner;
     companionSlots: CompanionSlot;
     dailyReports: DailyReport;
-    medias: Media;
+    media: Media;
     organizationMemberships: OrganizationMembership;
     organizations: Organization;
     users: User;

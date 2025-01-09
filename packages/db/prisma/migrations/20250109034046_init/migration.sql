@@ -28,14 +28,14 @@ CREATE TABLE "organization_memberships" (
 );
 
 -- CreateTable
-CREATE TABLE "medias" (
+CREATE TABLE "media" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "name" TEXT NOT NULL,
     "categories" TEXT,
     "organization_id" TEXT NOT NULL,
     "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT "medias_organization_id_fkey" FOREIGN KEY ("organization_id") REFERENCES "organizations" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "media_organization_id_fkey" FOREIGN KEY ("organization_id") REFERENCES "organizations" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -46,7 +46,7 @@ CREATE TABLE "ad_slots" (
     "type" TEXT NOT NULL,
     "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT "ad_slots_media_id_fkey" FOREIGN KEY ("media_id") REFERENCES "medias" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "ad_slots_media_id_fkey" FOREIGN KEY ("media_id") REFERENCES "media" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -215,10 +215,10 @@ CREATE INDEX "organization_memberships_user_id_idx" ON "organization_memberships
 CREATE INDEX "organization_memberships_organization_id_idx" ON "organization_memberships"("organization_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "medias_name_key" ON "medias"("name");
+CREATE UNIQUE INDEX "media_name_key" ON "media"("name");
 
 -- CreateIndex
-CREATE INDEX "medias_organization_id_idx" ON "medias"("organization_id");
+CREATE INDEX "media_organization_id_idx" ON "media"("organization_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "ad_slots_name_key" ON "ad_slots"("name");

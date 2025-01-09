@@ -7,13 +7,13 @@ export const getAdSlot = async (
 ) => {
   const adSlot = await db
     .selectFrom('adSlots')
-    .innerJoin('medias', 'adSlots.mediaId', 'medias.id')
+    .innerJoin('media', 'adSlots.mediaId', 'media.id')
     .select([
       'adSlots.id',
       'adSlots.mediaId',
       'adSlots.name',
       'adSlots.type',
-      'medias.categories as categories',
+      'media.categories as categories',
     ])
     .where('adSlots.id', '==', adSlotId)
     .where('adSlots.mediaId', '==', mediaId)
