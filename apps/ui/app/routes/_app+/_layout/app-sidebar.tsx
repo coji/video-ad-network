@@ -96,7 +96,7 @@ export function AppSidebar() {
             <SidebarGroupLabel>Media</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                <SidebarMenuItemLink to="/media/medias">
+                <SidebarMenuItemLink to="/media/media">
                   <NewspaperIcon />
                   メディア
                 </SidebarMenuItemLink>

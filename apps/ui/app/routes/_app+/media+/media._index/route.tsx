@@ -20,25 +20,25 @@ import type { Route } from './+types/route'
 export const loader = async (args: Route.LoaderArgs) => {
   const user = await requireOrgUser(args)
   const db = getDB(args.context.cloudflare.env)
-  const medias = await db
-    .selectFrom('medias')
-    .innerJoin('adSlots', 'medias.id', 'adSlots.mediaId')
+  const media = await db
+    .selectFrom('media')
+    .innerJoin('adSlots', 'media.id', 'adSlots.mediaId')
     .select([
-      'medias.id',
-      'medias.name',
-      'medias.categories',
+      'media.id',
+      'media.name',
+      'media.categories',
       (eb) => eb.fn('count', [eb.ref('adSlots.id')]).as('adSlotCount'),
     ])
-    .where('medias.organizationId', '==', user.orgId)
-    .groupBy('medias.id')
+    .where('media.organizationId', '==', user.orgId)
+    .groupBy('media.id')
     .limit(100)
     .execute()
 
-  return { medias }
+  return { media }
 }
 
-export default function MediasIndexPage({
-  loaderData: { medias },
+export default function MediaIndexPage({
+  loaderData: { media },
 }: Route.ComponentProps) {
   return (
     <Card>
@@ -57,13 +57,13 @@ export default function MediasIndexPage({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {medias.map((media) => (
-              <TableRow key={media.id}>
-                <TableCell>{media.id}</TableCell>
-                <TableCell>{media.name}</TableCell>
+            {media.map((medium) => (
+              <TableRow key={medium.id}>
+                <TableCell>{medium.id}</TableCell>
+                <TableCell>{medium.name}</TableCell>
                 <TableCell>
                   <HStack>
-                    {(media?.categories as unknown as string[] | null)?.map(
+                    {(medium.categories as unknown as string[] | null)?.map(
                       (category) => {
                         return (
                           <Badge key={category} variant="outline">
@@ -75,7 +75,7 @@ export default function MediasIndexPage({
                   </HStack>
                 </TableCell>
                 <TableCell>
-                  {media.adSlotCount}
+                  {medium.adSlotCount}
                   <small>枠</small>
                 </TableCell>
               </TableRow>

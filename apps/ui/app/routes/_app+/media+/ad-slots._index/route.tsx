@@ -21,14 +21,14 @@ export const loader = async (args: Route.LoaderArgs) => {
   const db = getDB(args.context.cloudflare.env)
   const adSlots = await db
     .selectFrom('adSlots')
-    .innerJoin('medias', 'medias.id', 'adSlots.mediaId')
+    .innerJoin('media', 'media.id', 'adSlots.mediaId')
     .innerJoin('companionSlots', 'adSlots.id', 'companionSlots.adSlotId')
     .select([
       'adSlots.id',
       'adSlots.name',
       'adSlots.type',
-      'medias.id as mediaAId',
-      'medias.name as mediaName',
+      'media.id as mediaAId',
+      'media.name as mediaName',
       (eb) =>
         eb.fn('count', [eb.ref('companionSlots.id')]).as('companionSlotCount'),
       // サイズ
@@ -37,14 +37,14 @@ export const loader = async (args: Route.LoaderArgs) => {
           'companionSlotSizes',
         ),
     ])
-    .where('medias.organizationId', '==', user.orgId)
+    .where('media.organizationId', '==', user.orgId)
     .limit(100)
     .execute()
 
   return { adSlots }
 }
 
-export default function MediasIndexPage({
+export default function MediaIndexPage({
   loaderData: { adSlots },
 }: Route.ComponentProps) {
   return (

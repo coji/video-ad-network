@@ -15,9 +15,9 @@ const seed = async () => {
   const { users, organizations, organizationMemberships } =
     await importClerkObjects(db)
 
-  // medias
+  // media
   await db
-    .insertInto('medias')
+    .insertInto('media')
     .values([
       {
         id: 'media1',
@@ -198,7 +198,7 @@ const seed = async () => {
         advertiserId: 'adv1',
         adGroupId: 'ag1',
         type: 'video',
-        url: 'https://pub-0bf554d65e60408bb58720ed5b08a665.r2.dev/example/ads/example_video1.mp4',
+        url: 'http://localhost:5173/example/ads/example_video1.mp4',
         duration: 15,
         mimeType: 'video/mp4',
         clickThroughUrl: 'https://example.com/ad/1',
@@ -209,7 +209,7 @@ const seed = async () => {
         advertiserId: 'adv2',
         adGroupId: 'ag2',
         type: 'audio',
-        url: 'https://pub-0bf554d65e60408bb58720ed5b08a665.r2.dev/example/ads/example_audio1.m4a',
+        url: 'http://localhost:5173/example/ads/example_audio1.m4a',
         duration: 37,
         mimeType: 'audio/x-m4a',
         clickThroughUrl: 'https://example.com/ad/2',
@@ -220,7 +220,7 @@ const seed = async () => {
         advertiserId: 'adv1',
         adGroupId: 'ag1',
         type: 'video',
-        url: 'https://pub-0bf554d65e60408bb58720ed5b08a665.r2.dev/example/ads/example_video2.mp4',
+        url: 'http://localhost:5173/example/ads/example_video2.mp4',
         duration: 14,
         mimeType: 'video/mp4',
         clickThroughUrl: 'https://example.com/ad/3',
@@ -236,7 +236,7 @@ const seed = async () => {
       {
         id: 'cb1',
         adId: 'ad1',
-        url: 'https://pub-0bf554d65e60408bb58720ed5b08a665.r2.dev/example/ads/example_companion_banner1.png',
+        url: 'http://localhost:5173/example/ads/example_companion_banner1.png',
         width: 300,
         height: 250,
         mimeType: 'image/png',
@@ -245,7 +245,7 @@ const seed = async () => {
       {
         id: 'cb2',
         adId: 'ad2',
-        url: 'https://pub-0bf554d65e60408bb58720ed5b08a665.r2.dev/example/ads/example_companion_banner2.png',
+        url: 'http://localhost:5173/example/ads/example_companion_banner2.png',
         width: 300,
         height: 250,
         mimeType: 'image/png',
@@ -254,7 +254,7 @@ const seed = async () => {
       {
         id: 'cb3',
         adId: 'ad3',
-        url: 'https://pub-0bf554d65e60408bb58720ed5b08a665.r2.dev/example/ads/example_companion_banner3.png',
+        url: 'http://localhost:5173/example/ads/example_companion_banner3.png',
         width: 728,
         height: 90,
         mimeType: 'image/png',
