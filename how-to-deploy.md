@@ -16,7 +16,7 @@ turso db create video-ad-network
 出力
 
 ```sh
-Created database admel at group default in 6.487s.
+Created database video-ad-network at group default in 6.487s.
 
 Start an interactive SQL shell with:
 
@@ -76,9 +76,9 @@ aB3-dE5fG7hI9jK1lM2nO4pQ6rS8tU0vW1xY.3zA5bC7dE9-fG0hI2jK4lM6nO8pQ0rS2tU4vW6xY8zA
 
 Cloudflare Workers で使う secret や環境変数を設定します。
 
-secret はWorkers アプリでサーバ側環境変数として取得できる内容ですが、内容が暗号化され Cloudflare 側に保存されるものです。admel-server では、Turso の DB アクセス情報や、Clerk のキーを secret で定義して使います。
+secret はWorkers アプリでサーバ側環境変数として取得できる内容ですが、内容が暗号化され Cloudflare 側に保存されるものです。ad-server では、Turso の DB アクセス情報や、Clerk のキーを secret で定義して使います。
 
-環境変数は secret と似ていますが、公開される情報です。admel-server は TRACKER_ORIGIN というトラッキングのためのオリジンURLを環境変数で設定するようになっています。
+環境変数は secret と似ていますが、公開される情報です。ad-server は TRACKER_ORIGIN というトラッキングのためのオリジンURLを環境変数で設定するようになっています。
 
 以下、リポジトリルートディレクトリで、ターミナルを使って作業します。
 
@@ -106,7 +106,7 @@ pnpm -C apps/ad-server exec wrangler secret put TURSO_DATABASE_URL
 `? Enter a secret value:` と表示されるので、Turso のデータベースURLを入力します。
 
 ```sh
-? Enter a secret value: libsql://admel-mizoguchicoji.turso.io
+? Enter a secret value: libsql://video-ad-network-mizoguchicoji.turso.io
 ```
 
 ※ 実際に入力した値は *** でマスクされます。
