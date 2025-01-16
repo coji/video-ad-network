@@ -16,6 +16,8 @@
   },
   "dependencies": {
     "@clerk/react-router": "catalog:",
+    "@conform-to/react": "1.2.2",
+    "@conform-to/zod": "1.2.2",
     "@date-fns/tz": "catalog:",
     "@date-fns/utc": "catalog:",
     "@radix-ui/react-accordion": "catalog:",
@@ -27,6 +29,7 @@
     "@radix-ui/react-dropdown-menu": "catalog:",
     "@radix-ui/react-label": "catalog:",
     "@radix-ui/react-popover": "catalog:",
+    "@radix-ui/react-radio-group": "1.2.2",
     "@radix-ui/react-select": "catalog:",
     "@radix-ui/react-separator": "catalog:",
     "@radix-ui/react-slot": "catalog:",
@@ -56,7 +59,8 @@
     "tailwind-merge": "catalog:",
     "tailwindcss-animate": "catalog:",
     "ts-pattern": "5.6.0",
-    "vaul": "catalog:"
+    "vaul": "catalog:",
+    "zod": "3.24.1"
   },
   "devDependencies": {
     "@biomejs/biome": "catalog:",

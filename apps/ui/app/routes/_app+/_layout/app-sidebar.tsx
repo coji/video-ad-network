@@ -8,12 +8,12 @@ import {
   GoalIcon,
   GroupIcon,
   NewspaperIcon,
+  PlusIcon,
   ScanIcon,
 } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { NavLink } from 'react-router'
 import {
-  HStack,
   Sidebar,
   SidebarContent,
   SidebarFooter,
@@ -24,7 +24,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarTrigger,
   useSidebar,
 } from '~/components/ui'
 
@@ -53,20 +52,11 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader>
-        {open ? (
-          <HStack>
-            <OrganizationSwitcher
-              hidePersonal
-              afterSelectOrganizationUrl={'/'}
-            />
-            <div className="flex-1" />
-            <SidebarTrigger />
-          </HStack>
-        ) : (
-          <SidebarTrigger />
-        )}
-      </SidebarHeader>
+      {open && (
+        <SidebarHeader>
+          <OrganizationSwitcher hidePersonal afterSelectOrganizationUrl={'/'} />
+        </SidebarHeader>
+      )}
 
       <SidebarContent>
         {!!organization?.publicMetadata?.isAdvertiser && (
@@ -85,6 +75,11 @@ export function AppSidebar() {
                 <SidebarMenuItemLink to="/advertiser/ads">
                   <FileVideoIcon />
                   広告
+                </SidebarMenuItemLink>
+
+                <SidebarMenuItemLink to="/advertiser/entries/new">
+                  <PlusIcon />
+                  まとめて新規入稿
                 </SidebarMenuItemLink>
               </SidebarMenu>
             </SidebarGroupContent>
