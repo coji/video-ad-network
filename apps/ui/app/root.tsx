@@ -2,6 +2,7 @@ import { ClerkProvider } from '@clerk/react-router'
 import { rootAuthLoader } from '@clerk/react-router/ssr.server'
 import type { LinksFunction } from 'react-router'
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router'
+import { Toaster } from '~/components/ui/sonner'
 import type { Route } from './+types/root'
 import { PageLoadingProgress } from './components/page-loading-progress'
 import styles from './tailwind.css?url'
@@ -38,6 +39,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <PageLoadingProgress />
+        <Toaster richColors closeButton />
         {children}
         <ScrollRestoration />
         <Scripts />

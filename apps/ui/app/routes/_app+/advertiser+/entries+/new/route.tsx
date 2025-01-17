@@ -1,135 +1,430 @@
-import { ChevronRightIcon } from 'lucide-react'
-import React, { useState } from 'react'
-import { data, redirect, useNavigation, useSubmit } from 'react-router'
-import { Button } from '~/components/ui'
+import { getFormProps, getInputProps, useForm } from '@conform-to/react'
+import { getZodConstraint, parseWithZod } from '@conform-to/zod'
+import {
+  CloudUploadIcon,
+  FileVideoIcon,
+  GoalIcon,
+  GroupIcon,
+  PlusIcon,
+  XIcon,
+} from 'lucide-react'
+import { Form, Link, useNavigation } from 'react-router'
+import { z } from 'zod'
+import { DatePickerWithRange } from '~/components/date-picker-with-range'
+import { FieldError } from '~/components/field-error'
+import FileDrop from '~/components/file-drop'
+import {
+  Button,
+  HStack,
+  Input,
+  Label,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Stack,
+} from '~/components/ui'
+import { cn } from '~/lib/utils'
 import type { Route } from './+types/route'
-import { AdForm, AdGroupForm, CampaignForm } from './components'
-import { sessionStorage } from './session.server'
 
-const STEPS = [
-  { id: 'campaign', label: 'キャンペーン' },
-  { id: 'adgroup', label: '広告グループ' },
-  { id: 'ad', label: '広告' },
-] as const
-type Step = (typeof STEPS)[number]
+const companionBannerSizes = ['400x400', '300x250'] as const
+const companionBannerSizesSchema = z.enum(companionBannerSizes)
+
+export const schema = z.object({
+  campaignName: z.string().max(200),
+  campaignStartAt: z.string({ required_error: '開始日は必須です' }).date(),
+  campaignEndAt: z.string({ required_error: '終了日は必須です' }).date(),
+  campaignBudget: z.number().int().min(0),
+  campaignBudgetType: z.union([z.literal('UNLIMITED'), z.literal('TOTAL')]),
+  campaignDeliveryPace: z.union([
+    z.literal('ASMUCHASPOSSIBLE'),
+    z.literal('EVENLY'),
+  ]),
+
+  adGroupName: z.string().max(200),
+  adGroupBidPriceCpm: z.number().int().positive(),
+  adGroupFrequencyCapImpression: z.number().int().positive(),
+  adGroupFrequencyCapWindow: z.number().int().min(1).max(100),
+  adGroupFrequencyCapUnit: z.union([
+    z.literal('DAY'),
+    z.literal('HOUR'),
+    z.literal('MINUTE'),
+  ]),
+
+  adName: z.string().max(200),
+  adMediaFile: z
+    .instanceof(File, {
+      message: 'ファイルを選択してください',
+    })
+    .refine(
+      (file) =>
+        file.type.startsWith('video/') || file.type.startsWith('audio/'),
+      {
+        message: '動画または音声ファイルを選択してください',
+      },
+    ),
+
+  adDescription: z.string().max(1000).optional(),
+
+  companionBanners: z.array(
+    z.object({
+      size: companionBannerSizesSchema,
+      mediaFile: z.instanceof(File),
+      clickThroughUrl: z.string().url().optional(),
+    }),
+  ),
+})
 
 export async function action({ request }: Route.ActionArgs) {
-  const session = await sessionStorage.getSession(request.headers.get('Cookie'))
-  const formData = await request.formData()
-
-  const step = formData.get('step') as Step['id']
-  const intent = formData.get('intent')
-
-  // セッションからドラフトデータを取得
-  const draftData = session.get('draftData') ?? {
-    campaign: null,
-    adgroup: null,
-    ad: null,
+  console.log('action')
+  const submission = await parseWithZod(await request.formData(), { schema })
+  if (submission.status !== 'success') {
+    return { lastResult: submission.reply() }
   }
 
-  if (intent === 'save_draft') {
-    // 現在のステップのデータをセッションに保存
-    const stepData = Object.fromEntries(formData)
-    session.set('draftData', {
-      ...draftData,
-      [step]: stepData,
-    })
+  console.log(submission.value)
 
-    return data(
-      { ok: true },
-      {
-        headers: { 'Set-Cookie': await sessionStorage.commitSession(session) },
-      },
-    )
-  }
-
-  if (intent === 'submit') {
-    // すべてのデータが揃っていれば、DBに保存
-    const { campaign, adgroup, ad } = draftData ?? {}
-
-    // セッションをクリア
-    session.unset('draftData')
-
-    return redirect('/campaigns', {
-      headers: { 'Set-Cookie': await sessionStorage.commitSession(session) },
-    })
-  }
+  return { lastResult: submission.reply() }
 }
 
-// ローダー関数
-export async function loader({ request }: Route.LoaderArgs) {
-  const session = await sessionStorage.getSession(request.headers.get('Cookie'))
-  const draftData = session.get('draftData') || {
-    campaign: null,
-    adgroup: null,
-    ad: null,
-  }
-
-  return { draftData }
-}
-
-// コンポーネント
-export default function NewCampaign({
-  loaderData: { draftData },
-  actionData,
-}: Route.ComponentProps) {
+export default function NewCampaign({ actionData }: Route.ComponentProps) {
   const navigation = useNavigation()
-  const submit = useSubmit()
-
-  const [currentStep, setCurrentStep] = useState<Step['id']>('campaign')
+  const [form, fields] = useForm({
+    lastResult: actionData?.lastResult,
+    defaultValue: {
+      campaignBudgetType: 'UNLIMITED',
+      campaignDeliveryPace: 'ASMUCHASPOSSIBLE',
+      adGroupFrequencyCapWindow: 5,
+      adGroupFrequencyCapUnit: 'MINUTE',
+      adGroupFrequencyCapImpression: 1,
+    },
+    constraint: getZodConstraint(schema),
+    onValidate: ({ formData }) => parseWithZod(formData, { schema }),
+    shouldValidate: 'onBlur',
+    shouldRevalidate: 'onInput',
+  })
+  const companionBanners = fields.companionBanners.getFieldList()
 
   return (
     <div>
-      <h1 className="mb-2 text-2xl font-bold">まとめて新規入稿</h1>
+      <h1 className="text-2xl font-bold">まとめて新規入稿</h1>
+      <Form
+        method="POST"
+        encType="multipart/form-data"
+        {...getFormProps(form)}
+        className="grid max-w-2xl grid-cols-1 place-items-start gap-4 md:grid-cols-[auto_1fr] md:gap-x-32 md:gap-y-8 md:py-4"
+      >
+        {/* キャンペーン */}
+        <HStack>
+          <GoalIcon size="16" />
+          <div>キャンペーン</div>
+        </HStack>
 
-      <div className="flex items-center rounded border bg-slate-200 p-1">
-        {STEPS.map((step, index) => (
-          <React.Fragment key={step.id}>
-            <div
-              className={`flex items-center ${
-                currentStep === step.id
-                  ? 'rounded bg-card font-medium text-blue-600'
-                  : 'text-gray-500'
-              }`}
-            >
-              <Button
-                type="button"
-                onClick={() => setCurrentStep(step.id)}
-                variant="ghost"
-                className="w-40"
+        <Stack gap="lg">
+          <Stack>
+            <Label htmlFor={fields.campaignName.id}>キャンペーン名</Label>
+            <Input
+              {...getInputProps(fields.campaignName, { type: 'text' })}
+              placeholder="キャンペーン名を入力"
+            />
+            <FieldError id={fields.campaignName.errorId}>
+              {fields.campaignName.errors}
+            </FieldError>
+          </Stack>
+
+          <Stack>
+            <Label htmlFor="campaign_period">期間</Label>
+            <DatePickerWithRange
+              id="campaign_period"
+              className="w-full"
+              names={{
+                from: fields.campaignStartAt.name,
+                to: fields.campaignEndAt.name,
+              }}
+            />
+            <FieldError id={fields.campaignStartAt.errorId}>
+              {fields.campaignStartAt.errors}
+            </FieldError>
+            <FieldError id={fields.campaignEndAt.errorId}>
+              {fields.campaignEndAt.errors}
+            </FieldError>
+          </Stack>
+
+          <div className="grid w-full grid-cols-2 gap-4">
+            <Stack>
+              <Label htmlFor={fields.campaignBudget.id}>予算</Label>
+              <HStack>
+                <Input
+                  {...getInputProps(fields.campaignBudget, { type: 'text' })}
+                  className="flex-1"
+                />
+                <div className="text-sm">円</div>
+              </HStack>
+              <FieldError id={fields.campaignBudget.errorId}>
+                {fields.campaignBudget.errors}
+              </FieldError>
+            </Stack>
+
+            <Stack>
+              <Label htmlFor={fields.campaignBudgetType.id}>予算タイプ</Label>
+              <Select
+                name={fields.campaignBudgetType.name}
+                defaultValue={fields.campaignBudgetType.initialValue}
               >
-                <span>{index + 1}.</span>
-                {step.label}
-              </Button>
-            </div>
+                <SelectTrigger id={fields.campaignBudgetType.id}>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="UNLIMITED">無制限</SelectItem>
+                  <SelectItem value="TOTAL">トータル予算</SelectItem>
+                </SelectContent>
+              </Select>
+              <FieldError id={fields.campaignBudgetType.errorId}>
+                {fields.campaignBudgetType.errors}
+              </FieldError>
+            </Stack>
 
-            {index < STEPS.length - 1 && (
-              <ChevronRightIcon className="mx-4 text-gray-400" />
-            )}
-          </React.Fragment>
-        ))}
-      </div>
+            <Stack className="col-span-2">
+              <Label htmlFor={fields.campaignDeliveryPace.id}>配信ペース</Label>
+              <Select
+                name={fields.campaignDeliveryPace.name}
+                defaultValue={fields.campaignDeliveryPace.initialValue}
+              >
+                <SelectTrigger id={fields.campaignDeliveryPace.id}>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="ASMUCHASPOSSIBLE">なるべく多く</SelectItem>
+                  <SelectItem value="EVENLY">均等</SelectItem>
+                </SelectContent>
+              </Select>
+              <FieldError id={fields.campaignDeliveryPace.errorId}>
+                {fields.campaignDeliveryPace.errors}
+              </FieldError>
+            </Stack>
+          </div>
+        </Stack>
 
-      {currentStep === 'campaign' && (
-        <CampaignForm defaultValue={draftData.campaign ?? undefined} />
-      )}
+        {/* 広告グループ */}
+        <HStack>
+          <GroupIcon />
+          <div>広告グループ</div>
+        </HStack>
 
-      {currentStep === 'adgroup' && (
-        <AdGroupForm defaultValues={draftData.adgroup} />
-      )}
+        <Stack gap="lg">
+          <Stack>
+            <Label htmlFor={fields.adGroupName.id}>広告グループ名</Label>
+            <Input
+              {...getInputProps(fields.adGroupName, { type: 'text' })}
+              placeholder="広告グループ名を入力"
+            />
+            <FieldError id={fields.adGroupName.errorId}>
+              {fields.adGroupName.errors}
+            </FieldError>
+          </Stack>
 
-      {currentStep === 'ad' && <AdForm defaultValues={draftData.ad} />}
+          <Stack>
+            <Label htmlFor={fields.adGroupFrequencyCapWindow.id}>
+              フリークエンシーキャップ
+            </Label>
+            <HStack>
+              <Input
+                {...getInputProps(fields.adGroupFrequencyCapWindow, {
+                  type: 'text',
+                })}
+                className="w-14"
+              />
+              <Select
+                name={fields.adGroupFrequencyCapUnit.name}
+                defaultValue={fields.adGroupFrequencyCapUnit.initialValue}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="DAY">日</SelectItem>
+                  <SelectItem value="HOUR">時間</SelectItem>
+                  <SelectItem value="MINUTE">分</SelectItem>
+                </SelectContent>
+              </Select>
+              <div>に</div>
+              <Input
+                {...getInputProps(fields.adGroupFrequencyCapImpression, {
+                  type: 'text',
+                })}
+                className="w-14"
+              />
+              <div className="flex-shrink-0">回まで</div>
+            </HStack>
 
-      {currentStep === 'ad' && (
-        <button
-          type="submit"
-          name="intent"
-          value="submit"
-          disabled={navigation.state === 'submitting'}
-        >
-          入稿する
-        </button>
-      )}
+            <FieldError id={fields.adGroupFrequencyCapWindow.errorId}>
+              {fields.adGroupFrequencyCapWindow.errors}
+            </FieldError>
+
+            <FieldError id={fields.adGroupFrequencyCapImpression.errorId}>
+              {fields.adGroupFrequencyCapImpression.errors}
+            </FieldError>
+
+            <FieldError id={fields.adGroupFrequencyCapUnit.errorId}>
+              {fields.adGroupFrequencyCapUnit.errors}
+            </FieldError>
+          </Stack>
+
+          <Stack className="md:col-span-2">
+            <Label htmlFor={fields.adGroupBidPriceCpm.id}>入札価格 (CPM)</Label>
+            <HStack>
+              <Input
+                {...getInputProps(fields.adGroupBidPriceCpm, { type: 'text' })}
+              />
+              <div className="text-sm">円</div>
+            </HStack>
+            <FieldError id={fields.adGroupBidPriceCpm.errorId}>
+              {fields.adGroupBidPriceCpm.errors}
+            </FieldError>
+          </Stack>
+        </Stack>
+
+        {/* 広告 */}
+        <HStack>
+          <FileVideoIcon />
+          <div>広告</div>
+        </HStack>
+
+        <Stack gap="lg">
+          <Stack>
+            <Label htmlFor={fields.adName.id}>広告名</Label>
+            <Input {...getInputProps(fields.adName, { type: 'text' })} />
+            <FieldError id={fields.adName.errorId}>
+              {fields.adName.errors}
+            </FieldError>
+          </Stack>
+
+          <Stack>
+            <Label htmlFor={fields.adMediaFile.id}>広告クリエイティブ</Label>
+
+            <FileDrop
+              id={fields.adMediaFile.id}
+              name={fields.adMediaFile.name}
+              accepts={['.mp3', '.ogg', '.wav', '.mp4', '.webm']}
+              className={({ files, isDragging }) =>
+                cn(
+                  'w-full rounded-md border-2 p-4',
+                  isDragging && 'bg-muted',
+                  files && files.length > 0 && 'bg-muted',
+                )
+              }
+            >
+              {({ isDragging, files, removeFile }) => (
+                <div className="flex flex-col items-center gap-4 text-center">
+                  <CloudUploadIcon className="size-12 stroke-muted-foreground" />
+                  {isDragging ? (
+                    <p>ファイルをここにドロップ</p>
+                  ) : (
+                    <>
+                      <p className="italic text-muted-foreground">
+                        <strong>{files.map((f) => f.name)}</strong>
+                      </p>
+                      {files.length >= 1 && (
+                        <Button
+                          type="button"
+                          variant="link"
+                          className="text-muted-foreground"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            removeFile(0)
+                          }}
+                        >
+                          <XIcon />
+                          クリア
+                        </Button>
+                      )}
+                    </>
+                  )}
+                </div>
+              )}
+            </FileDrop>
+            <FieldError id={fields.adMediaFile.errorId}>
+              {fields.adMediaFile.errors}
+            </FieldError>
+          </Stack>
+
+          <Stack>
+            <Label htmlFor={fields.adDescription.id}>広告説明メモ</Label>
+            <Input {...getInputProps(fields.adDescription, { type: 'text' })} />
+            <FieldError id={fields.adDescription.errorId}>
+              {fields.adDescription.errors}
+            </FieldError>
+          </Stack>
+
+          {companionBanners.map((companionBanner, index) => {
+            const cbFields = companionBanner.getFieldset()
+            return (
+              <Stack key={companionBanner.key}>
+                <Label>コンパニオンバナー {index + 1}</Label>
+                <HStack className="w-full">
+                  <Select
+                    name={cbFields.size.name}
+                    defaultValue={companionBannerSizes[0]}
+                  >
+                    <SelectTrigger className="w-auto">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {companionBannerSizes.map((size) => (
+                        <SelectItem key={size} value={size}>
+                          {size}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Input
+                    {...getInputProps(cbFields.mediaFile, { type: 'file' })}
+                    accept=".png,.jpg,.jpeg"
+                    multiple={false}
+                    className={cn(
+                      cbFields.mediaFile.value ? 'bg-secondary' : '',
+                    )}
+                  />
+                  <Button
+                    type="submit"
+                    size="icon"
+                    {...form.remove.getButtonProps({
+                      name: fields.companionBanners.name,
+                      index,
+                    })}
+                    variant="ghost"
+                  >
+                    <XIcon />
+                  </Button>
+                </HStack>
+              </Stack>
+            )
+          })}
+
+          <Button
+            {...form.insert.getButtonProps({
+              name: fields.companionBanners.name,
+            })}
+            type="submit"
+            variant="link"
+          >
+            <PlusIcon />
+            コンパニオンバナーを追加
+          </Button>
+        </Stack>
+
+        <div>{JSON.stringify(form.allErrors)}</div>
+
+        <HStack className="w-full justify-end md:col-span-2">
+          <Button type="button" variant="link" asChild>
+            <Link to="..">キャンセル</Link>
+          </Button>
+          <Button type="submit" disabled={navigation.state === 'submitting'}>
+            まとめて新規入稿
+          </Button>
+        </HStack>
+      </Form>
     </div>
   )
 }
