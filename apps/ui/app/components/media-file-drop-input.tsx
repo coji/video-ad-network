@@ -4,12 +4,11 @@ import {
   FileIcon,
   FileImage,
   FileVideo,
-  PlayIcon,
   XIcon,
 } from 'lucide-react'
 import { cn } from '~/lib/utils'
 import { FileDrop } from './file-drop'
-import { Button } from './ui'
+import { Button, Stack } from './ui'
 
 const accepts = {
   image: ['.png', '.jpg', '.jpeg', '.gif', '.webp'],
@@ -17,17 +16,21 @@ const accepts = {
   audio: ['.mp3', '.ogg', '.wav'],
 }
 
-const MediaIcon = ({ type }: { type: string }) => {
+const MediaIcon = ({
+  type,
+  className,
+}: React.ComponentProps<'svg'> & { type: string }) => {
+  const c = cn('inline-block h-6 w-6', className)
   if (type.startsWith('image')) {
-    return <FileImage className="h-6 w-6" />
+    return <FileImage className={c} />
   }
   if (type.startsWith('video')) {
-    return <FileVideo className="h-6 w-6" />
+    return <FileVideo className={c} />
   }
   if (type.startsWith('audio')) {
-    return <FileAudio className="h-6 w-6" />
+    return <FileAudio className={c} />
   }
-  return <FileIcon className="h-6 w-6" />
+  return <FileIcon className={c} />
 }
 
 export const MediaFileDropInput = ({
@@ -63,20 +66,43 @@ export const MediaFileDropInput = ({
               {files.map((f, index) => (
                 <div
                   key={`${f.name}_${index}`}
-                  className="grid w-full grid-cols-[auto_1fr_auto] place-items-center gap-4 italic text-muted-foreground"
+                  className="grid w-full grid-cols-1 place-items-center gap-4 p-4 italic text-muted-foreground"
                 >
-                  <MediaIcon type={f.type} />
-                  <strong>{files.map((f) => f.name)}</strong>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                    }}
-                  >
-                    <PlayIcon />
-                  </Button>
+                  <Stack align="center">
+                    <strong>
+                      <MediaIcon type={f.type} className="mr-2" />
+                      {files.map((f) => f.name)}
+                    </strong>
+                    <div>
+                      {f.type.startsWith('image') && (
+                        <img
+                          src={URL.createObjectURL(f)}
+                          alt={f.name}
+                          className="h-24 w-auto border object-contain"
+                        />
+                      )}
+                      {f.type.startsWith('audio') && (
+                        <audio controls>
+                          <source src={URL.createObjectURL(f)} type={f.type} />
+                          <track
+                            kind="captions"
+                            srcLang="en"
+                            label="English captions"
+                          />
+                        </audio>
+                      )}
+                      {f.type.startsWith('video') && (
+                        <video controls className="h-24 w-auto">
+                          <source src={URL.createObjectURL(f)} type={f.type} />
+                          <track
+                            kind="captions"
+                            srcLang="en"
+                            label="English captions"
+                          />
+                        </video>
+                      )}
+                    </div>
+                  </Stack>
                 </div>
               ))}
 
