@@ -56,6 +56,7 @@
     "react-twc": "catalog:",
     "recharts": "catalog:",
     "remix-flat-routes": "catalog:",
+    "remix-toast": "2.0.0",
     "sonner": "catalog:",
     "svix": "1.45.1",
     "tailwind-merge": "catalog:",

@@ -1,7 +1,6 @@
 import { getFormProps, getInputProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import {
-  CloudUploadIcon,
   FileVideoIcon,
   GoalIcon,
   GroupIcon,
@@ -9,10 +8,11 @@ import {
   XIcon,
 } from 'lucide-react'
 import { Form, Link, useNavigation } from 'react-router'
+import { dataWithSuccess } from 'remix-toast'
 import { z } from 'zod'
 import { DatePickerWithRange } from '~/components/date-picker-with-range'
 import { FieldError } from '~/components/field-error'
-import FileDrop from '~/components/file-drop'
+import { MediaFileDropInput } from '~/components/file-drop-input'
 import {
   Button,
   HStack,
@@ -25,11 +25,7 @@ import {
   SelectValue,
   Stack,
 } from '~/components/ui'
-import { cn } from '~/lib/utils'
 import type { Route } from './+types/route'
-
-const companionBannerSizes = ['400x400', '300x250'] as const
-const companionBannerSizesSchema = z.enum(companionBannerSizes)
 
 export const schema = z.object({
   campaignName: z.string().max(200),
@@ -69,8 +65,11 @@ export const schema = z.object({
 
   companionBanners: z.array(
     z.object({
-      size: companionBannerSizesSchema,
-      mediaFile: z.instanceof(File),
+      mediaFile: z
+        .instanceof(File, { message: 'ファイルを選択してください' })
+        .refine((file) => file.type.startsWith('image/'), {
+          message: '画像ファイルを選択してください',
+        }),
       clickThroughUrl: z.string().url().optional(),
     }),
   ),
@@ -85,7 +84,13 @@ export async function action({ request }: Route.ActionArgs) {
 
   console.log(submission.value)
 
-  return { lastResult: submission.reply() }
+  return dataWithSuccess(
+    { lastResult: submission.reply() },
+    {
+      message: '新規入稿が完了しました',
+      description: JSON.stringify(submission.value),
+    },
+  )
 }
 
 export default function NewCampaign({ actionData }: Route.ComponentProps) {
@@ -301,49 +306,14 @@ export default function NewCampaign({ actionData }: Route.ComponentProps) {
           </Stack>
 
           <Stack>
-            <Label htmlFor={fields.adMediaFile.id}>広告クリエイティブ</Label>
-
-            <FileDrop
+            <Label htmlFor={fields.adMediaFile.id}>
+              広告クリエイティブファイル
+            </Label>
+            <MediaFileDropInput
               id={fields.adMediaFile.id}
               name={fields.adMediaFile.name}
-              accepts={['.mp3', '.ogg', '.wav', '.mp4', '.webm']}
-              className={({ files, isDragging }) =>
-                cn(
-                  'w-full rounded-md border-2 p-4',
-                  isDragging && 'bg-muted',
-                  files && files.length > 0 && 'bg-muted',
-                )
-              }
-            >
-              {({ isDragging, files, removeFile }) => (
-                <div className="flex flex-col items-center gap-4 text-center">
-                  <CloudUploadIcon className="size-12 stroke-muted-foreground" />
-                  {isDragging ? (
-                    <p>ファイルをここにドロップ</p>
-                  ) : (
-                    <>
-                      <p className="italic text-muted-foreground">
-                        <strong>{files.map((f) => f.name)}</strong>
-                      </p>
-                      {files.length >= 1 && (
-                        <Button
-                          type="button"
-                          variant="link"
-                          className="text-muted-foreground"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            removeFile(0)
-                          }}
-                        >
-                          <XIcon />
-                          クリア
-                        </Button>
-                      )}
-                    </>
-                  )}
-                </div>
-              )}
-            </FileDrop>
+              type="audio"
+            />
             <FieldError id={fields.adMediaFile.errorId}>
               {fields.adMediaFile.errors}
             </FieldError>
@@ -362,38 +332,48 @@ export default function NewCampaign({ actionData }: Route.ComponentProps) {
             return (
               <Stack key={companionBanner.key}>
                 <Label>コンパニオンバナー {index + 1}</Label>
-                <HStack className="w-full">
-                  <Select
-                    name={cbFields.size.name}
-                    defaultValue={companionBannerSizes[0]}
-                  >
-                    <SelectTrigger className="w-auto">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {companionBannerSizes.map((size) => (
-                        <SelectItem key={size} value={size}>
-                          {size}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Input
-                    {...getInputProps(cbFields.mediaFile, { type: 'file' })}
-                    accept=".png,.jpg,.jpeg"
-                    multiple={false}
-                    className={cn(
-                      cbFields.mediaFile.value ? 'bg-secondary' : '',
-                    )}
-                  />
+
+                <HStack full align="top">
+                  <Stack>
+                    <Stack>
+                      <Label htmlFor={cbFields.mediaFile.id}>
+                        バナー画像ファイル
+                      </Label>
+                      <MediaFileDropInput
+                        id={cbFields.mediaFile.id}
+                        name={cbFields.mediaFile.name}
+                        type="image"
+                      />
+                      <FieldError id={cbFields.mediaFile.errorId}>
+                        {cbFields.mediaFile.errors}
+                      </FieldError>
+                    </Stack>
+
+                    <Stack>
+                      <Label htmlFor={cbFields.clickThroughUrl.id}>
+                        クリックスルーURL
+                      </Label>
+                      <Input
+                        {...getInputProps(cbFields.clickThroughUrl, {
+                          type: 'text',
+                        })}
+                      />
+                      <FieldError id={cbFields.clickThroughUrl.errorId}>
+                        {cbFields.clickThroughUrl.errors}
+                      </FieldError>
+                    </Stack>
+                  </Stack>
+
                   <Button
-                    type="submit"
+                    type="button"
                     size="icon"
-                    {...form.remove.getButtonProps({
-                      name: fields.companionBanners.name,
-                      index,
-                    })}
                     variant="ghost"
+                    onClick={() => {
+                      form.remove({
+                        name: fields.companionBanners.name,
+                        index,
+                      })
+                    }}
                   >
                     <XIcon />
                   </Button>
@@ -403,18 +383,18 @@ export default function NewCampaign({ actionData }: Route.ComponentProps) {
           })}
 
           <Button
-            {...form.insert.getButtonProps({
-              name: fields.companionBanners.name,
-            })}
-            type="submit"
+            type="button"
             variant="link"
+            onClick={() => {
+              form.insert({
+                name: fields.companionBanners.name,
+              })
+            }}
           >
             <PlusIcon />
             コンパニオンバナーを追加
           </Button>
         </Stack>
-
-        <div>{JSON.stringify(form.allErrors)}</div>
 
         <HStack className="w-full justify-end md:col-span-2">
           <Button type="button" variant="link" asChild>

@@ -49,7 +49,7 @@ const hstack = cva('flex flex-row', {
       stretch: 'items-stretch',
     },
     full: {
-      true: 'h-full',
+      true: 'w-full',
     },
   },
   defaultVariants: {

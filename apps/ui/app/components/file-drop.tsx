@@ -25,7 +25,7 @@ interface FileDropProps
   name?: string
 }
 
-export default function FileDrop({
+export const FileDrop = ({
   children,
   className,
   onSelect = (files) => {},
@@ -36,7 +36,7 @@ export default function FileDrop({
   accepts,
   id,
   name,
-}: FileDropProps) {
+}: FileDropProps) => {
   const [files, setFiles] = useState<File[]>([])
   const [isDragging, setIsDragging] = useState(false)
 
