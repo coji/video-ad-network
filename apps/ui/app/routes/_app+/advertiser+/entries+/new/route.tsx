@@ -71,7 +71,7 @@ export const schema = z.object({
         .refine((file) => file.type.startsWith('image/'), {
           message: '画像ファイルを選択してください',
         }),
-      clickThroughUrl: z.string().url().optional(),
+      clickThroughUrl: z.string().url().startsWith('https://').optional(),
     }),
   ),
 })
@@ -372,6 +372,7 @@ export default function NewCampaign({ actionData }: Route.ComponentProps) {
                           type: 'text',
                         })}
                         key={cbFields.clickThroughUrl.key}
+                        placeholder="https://"
                       />
                       <FieldError id={cbFields.clickThroughUrl.errorId}>
                         {cbFields.clickThroughUrl.errors}

@@ -85,14 +85,15 @@ export const MediaFileDropInput = ({
                           alt={f.name}
                           className="h-24 w-auto border object-contain"
                           onLoad={(e) => {
-                            console.log('onLoad')
-                            setMetadataMap((prev) => ({
-                              ...prev,
-                              [f.name]: {
-                                width: e.currentTarget?.naturalWidth,
-                                height: e.currentTarget?.naturalHeight,
-                              },
-                            }))
+                            if (!metadataMap[f.name]?.width) {
+                              setMetadataMap((prev) => ({
+                                ...prev,
+                                [f.name]: {
+                                  width: e.currentTarget?.naturalWidth,
+                                  height: e.currentTarget?.naturalHeight,
+                                },
+                              }))
+                            }
                           }}
                         />
                       )}
