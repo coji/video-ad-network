@@ -14,7 +14,7 @@ import { Button, Stack } from './ui'
 const accepts = {
   image: ['.png', '.jpg', '.jpeg', '.gif', '.webp'],
   video: ['.mp4', '.webm'],
-  audio: ['.mp3', '.ogg', '.wav'],
+  audio: ['.mp3', '.ogg', '.wav', '.m4a'],
 }
 
 const MediaIcon = ({
