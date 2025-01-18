@@ -61,7 +61,8 @@ export const schema = z.object({
         message: '動画または音声ファイルを選択してください',
       },
     ),
-
+  adMediaFileDuration: z.number().int().positive().optional(),
+  adMediaMimeType: z.string().optional(),
   adDescription: z.string().max(1000).optional(),
 
   companionBanners: z.array(
@@ -71,6 +72,9 @@ export const schema = z.object({
         .refine((file) => file.type.startsWith('image/'), {
           message: '画像ファイルを選択してください',
         }),
+      width: z.number().int().positive().optional(),
+      height: z.number().int().positive().optional(),
+      mimeType: z.string().optional(),
       clickThroughUrl: z.string().url().startsWith('https://').optional(),
     }),
   ),
@@ -318,16 +322,59 @@ export default function NewCampaign({ actionData }: Route.ComponentProps) {
 
           <Stack>
             <Label htmlFor={fields.adMediaFile.id}>
-              広告クリエイティブファイル
+              広告クリエイティブ (動画または音声ファイル)
             </Label>
             <MediaFileDropInput
               id={fields.adMediaFile.id}
               name={fields.adMediaFile.name}
-              type="audio"
+              type={['video', 'audio']}
+              onMetadataReady={(file, metadata) => {
+                form.update({
+                  name: fields.adMediaFileDuration.name,
+                  value: metadata.duration?.toFixed(0),
+                })
+                form.update({
+                  name: fields.adMediaMimeType.name,
+                  value: file.type,
+                })
+              }}
             />
             <FieldError id={fields.adMediaFile.errorId}>
               {fields.adMediaFile.errors}
             </FieldError>
+
+            <div className="grid w-full grid-cols-2 place-items-end items-center gap-2">
+              <Label htmlFor={fields.adMediaMimeType.id}>MIME タイプ</Label>
+              <Input
+                {...getInputProps(fields.adMediaMimeType, { type: 'text' })}
+                key={fields.adMediaMimeType.key}
+                className="w-full"
+              />
+              {fields.adMediaMimeType.errors && (
+                <FieldError
+                  id={fields.adMediaMimeType.errorId}
+                  className="col-span-2"
+                >
+                  {fields.adMediaMimeType.errors}
+                </FieldError>
+              )}
+
+              <Label htmlFor={fields.adMediaFileDuration.id}>再生時間</Label>
+              <Input
+                {...getInputProps(fields.adMediaFileDuration, {
+                  type: 'text',
+                })}
+                key={fields.adMediaFileDuration.key}
+              />
+              {fields.adMediaFileDuration.errors && (
+                <FieldError
+                  id={fields.adMediaFileDuration.errorId}
+                  className="col-span-2"
+                >
+                  {fields.adMediaFileDuration.errors}
+                </FieldError>
+              )}
+            </div>
           </Stack>
 
           <Stack>

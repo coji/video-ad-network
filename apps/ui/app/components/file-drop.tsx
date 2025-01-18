@@ -113,7 +113,9 @@ export const FileDrop = ({
   return (
     <div
       className={classNameAttr}
-      onClick={() => fileInputRef.current?.click()}
+      onClick={() => {
+        if (files.length === 0) fileInputRef.current?.click()
+      }}
       onKeyUp={() => fileInputRef.current?.click()}
       onDragEnter={() => setIsDragging(true)}
       onDragLeave={() => setIsDragging(false)}
