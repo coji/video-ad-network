@@ -13,7 +13,7 @@ import { dataWithSuccess } from 'remix-toast'
 import { z } from 'zod'
 import { DatePickerWithRange } from '~/components/date-picker-with-range'
 import { FieldError } from '~/components/field-error'
-import { MediaFileDropInput } from '~/components/file-drop-input'
+import { MediaFileDropInput } from '~/components/media-file-drop-input'
 import {
   Button,
   HStack,
