@@ -133,6 +133,7 @@ export default function NewCampaign({ actionData }: Route.ComponentProps) {
             <Label htmlFor={fields.campaignName.id}>キャンペーン名</Label>
             <Input
               {...getInputProps(fields.campaignName, { type: 'text' })}
+              key={fields.campaignName.key}
               placeholder="キャンペーン名を入力"
             />
             <FieldError id={fields.campaignName.errorId}>
@@ -164,6 +165,7 @@ export default function NewCampaign({ actionData }: Route.ComponentProps) {
               <HStack>
                 <Input
                   {...getInputProps(fields.campaignBudget, { type: 'text' })}
+                  key={fields.campaignBudget.key}
                   className="flex-1"
                 />
                 <div className="text-sm">円</div>
@@ -224,6 +226,7 @@ export default function NewCampaign({ actionData }: Route.ComponentProps) {
             <Label htmlFor={fields.adGroupName.id}>広告グループ名</Label>
             <Input
               {...getInputProps(fields.adGroupName, { type: 'text' })}
+              key={fields.adGroupName.key}
               placeholder="広告グループ名を入力"
             />
             <FieldError id={fields.adGroupName.errorId}>
@@ -240,6 +243,7 @@ export default function NewCampaign({ actionData }: Route.ComponentProps) {
                 {...getInputProps(fields.adGroupFrequencyCapWindow, {
                   type: 'text',
                 })}
+                key={fields.adGroupFrequencyCapWindow.key}
                 className="w-14"
               />
               <Select
@@ -260,6 +264,7 @@ export default function NewCampaign({ actionData }: Route.ComponentProps) {
                 {...getInputProps(fields.adGroupFrequencyCapImpression, {
                   type: 'text',
                 })}
+                key={fields.adGroupFrequencyCapImpression.key}
                 className="w-14"
               />
               <div className="flex-shrink-0">回まで</div>
@@ -283,6 +288,7 @@ export default function NewCampaign({ actionData }: Route.ComponentProps) {
             <HStack>
               <Input
                 {...getInputProps(fields.adGroupBidPriceCpm, { type: 'text' })}
+                key={fields.adGroupBidPriceCpm.key}
               />
               <div className="text-sm">円</div>
             </HStack>
@@ -301,7 +307,10 @@ export default function NewCampaign({ actionData }: Route.ComponentProps) {
         <Stack gap="lg">
           <Stack>
             <Label htmlFor={fields.adName.id}>広告名</Label>
-            <Input {...getInputProps(fields.adName, { type: 'text' })} />
+            <Input
+              {...getInputProps(fields.adName, { type: 'text' })}
+              key={fields.adName.key}
+            />
             <FieldError id={fields.adName.errorId}>
               {fields.adName.errors}
             </FieldError>
@@ -323,7 +332,10 @@ export default function NewCampaign({ actionData }: Route.ComponentProps) {
 
           <Stack>
             <Label htmlFor={fields.adDescription.id}>広告説明メモ</Label>
-            <Input {...getInputProps(fields.adDescription, { type: 'text' })} />
+            <Input
+              {...getInputProps(fields.adDescription, { type: 'text' })}
+              key={fields.adDescription.key}
+            />
             <FieldError id={fields.adDescription.errorId}>
               {fields.adDescription.errors}
             </FieldError>
@@ -359,6 +371,7 @@ export default function NewCampaign({ actionData }: Route.ComponentProps) {
                         {...getInputProps(cbFields.clickThroughUrl, {
                           type: 'text',
                         })}
+                        key={cbFields.clickThroughUrl.key}
                       />
                       <FieldError id={cbFields.clickThroughUrl.errorId}>
                         {cbFields.clickThroughUrl.errors}
