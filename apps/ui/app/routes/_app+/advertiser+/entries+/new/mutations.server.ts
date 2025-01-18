@@ -60,12 +60,12 @@ export const submitEntries = async (
         advertiserId,
         adGroupId: adGroup.id,
         id: crypto.randomUUID(),
-        type: 'video',
+        type: value.adType,
         url: '',
-        duration: value.adMediaFileDuration,
-        mimeType: value.adMediaMimeType,
+        duration: value.adDuration,
+        mimeType: value.adMimeType,
         description: value.adDescription,
-        clickThroughUrl: '',
+        clickThroughUrl: value.adClickThroughUrl,
       })
       .executeTakeFirst()
 
