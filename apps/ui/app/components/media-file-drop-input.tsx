@@ -6,6 +6,7 @@ import {
   FileVideo,
   XIcon,
 } from 'lucide-react'
+import { useState } from 'react'
 import { cn } from '~/lib/utils'
 import { FileDrop } from './file-drop'
 import { Button, Stack } from './ui'
@@ -42,6 +43,10 @@ export const MediaFileDropInput = ({
   name?: string
   type: 'image' | 'video' | 'audio'
 }) => {
+  const [metadataMap, setMetadataMap] = useState<{
+    [key: string]: { width?: number; height?: number; duration?: number }
+  }>({})
+
   return (
     <FileDrop
       id={id}
@@ -57,7 +62,7 @@ export const MediaFileDropInput = ({
     >
       {({ isDragging, files, removeFile }) => (
         <div className="flex flex-col items-center gap-4 text-center">
-          <CloudUploadIcon className="size-12 stroke-muted-foreground" />
+          <CloudUploadIcon className="size-6 stroke-muted-foreground" />
 
           {isDragging ? (
             <p>ファイルをここにドロップ</p>
@@ -79,10 +84,35 @@ export const MediaFileDropInput = ({
                           src={URL.createObjectURL(f)}
                           alt={f.name}
                           className="h-24 w-auto border object-contain"
+                          onLoad={(e) => {
+                            console.log('onLoad')
+                            setMetadataMap((prev) => ({
+                              ...prev,
+                              [f.name]: {
+                                width: e.currentTarget?.naturalWidth,
+                                height: e.currentTarget?.naturalHeight,
+                              },
+                            }))
+                          }}
                         />
                       )}
+                      {metadataMap[f.name]?.width &&
+                        metadataMap[f.name]?.height && (
+                          <p className="text-sm">
+                            {metadataMap[f.name].width} x{' '}
+                            {metadataMap[f.name].height}
+                          </p>
+                        )}
                       {f.type.startsWith('audio') && (
-                        <audio controls>
+                        <audio
+                          controls
+                          onLoadedMetadata={(e) =>
+                            setMetadataMap((prev) => ({
+                              ...prev,
+                              [f.name]: { duration: e.currentTarget?.duration },
+                            }))
+                          }
+                        >
                           <source src={URL.createObjectURL(f)} type={f.type} />
                           <track
                             kind="captions"
@@ -92,7 +122,16 @@ export const MediaFileDropInput = ({
                         </audio>
                       )}
                       {f.type.startsWith('video') && (
-                        <video controls className="h-24 w-auto">
+                        <video
+                          controls
+                          className="h-24 w-auto"
+                          onLoadedMetadata={(e) =>
+                            setMetadataMap((prev) => ({
+                              ...prev,
+                              [f.name]: { duration: e.currentTarget?.duration },
+                            }))
+                          }
+                        >
                           <source src={URL.createObjectURL(f)} type={f.type} />
                           <track
                             kind="captions"
@@ -100,6 +139,11 @@ export const MediaFileDropInput = ({
                             label="English captions"
                           />
                         </video>
+                      )}
+                      {metadataMap[f.name]?.duration && (
+                        <p className="text-sm">
+                          {metadataMap[f.name].duration?.toFixed(1)} seconds
+                        </p>
                       )}
                     </div>
                   </Stack>
