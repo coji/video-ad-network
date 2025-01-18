@@ -51,6 +51,7 @@ export const schema = z.object({
   ]),
 
   adName: z.string().max(200),
+  adType: z.union([z.literal('VIDEO'), z.literal('AUDIO')]),
   adMediaFile: z
     .instanceof(File, {
       message: 'ファイルを選択してください',
@@ -62,9 +63,12 @@ export const schema = z.object({
         message: '動画または音声ファイルを選択してください',
       },
     ),
-  adMediaFileDuration: z.number().int().positive(),
-  adMediaMimeType: z.string(),
+  adDuration: z.number().int().positive(),
+  adMimeType: z.string(),
+  adWidth: z.number().int().positive().optional(),
+  adHeight: z.number().int().positive().optional(),
   adDescription: z.string().max(1000).optional(),
+  adClickThroughUrl: z.string().url().startsWith('https://').optional(),
 
   companionBanners: z.array(
     z.object({
@@ -73,10 +77,9 @@ export const schema = z.object({
         .refine((file) => file.type.startsWith('image/'), {
           message: '画像ファイルを選択してください',
         }),
-      width: z.number().int().positive().optional(),
-      height: z.number().int().positive().optional(),
-      mimeType: z.string().optional(),
-      clickThroughUrl: z.string().url().startsWith('https://').optional(),
+      width: z.number().int().positive(),
+      height: z.number().int().positive(),
+      mimeType: z.string(),
     }),
   ),
 })
@@ -219,7 +222,6 @@ export default function NewCampaign({ actionData }: Route.ComponentProps) {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="ASMUCHASPOSSIBLE">なるべく多く</SelectItem>
-                  <SelectItem value="EVENLY">均等</SelectItem>
                 </SelectContent>
               </Select>
               <FieldError id={fields.campaignDeliveryPace.errorId}>
@@ -338,14 +340,26 @@ export default function NewCampaign({ actionData }: Route.ComponentProps) {
               id={fields.adMediaFile.id}
               name={fields.adMediaFile.name}
               type={['video', 'audio']}
-              onMetadataReady={(file, metadata) => {
+              onMetadataReady={(file, type, metadata) => {
                 form.update({
-                  name: fields.adMediaFileDuration.name,
+                  name: fields.adType.name,
+                  value: type,
+                })
+                form.update({
+                  name: fields.adDuration.name,
                   value: metadata.duration?.toFixed(0),
                 })
                 form.update({
-                  name: fields.adMediaMimeType.name,
+                  name: fields.adMimeType.name,
                   value: file.type,
+                })
+                form.update({
+                  name: fields.adWidth.name,
+                  value: metadata.width,
+                })
+                form.update({
+                  name: fields.adHeight.name,
+                  value: metadata.height,
                 })
                 form.update({
                   name: fields.adDescription.name,
@@ -353,42 +367,110 @@ export default function NewCampaign({ actionData }: Route.ComponentProps) {
                 })
               }}
             />
+            <input
+              {...getInputProps(fields.adType, { type: 'hidden' })}
+              key={fields.adType.key}
+            />
             <FieldError id={fields.adMediaFile.errorId}>
               {fields.adMediaFile.errors}
             </FieldError>
 
             <div className="grid w-full grid-cols-2 place-items-end items-center gap-2">
-              <Label htmlFor={fields.adMediaMimeType.id}>MIME タイプ</Label>
+              <Label htmlFor={fields.adMimeType.id}>MIME タイプ</Label>
               <Input
-                {...getInputProps(fields.adMediaMimeType, { type: 'text' })}
-                key={fields.adMediaMimeType.key}
+                {...getInputProps(fields.adMimeType, { type: 'text' })}
+                key={fields.adMimeType.key}
                 className="w-full"
               />
-              {fields.adMediaMimeType.errors && (
+              {fields.adMimeType.errors && (
                 <FieldError
-                  id={fields.adMediaMimeType.errorId}
+                  id={fields.adMimeType.errorId}
                   className="col-span-2"
                 >
-                  {fields.adMediaMimeType.errors}
+                  {fields.adMimeType.errors}
                 </FieldError>
               )}
 
-              <Label htmlFor={fields.adMediaFileDuration.id}>再生時間</Label>
-              <Input
-                {...getInputProps(fields.adMediaFileDuration, {
-                  type: 'text',
-                })}
-                key={fields.adMediaFileDuration.key}
-              />
-              {fields.adMediaFileDuration.errors && (
+              <Label htmlFor={fields.adDuration.id}>再生時間</Label>
+              <HStack>
+                <Input
+                  {...getInputProps(fields.adDuration, {
+                    type: 'text',
+                  })}
+                  key={fields.adDuration.key}
+                />
+                <div className="text-sm">秒</div>
+              </HStack>
+
+              {fields.adDuration.errors && (
                 <FieldError
-                  id={fields.adMediaFileDuration.errorId}
+                  id={fields.adDuration.errorId}
                   className="col-span-2"
                 >
-                  {fields.adMediaFileDuration.errors}
+                  {fields.adDuration.errors}
                 </FieldError>
               )}
+
+              {fields.adType.value === 'video' && (
+                <>
+                  <Label htmlFor={fields.adWidth.id}>witdh</Label>
+                  <HStack>
+                    <Input
+                      {...getInputProps(fields.adWidth, {
+                        type: 'text',
+                      })}
+                      key={fields.adWidth.key}
+                    />
+                    <div className="text-sm">px</div>
+                  </HStack>
+
+                  {fields.adWidth.errors && (
+                    <FieldError
+                      id={fields.adWidth.errorId}
+                      className="col-span-2"
+                    >
+                      {fields.adWidth.errors}
+                    </FieldError>
+                  )}
+
+                  <Label htmlFor={fields.adHeight.id}>height</Label>
+                  <HStack>
+                    <Input
+                      {...getInputProps(fields.adHeight, {
+                        type: 'text',
+                      })}
+                      key={fields.adHeight.key}
+                    />
+                    <div className="text-sm">px</div>
+                  </HStack>
+
+                  {fields.adHeight.errors && (
+                    <FieldError
+                      id={fields.adHeight.errorId}
+                      className="col-span-2"
+                    >
+                      {fields.adHeight.errors}
+                    </FieldError>
+                  )}
+                </>
+              )}
             </div>
+          </Stack>
+
+          <Stack>
+            <Label htmlFor={fields.adClickThroughUrl.id}>
+              クリックスルーURL
+            </Label>
+            <Input
+              {...getInputProps(fields.adClickThroughUrl, {
+                type: 'text',
+              })}
+              key={fields.adClickThroughUrl.key}
+              placeholder="https://"
+            />
+            <FieldError id={fields.adClickThroughUrl.errorId}>
+              {fields.adClickThroughUrl.errors}
+            </FieldError>
           </Stack>
 
           <Stack>
@@ -418,7 +500,7 @@ export default function NewCampaign({ actionData }: Route.ComponentProps) {
                         id={cbFields.mediaFile.id}
                         name={cbFields.mediaFile.name}
                         type="image"
-                        onMetadataReady={(file, metadata) => {
+                        onMetadataReady={(file, type, metadata) => {
                           form.update({
                             name: cbFields.width.name,
                             value: metadata.width,
@@ -457,12 +539,16 @@ export default function NewCampaign({ actionData }: Route.ComponentProps) {
                           </FieldError>
                         )}
                         <Label htmlFor={cbFields.width.id}>width</Label>
-                        <Input
-                          {...getInputProps(cbFields.width, {
-                            type: 'text',
-                          })}
-                          key={cbFields.width.key}
-                        />
+                        <HStack>
+                          <Input
+                            {...getInputProps(cbFields.width, {
+                              type: 'text',
+                            })}
+                            key={cbFields.width.key}
+                          />
+                          <div className="text-sm">px</div>
+                        </HStack>
+
                         {cbFields.width.errors && (
                           <FieldError
                             id={cbFields.width.errorId}
@@ -473,12 +559,15 @@ export default function NewCampaign({ actionData }: Route.ComponentProps) {
                         )}
 
                         <Label htmlFor={cbFields.height.id}>height</Label>
-                        <Input
-                          {...getInputProps(cbFields.height, {
-                            type: 'text',
-                          })}
-                          key={cbFields.height.key}
-                        />
+                        <HStack>
+                          <Input
+                            {...getInputProps(cbFields.height, {
+                              type: 'text',
+                            })}
+                            key={cbFields.height.key}
+                          />
+                          <div className="text-sm">px</div>
+                        </HStack>
 
                         {cbFields.height.errors && (
                           <FieldError
@@ -489,22 +578,6 @@ export default function NewCampaign({ actionData }: Route.ComponentProps) {
                           </FieldError>
                         )}
                       </div>
-                    </Stack>
-
-                    <Stack>
-                      <Label htmlFor={cbFields.clickThroughUrl.id}>
-                        クリックスルーURL
-                      </Label>
-                      <Input
-                        {...getInputProps(cbFields.clickThroughUrl, {
-                          type: 'text',
-                        })}
-                        key={cbFields.clickThroughUrl.key}
-                        placeholder="https://"
-                      />
-                      <FieldError id={cbFields.clickThroughUrl.errorId}>
-                        {cbFields.clickThroughUrl.errors}
-                      </FieldError>
                     </Stack>
                   </Stack>
 

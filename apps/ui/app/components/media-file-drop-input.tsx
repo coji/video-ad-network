@@ -45,6 +45,7 @@ export const MediaFileDropInput = ({
   type: 'image' | 'video' | 'audio' | Array<'image' | 'video' | 'audio'>
   onMetadataReady?: (
     file: File,
+    type: 'image' | 'video' | 'audio',
     metadata: { width?: number; height?: number; duration?: number },
   ) => void
 }) => {
@@ -55,8 +56,6 @@ export const MediaFileDropInput = ({
   const accepts = Array.isArray(type)
     ? type.reduce((acc, t) => acc.concat(acceptMaps[t]), [] as string[])
     : acceptMaps[type]
-
-  console.log({ accepts })
 
   return (
     <FileDrop
@@ -104,7 +103,7 @@ export const MediaFileDropInput = ({
                                   height: e.currentTarget?.naturalHeight,
                                 },
                               }))
-                              onMetadataReady?.(f, {
+                              onMetadataReady?.(f, 'image', {
                                 width: e.currentTarget.naturalWidth,
                                 height: e.currentTarget.naturalHeight,
                               })
@@ -127,7 +126,7 @@ export const MediaFileDropInput = ({
                               ...prev,
                               [f.name]: { duration: e.currentTarget?.duration },
                             }))
-                            onMetadataReady?.(f, {
+                            onMetadataReady?.(f, 'audio', {
                               duration: e.currentTarget.duration,
                             })
                           }}
@@ -146,10 +145,16 @@ export const MediaFileDropInput = ({
                           onLoadedMetadata={(e) => {
                             setMetadataMap((prev) => ({
                               ...prev,
-                              [f.name]: { duration: e.currentTarget?.duration },
+                              [f.name]: {
+                                duration: e.currentTarget?.duration,
+                                width: e.currentTarget?.videoWidth,
+                                height: e.currentTarget?.videoHeight,
+                              },
                             }))
-                            onMetadataReady?.(f, {
+                            onMetadataReady?.(f, 'video', {
                               duration: e.currentTarget.duration,
+                              width: e.currentTarget.videoWidth,
+                              height: e.currentTarget.videoHeight,
                             })
                           }}
                         >
