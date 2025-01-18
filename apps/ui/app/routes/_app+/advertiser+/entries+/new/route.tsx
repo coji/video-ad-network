@@ -1,5 +1,6 @@
 import { getFormProps, getInputProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
+import { getDB } from '@video-ad-network/db'
 import {
   FileVideoIcon,
   GoalIcon,
@@ -9,7 +10,7 @@ import {
 } from 'lucide-react'
 import { setTimeout } from 'node:timers/promises'
 import { Form, Link, useNavigation } from 'react-router'
-import { dataWithSuccess } from 'remix-toast'
+import { dataWithError, dataWithSuccess } from 'remix-toast'
 import { z } from 'zod'
 import { DatePickerWithRange } from '~/components/date-picker-with-range'
 import { FieldError } from '~/components/field-error'
@@ -26,7 +27,10 @@ import {
   SelectValue,
   Stack,
 } from '~/components/ui'
+import { requireOrgUser } from '~/services/auth.server'
 import type { Route } from './+types/route'
+import { submitEntries } from './mutations.server'
+import { getAdvertiserByOrganizationId } from './queries.server'
 
 export const schema = z.object({
   campaignName: z.string().max(200),
@@ -34,10 +38,7 @@ export const schema = z.object({
   campaignEndAt: z.string({ required_error: '終了日は必須です' }).date(),
   campaignBudget: z.number().int().min(0),
   campaignBudgetType: z.union([z.literal('UNLIMITED'), z.literal('TOTAL')]),
-  campaignDeliveryPace: z.union([
-    z.literal('ASMUCHASPOSSIBLE'),
-    z.literal('EVENLY'),
-  ]),
+  campaignDeliveryPace: z.literal('ASMUCHASPOSSIBLE'),
 
   adGroupName: z.string().max(200),
   adGroupBidPriceCpm: z.number().int().positive(),
@@ -61,8 +62,8 @@ export const schema = z.object({
         message: '動画または音声ファイルを選択してください',
       },
     ),
-  adMediaFileDuration: z.number().int().positive().optional(),
-  adMediaMimeType: z.string().optional(),
+  adMediaFileDuration: z.number().int().positive(),
+  adMediaMimeType: z.string(),
   adDescription: z.string().max(1000).optional(),
 
   companionBanners: z.array(
@@ -80,13 +81,22 @@ export const schema = z.object({
   ),
 })
 
-export async function action({ request }: Route.ActionArgs) {
-  console.log('action')
+export async function action({ request, params, context }: Route.ActionArgs) {
+  const orgUser = await requireOrgUser({ request, params, context })
   const submission = await parseWithZod(await request.formData(), { schema })
   if (submission.status !== 'success') {
     return { lastResult: submission.reply() }
   }
 
+  const db = getDB(context.cloudflare.env)
+  const advertiser = await getAdvertiserByOrganizationId(db, orgUser.orgId)
+  if (!advertiser) {
+    throw dataWithError(null, '広告主情報が見つかりませんでした', {
+      status: 422, // Unprocessable Entity
+    })
+  }
+
+  const entries = await submitEntries(db, advertiser.id, submission.value)
   console.log(submission.value)
   await setTimeout(1000)
 
