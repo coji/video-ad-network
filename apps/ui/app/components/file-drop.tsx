@@ -99,9 +99,14 @@ export default function FileDrop({
   }
 
   function removeFile(index: number) {
-    setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index))
+    const newFiles = files.filter((_, i) => i !== index)
+    setFiles(newFiles)
     if (fileInputRef.current) {
-      fileInputRef.current.value = ''
+      const fileList = new DataTransfer()
+      for (const file of newFiles) {
+        fileList.items.add(file)
+      }
+      fileInputRef.current.files = fileList.files
     }
   }
 
