@@ -161,11 +161,6 @@ export const MediaFileDropInput = ({
                           />
                         </video>
                       )}
-                      {metadataMap[f.name]?.duration && (
-                        <p className="text-sm">
-                          {metadataMap[f.name].duration?.toFixed(0)} seconds
-                        </p>
-                      )}
                     </div>
                   </Stack>
                 </div>

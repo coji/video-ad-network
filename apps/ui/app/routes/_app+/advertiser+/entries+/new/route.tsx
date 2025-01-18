@@ -337,6 +337,10 @@ export default function NewCampaign({ actionData }: Route.ComponentProps) {
                   name: fields.adMediaMimeType.name,
                   value: file.type,
                 })
+                form.update({
+                  name: fields.adDescription.name,
+                  value: `${file.name.replace(/\.[^.]+$/, '')} (${metadata.duration?.toFixed(0)}秒)`,
+                })
               }}
             />
             <FieldError id={fields.adMediaFile.errorId}>
@@ -404,10 +408,77 @@ export default function NewCampaign({ actionData }: Route.ComponentProps) {
                         id={cbFields.mediaFile.id}
                         name={cbFields.mediaFile.name}
                         type="image"
+                        onMetadataReady={(file, metadata) => {
+                          form.update({
+                            name: cbFields.width.name,
+                            value: metadata.width,
+                          })
+                          form.update({
+                            name: cbFields.height.name,
+                            value: metadata.height,
+                          })
+                          form.update({
+                            name: cbFields.mimeType.name,
+                            value: file.type,
+                          })
+                        }}
                       />
                       <FieldError id={cbFields.mediaFile.errorId}>
                         {cbFields.mediaFile.errors}
                       </FieldError>
+
+                      <div className="grid w-full grid-cols-2 place-items-end items-center gap-2">
+                        <Label htmlFor={cbFields.mimeType.id}>
+                          MIME タイプ
+                        </Label>
+                        <Input
+                          {...getInputProps(cbFields.mimeType, {
+                            type: 'text',
+                          })}
+                          key={cbFields.mimeType.key}
+                          className="w-full"
+                        />
+                        {cbFields.mimeType.errors && (
+                          <FieldError
+                            id={cbFields.mimeType.errorId}
+                            className="col-span-2"
+                          >
+                            {cbFields.mimeType.errors}
+                          </FieldError>
+                        )}
+                        <Label htmlFor={cbFields.width.id}>width</Label>
+                        <Input
+                          {...getInputProps(cbFields.width, {
+                            type: 'text',
+                          })}
+                          key={cbFields.width.key}
+                        />
+                        {cbFields.width.errors && (
+                          <FieldError
+                            id={cbFields.width.errorId}
+                            className="col-span-2"
+                          >
+                            {cbFields.width.errors}
+                          </FieldError>
+                        )}
+
+                        <Label htmlFor={cbFields.height.id}>height</Label>
+                        <Input
+                          {...getInputProps(cbFields.height, {
+                            type: 'text',
+                          })}
+                          key={cbFields.height.key}
+                        />
+
+                        {cbFields.height.errors && (
+                          <FieldError
+                            id={cbFields.height.errorId}
+                            className="col-span-2"
+                          >
+                            {cbFields.height.errors}
+                          </FieldError>
+                        )}
+                      </div>
                     </Stack>
 
                     <Stack>
