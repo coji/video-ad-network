@@ -80,7 +80,7 @@ export function AppSidebar() {
 
                 <SidebarMenuItemLink to="/advertiser/entries/new">
                   <PlusIcon />
-                  まとめて新規入稿
+                  新規入稿
                 </SidebarMenuItemLink>
               </SidebarMenu>
             </SidebarGroupContent>

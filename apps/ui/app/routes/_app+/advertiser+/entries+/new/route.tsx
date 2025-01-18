@@ -7,6 +7,7 @@ import {
   PlusIcon,
   XIcon,
 } from 'lucide-react'
+import { setTimeout } from 'node:timers/promises'
 import { Form, Link, useNavigation } from 'react-router'
 import { dataWithSuccess } from 'remix-toast'
 import { z } from 'zod'
@@ -83,6 +84,7 @@ export async function action({ request }: Route.ActionArgs) {
   }
 
   console.log(submission.value)
+  await setTimeout(1000)
 
   return dataWithSuccess(
     { lastResult: submission.reply() },
@@ -113,7 +115,7 @@ export default function NewCampaign({ actionData }: Route.ComponentProps) {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold">まとめて新規入稿</h1>
+      <h1 className="text-2xl font-bold">新規入稿</h1>
       <Form
         method="POST"
         encType="multipart/form-data"
