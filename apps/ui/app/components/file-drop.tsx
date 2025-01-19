@@ -116,7 +116,12 @@ export const FileDrop = ({
       onClick={() => {
         if (files.length === 0) fileInputRef.current?.click()
       }}
-      onKeyUp={() => fileInputRef.current?.click()}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          if (files.length === 0) fileInputRef.current?.click()
+        }
+      }}
       onDragEnter={() => setIsDragging(true)}
       onDragLeave={() => setIsDragging(false)}
       onDragOver={(e) => {
@@ -129,7 +134,9 @@ export const FileDrop = ({
           handleFileChange(e.dataTransfer.files)
         }
       }}
-      aria-hidden="true"
+      // biome-ignore lint/a11y/noNoninteractiveTabindex: <explanation>
+      tabIndex={0}
+      aria-label="Choose file or drag and drop"
     >
       <input
         id={id}
