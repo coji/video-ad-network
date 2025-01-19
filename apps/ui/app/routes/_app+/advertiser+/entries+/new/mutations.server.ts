@@ -11,8 +11,6 @@ export const submitEntries = async (
   advertiserId: string,
   value: z.infer<typeof schema>,
 ) => {
-  addSeconds(value.campaignEndAt, 1 * 60 * 60 * 24 - 1)
-
   return db.transaction().execute(async (tx) => {
     // キャンペーンの作成
     const campaign = await tx
@@ -69,7 +67,7 @@ export const submitEntries = async (
         description: value.adDescription,
         clickThroughUrl: value.adClickThroughUrl,
       })
-      .executeTakeFirst()
+      .executeTakeFirstOrThrow()
 
     // コンパニオン・バナーの作成
     const companionBanners: Selectable<DB['companionBanners']>[] = []
