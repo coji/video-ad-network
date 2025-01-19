@@ -92,8 +92,6 @@ export async function action({ request, params, context }: Route.ActionArgs) {
     return { lastResult: submission.reply() }
   }
 
-  console.log(submission.value)
-
   const db = getDB(context.cloudflare.env)
   const advertiser = await getAdvertiserByOrganizationId(db, orgUser.orgId)
   if (!advertiser) {
