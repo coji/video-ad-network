@@ -15,9 +15,6 @@ bucket_name = 'video-ad-network'
 # https://developers.cloudflare.com/workers/static-assets/binding/
 directory = "./build/client"
 
-[vars]
-CREATIVE_BASE_URL = "http://localhost:5175/resources/creative/"
-
 [build]
 command = "pnpm run build"
 

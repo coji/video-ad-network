@@ -74,5 +74,5 @@ catalog:
   vite: 5.4.11
   vite-tsconfig-paths: 5.1.4
   vitest: 2.1.8
-  wrangler: 3.99.0
+  wrangler: 3.103.2
   zx: 8.3.0
