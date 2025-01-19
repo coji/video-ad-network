@@ -1,6 +1,8 @@
 import { createId } from '@paralleldrive/cuid2'
 import type { DB, Kysely, Selectable } from '@video-ad-network/db'
+import { addSeconds } from 'date-fns'
 import type { z } from 'zod'
+import { serializeDateTime } from '~/lib/datetime'
 import type { schema } from './route'
 
 export const submitEntries = async (
@@ -9,6 +11,8 @@ export const submitEntries = async (
   advertiserId: string,
   value: z.infer<typeof schema>,
 ) => {
+  addSeconds(value.campaignEndAt, 1 * 60 * 60 * 24 - 1)
+
   return db.transaction().execute(async (tx) => {
     // キャンペーンの作成
     const campaign = await tx
@@ -17,8 +21,11 @@ export const submitEntries = async (
         id: createId(),
         advertiserId,
         name: value.campaignName,
-        startAt: value.campaignStartAt,
-        endAt: value.campaignEndAt,
+        startAt: serializeDateTime(value.campaignStartAt, value.tzOffset),
+        endAt: serializeDateTime(
+          addSeconds(value.campaignEndAt, 1 * 60 * 60 * 24 - 1), // 終了日の 23:59:59 にするために 1 日加算
+          value.tzOffset,
+        ),
         budget: value.campaignBudget,
         budgetType: value.campaignBudgetType,
         deliveryPace: value.campaignDeliveryPace,

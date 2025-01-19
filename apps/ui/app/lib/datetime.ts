@@ -1,5 +1,5 @@
 import { TZDate } from '@date-fns/tz'
-import { format } from 'date-fns'
+import { addMinutes, format } from 'date-fns'
 
 const tz = 'Asia/Tokyo'
 
@@ -17,4 +17,20 @@ export const formatDateTime = (
   const utcDate = new TZDate(isoString, 'utc')
   const tzDate = utcDate.withTimeZone(tz)
   return format(tzDate, formatStr)
+}
+
+/**
+ * DB に保存するために UTC 基準の文字列に変換する
+ * @param date
+ * @param timezoneOffset
+ * @returns
+ */
+export const serializeDateTime = (
+  dateStr: string | Date,
+  timezoneOffset: number,
+) => {
+  return format(
+    new TZDate(addMinutes(dateStr, timezoneOffset), 'utc'),
+    'yyyy-MM-dd HH:mm:ss',
+  )
 }

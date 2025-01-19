@@ -32,6 +32,8 @@ import { submitEntries } from './mutations.server'
 import { getAdvertiserByOrganizationId } from './queries.server'
 
 export const schema = z.object({
+  tzOffset: z.number().int().min(-720).max(840),
+
   campaignName: z.string().max(200),
   campaignStartAt: z.string({ required_error: '開始日は必須です' }).date(),
   campaignEndAt: z.string({ required_error: '終了日は必須です' }).date(),
@@ -89,6 +91,8 @@ export async function action({ request, params, context }: Route.ActionArgs) {
   if (submission.status !== 'success') {
     return { lastResult: submission.reply() }
   }
+
+  console.log(submission.value)
 
   const db = getDB(context.cloudflare.env)
   const advertiser = await getAdvertiserByOrganizationId(db, orgUser.orgId)
@@ -169,6 +173,15 @@ export default function NewCampaign({ actionData }: Route.ComponentProps) {
                 from: fields.campaignStartAt.name,
                 to: fields.campaignEndAt.name,
               }}
+              onSelect={(range) => {
+                if (range) {
+                  // タイムゾーンオフセットを更新
+                  form.update({
+                    name: fields.tzOffset.name,
+                    value: new Date().getTimezoneOffset(),
+                  })
+                }
+              }}
             />
             <FieldError id={fields.campaignStartAt.errorId}>
               {fields.campaignStartAt.errors}
@@ -176,6 +189,12 @@ export default function NewCampaign({ actionData }: Route.ComponentProps) {
             <FieldError id={fields.campaignEndAt.errorId}>
               {fields.campaignEndAt.errors}
             </FieldError>
+
+            {/* タイムゾーンオフセット */}
+            <input
+              {...getInputProps(fields.tzOffset, { type: 'hidden' })}
+              key={fields.tzOffset.key}
+            />
           </Stack>
 
           <div className="grid w-full grid-cols-2 gap-4">
