@@ -1,5 +1,5 @@
 import mime from 'mime'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 interface FileDropProps
   extends Omit<
@@ -77,8 +77,19 @@ export const FileDrop = ({
     return valid
   }
 
+  const [objectUrls, setObjectUrls] = useState<string[]>([])
+  useEffect(() => {
+    return () => {
+      objectUrls.forEach(URL.revokeObjectURL)
+    }
+  }, [objectUrls])
+
   function handleFileChange(selectedFiles: FileList) {
     setIsDragging(false)
+
+    // Cleanup old object URLs
+    objectUrls.forEach(URL.revokeObjectURL)
+    setObjectUrls([])
 
     if (!multiple && selectedFiles.length > 1)
       return onError({ code: 'multiple', message: 'Only one file allowed' })
@@ -100,6 +111,13 @@ export const FileDrop = ({
 
   function removeFile(index: number) {
     const newFiles = files.filter((_, i) => i !== index)
+
+    // Cleanup removed file's object URL
+    if (objectUrls[index]) {
+      URL.revokeObjectURL(objectUrls[index])
+      setObjectUrls((prev) => prev.filter((_, i) => i !== index))
+    }
+
     setFiles(newFiles)
     if (fileInputRef.current) {
       const fileList = new DataTransfer()
