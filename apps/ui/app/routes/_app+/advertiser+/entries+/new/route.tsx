@@ -8,7 +8,6 @@ import {
   PlusIcon,
   XIcon,
 } from 'lucide-react'
-import { setTimeout } from 'node:timers/promises'
 import { Form, Link, useNavigation } from 'react-router'
 import { dataWithError, dataWithSuccess } from 'remix-toast'
 import { z } from 'zod'
@@ -51,7 +50,7 @@ export const schema = z.object({
   ]),
 
   adName: z.string().max(200),
-  adType: z.union([z.literal('VIDEO'), z.literal('AUDIO')]),
+  adType: z.union([z.literal('video'), z.literal('audio')]),
   adMediaFile: z
     .instanceof(File, {
       message: 'ファイルを選択してください',
@@ -99,9 +98,12 @@ export async function action({ request, params, context }: Route.ActionArgs) {
     })
   }
 
-  const entries = await submitEntries(db, advertiser.id, submission.value)
-  console.log(submission.value)
-  await setTimeout(1000)
+  const entries = await submitEntries(
+    db,
+    context.cloudflare.env,
+    advertiser.id,
+    submission.value,
+  )
 
   return dataWithSuccess(
     { lastResult: submission.reply() },

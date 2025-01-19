@@ -7,9 +7,17 @@ workers_dev = true
 compatibility_flags = [ "nodejs_compat" ]
 compatibility_date = "2024-09-26"
 
+[[r2_buckets]]
+binding = 'R2'
+bucket_name = 'video-ad-network'
+
 [assets]
 # https://developers.cloudflare.com/workers/static-assets/binding/
 directory = "./build/client"
 
+[vars]
+CREATIVE_BASE_URL = "http://localhost:5175/resources/creative/"
+
 [build]
 command = "pnpm run build"
+

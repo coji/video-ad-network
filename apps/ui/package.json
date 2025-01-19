@@ -20,6 +20,7 @@
     "@conform-to/zod": "1.2.2",
     "@date-fns/tz": "catalog:",
     "@date-fns/utc": "catalog:",
+    "@paralleldrive/cuid2": "2.2.2",
     "@radix-ui/react-accordion": "catalog:",
     "@radix-ui/react-alert-dialog": "catalog:",
     "@radix-ui/react-aspect-ratio": "catalog:",
