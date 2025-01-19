@@ -132,11 +132,6 @@ export const MediaFileDropInput = ({
                           }}
                         >
                           <source src={URL.createObjectURL(f)} type={f.type} />
-                          <track
-                            kind="captions"
-                            srcLang="en"
-                            label="English captions"
-                          />
                         </audio>
                       )}
                       {f.type.startsWith('video') && (
@@ -159,11 +154,6 @@ export const MediaFileDropInput = ({
                           }}
                         >
                           <source src={URL.createObjectURL(f)} type={f.type} />
-                          <track
-                            kind="captions"
-                            srcLang="en"
-                            label="English captions"
-                          />
                         </video>
                       )}
                     </div>
