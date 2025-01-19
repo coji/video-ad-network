@@ -106,10 +106,10 @@ export async function action({ request, params, context }: Route.ActionArgs) {
   )
 
   return dataWithSuccess(
-    { lastResult: submission.reply() },
+    { lastResult: submission.reply({ resetForm: true }) },
     {
       message: '新規入稿が完了しました',
-      description: JSON.stringify(submission.value),
+      description: `キャンペーン: ${entries.campaign.name} の入稿が完了しました`,
     },
   )
 }
@@ -339,6 +339,7 @@ export default function NewCampaign({ actionData }: Route.ComponentProps) {
               広告クリエイティブ (動画または音声ファイル)
             </Label>
             <MediaFileDropInput
+              key={fields.adMediaFile.key}
               id={fields.adMediaFile.id}
               name={fields.adMediaFile.name}
               type={['video', 'audio']}
@@ -499,6 +500,7 @@ export default function NewCampaign({ actionData }: Route.ComponentProps) {
                         バナー画像ファイル
                       </Label>
                       <MediaFileDropInput
+                        key={cbFields.mediaFile.key}
                         id={cbFields.mediaFile.id}
                         name={cbFields.mediaFile.name}
                         type="image"
