@@ -84,6 +84,7 @@ export const submitEntries = async (
           id: cbId,
           adId: adId,
           url: `${env.CREATIVE_BASE_URL}${companionBannerKey}`,
+          clickThroughUrl: value.adClickThroughUrl, // 広告のクリックスルー URL をそのまま使う
           mimeType: cb.mimeType,
           width: cb.width,
           height: cb.height,
