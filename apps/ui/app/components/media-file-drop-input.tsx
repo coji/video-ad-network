@@ -70,7 +70,7 @@ export const MediaFileDropInput = ({
         )
       }
     >
-      {({ isDragging, files, removeFile }) => (
+      {({ isDragging, files, objectUrls, removeFile }) => (
         <div className="flex flex-col items-center gap-2 text-center">
           <CloudUploadIcon className="size-6 stroke-muted-foreground" />
 
@@ -91,7 +91,7 @@ export const MediaFileDropInput = ({
                     <div>
                       {f.type.startsWith('image') && (
                         <img
-                          src={URL.createObjectURL(f)}
+                          src={objectUrls[index]}
                           alt={f.name}
                           className="object-contain"
                           onLoad={(e) => {
@@ -131,7 +131,7 @@ export const MediaFileDropInput = ({
                             })
                           }}
                         >
-                          <source src={URL.createObjectURL(f)} type={f.type} />
+                          <source src={objectUrls[index]} type={f.type} />
                         </audio>
                       )}
                       {f.type.startsWith('video') && (
@@ -153,7 +153,7 @@ export const MediaFileDropInput = ({
                             })
                           }}
                         >
-                          <source src={URL.createObjectURL(f)} type={f.type} />
+                          <source src={objectUrls[index]} type={f.type} />
                         </video>
                       )}
                     </div>

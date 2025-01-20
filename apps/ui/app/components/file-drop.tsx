@@ -11,6 +11,7 @@ interface FileDropProps
     | ((props: {
         files: File[]
         isDragging: boolean
+        objectUrls: string[]
         removeFile: (index: number) => void
       }) => React.ReactNode)
   className:
@@ -38,6 +39,7 @@ export const FileDrop = ({
   name,
 }: FileDropProps) => {
   const [files, setFiles] = useState<File[]>([])
+  const [objectUrls, setObjectUrls] = useState<string[]>([])
   const [isDragging, setIsDragging] = useState(false)
 
   const classNameAttr =
@@ -46,7 +48,7 @@ export const FileDrop = ({
       : className
   const childrenNode =
     typeof children === 'function'
-      ? children({ files, isDragging, removeFile })
+      ? children({ files, isDragging, objectUrls, removeFile })
       : children
   const acceptAttr =
     accepts.length > 0
@@ -77,13 +79,6 @@ export const FileDrop = ({
     return valid
   }
 
-  const [objectUrls, setObjectUrls] = useState<string[]>([])
-  useEffect(() => {
-    return () => {
-      objectUrls.forEach(URL.revokeObjectURL)
-    }
-  }, [objectUrls])
-
   function handleFileChange(selectedFiles: FileList) {
     setIsDragging(false)
 
@@ -100,6 +95,7 @@ export const FileDrop = ({
     const fileList = new DataTransfer()
     for (const file of newFiles) {
       fileList.items.add(file)
+      setObjectUrls((prev) => [...prev, URL.createObjectURL(file)])
     }
     if (fileInputRef.current) {
       fileInputRef.current.files = fileList.files
@@ -127,6 +123,12 @@ export const FileDrop = ({
       fileInputRef.current.files = fileList.files
     }
   }
+
+  useEffect(() => {
+    return () => {
+      objectUrls.forEach(URL.revokeObjectURL)
+    }
+  }, [objectUrls])
 
   return (
     <div
