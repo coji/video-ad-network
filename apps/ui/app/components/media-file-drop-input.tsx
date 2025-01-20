@@ -35,11 +35,13 @@ export const MediaFileDropInput = ({
   id,
   name,
   type,
+  maxSize = null,
   onMetadataReady,
 }: {
   id?: string
   name?: string
   type: 'image' | 'video' | 'audio' | Array<'image' | 'video' | 'audio'>
+  maxSize?: number | null
   onMetadataReady?: (
     file: File,
     mediaType: 'image' | 'video' | 'audio',
@@ -58,6 +60,7 @@ export const MediaFileDropInput = ({
       id={id}
       name={name}
       accepts={accepts}
+      maxSize={maxSize}
       className={({ fileData, isDragging }) =>
         cn(
           'w-full cursor-pointer rounded-md border-2 p-4 transition-colors hover:bg-accent',
@@ -65,6 +68,9 @@ export const MediaFileDropInput = ({
           fileData.length > 0 && 'bg-accent',
         )
       }
+      onError={(error) => {
+        console.log(error)
+      }}
     >
       {({ isDragging, fileData, removeFile }) => (
         <div className="flex flex-col items-center gap-2 text-center">

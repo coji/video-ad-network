@@ -63,7 +63,10 @@ export const schema = z.object({
       {
         message: '動画または音声ファイルを選択してください',
       },
-    ),
+    )
+    .refine((file) => file.size <= 100 * 1024 * 1024, {
+      message: '最大 100MB までのファイルを選択してください',
+    }),
   adDuration: z.number().int().positive(),
   adMimeType: z.string(),
   adWidth: z.number().int().positive().optional(),
@@ -77,6 +80,9 @@ export const schema = z.object({
         .instanceof(File, { message: 'ファイルを選択してください' })
         .refine((file) => file.type.startsWith('image/'), {
           message: '画像ファイルを選択してください',
+        })
+        .refine((file) => file.size <= 100 * 1024 * 1024, {
+          message: '最大 100MB までのファイルを選択してください',
         }),
       width: z.number().int().positive(),
       height: z.number().int().positive(),
