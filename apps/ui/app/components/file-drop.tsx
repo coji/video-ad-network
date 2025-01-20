@@ -80,13 +80,14 @@ export const useFileDrop = ({
     setFileData(newFileData)
   }
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     return () => {
       for (const data of fileData) {
         URL.revokeObjectURL(data.url)
       }
     }
-  }, [fileData])
+  }, [])
 
   return {
     fileData,
