@@ -1,5 +1,5 @@
 import { Outlet } from 'react-router'
-import { SidebarProvider } from '~/components/ui/sidebar'
+import { SidebarProvider, SidebarTrigger } from '~/components/ui/sidebar'
 import { requireUser } from '~/services/auth.server'
 import type { Route } from './+types/route'
 import { AppSidebar } from './app-sidebar'
@@ -11,13 +11,18 @@ export const loader = async (args: Route.LoaderArgs) => {
 
 export default function AppLayout() {
   return (
-    <div>
-      <SidebarProvider>
-        <AppSidebar />
-        <main className="flex-1 p-2">
+    <SidebarProvider>
+      <AppSidebar />
+
+      <div className="flex-1">
+        <header className="p-2">
+          <SidebarTrigger />
+        </header>
+
+        <main className="px-4 py-2 md:px-8 md:py-4">
           <Outlet />
         </main>
-      </SidebarProvider>
-    </div>
+      </div>
+    </SidebarProvider>
   )
 }

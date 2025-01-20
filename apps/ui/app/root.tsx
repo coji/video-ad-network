@@ -1,7 +1,11 @@
 import { ClerkProvider } from '@clerk/react-router'
 import { rootAuthLoader } from '@clerk/react-router/ssr.server'
+import { useEffect } from 'react'
 import type { LinksFunction } from 'react-router'
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router'
+import { getToast } from 'remix-toast'
+import { toast } from 'sonner'
+import { Toaster } from '~/components/ui/sonner'
 import type { Route } from './+types/root'
 import { PageLoadingProgress } from './components/page-loading-progress'
 import styles from './tailwind.css?url'
@@ -23,8 +27,18 @@ export const links: LinksFunction = () => [
   },
 ]
 
-export const loader = (args: Route.LoaderArgs) => {
-  return rootAuthLoader(args)
+export const loader = async (args: Route.LoaderArgs) => {
+  const { toast, headers } = await getToast(args.request)
+
+  return rootAuthLoader(
+    args,
+    () => {
+      return Response.json({ toastData: toast }, { headers }) as unknown as {
+        toastData: typeof toast
+      }
+    },
+    {},
+  )
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -38,6 +52,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <PageLoadingProgress />
+        <Toaster richColors closeButton />
         {children}
         <ScrollRestoration />
         <Scripts />
@@ -47,6 +62,24 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 const App = ({ loaderData }: Route.ComponentProps) => {
+  const { toastData } = loaderData
+
+  useEffect(() => {
+    if (!toastData) {
+      return
+    }
+    let toastFn = toast.info
+    if (toastData.type === 'error') {
+      toastFn = toast.error
+    } else if (toastData.type === 'success') {
+      toastFn = toast.success
+    }
+    toastFn(toastData.message, {
+      description: toastData.description,
+      position: 'top-right',
+    })
+  }, [toastData])
+
   return (
     <ClerkProvider loaderData={loaderData}>
       <Outlet />

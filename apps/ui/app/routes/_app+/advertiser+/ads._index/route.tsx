@@ -107,8 +107,12 @@ export default function AdsIndexPage({
                       </PopoverTrigger>
                       <PopoverContent className="w-96">
                         <Stack>
-                          {/* biome-ignore lint/a11y/useMediaCaption: <explanation> */}
-                          <video src={ad.url} controls />
+                          {ad.type === 'video' && (
+                            <video src={ad.url} controls className="w-full" />
+                          )}
+                          {ad.type === 'audio' && (
+                            <audio src={ad.url} controls className="w-full" />
+                          )}
 
                           <a
                             className="text-xs"
