@@ -439,7 +439,7 @@ export default function NewCampaign({ actionData }: Route.ComponentProps) {
 
               {fields.adType.value === 'video' && (
                 <>
-                  <Label htmlFor={fields.adWidth.id}>witdh</Label>
+                  <Label htmlFor={fields.adWidth.id}>width</Label>
                   <HStack>
                     <Input
                       {...getInputProps(fields.adWidth, {
