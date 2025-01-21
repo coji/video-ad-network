@@ -1,5 +1,5 @@
 #:schema node_modules/wrangler/config-schema.json
-name = "ui"
+name = "video-ad-network-ui"
 
 main = "./server.ts"
 workers_dev = true

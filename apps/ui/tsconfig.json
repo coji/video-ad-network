@@ -14,7 +14,7 @@
     "lib": ["DOM", "DOM.Iterable", "ES2022"],
     "types": [
       "@react-router/cloudflare",
-      "@cloudflare/workers-types",
+      "@cloudflare/workers-types/2023-07-01",
       "vite/client"
     ],
     "isolatedModules": true,
