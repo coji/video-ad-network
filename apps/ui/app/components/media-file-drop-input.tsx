@@ -63,7 +63,7 @@ export const MediaFileDropInput = ({
       maxSize={maxSize}
       className={({ fileData, isDragging }) =>
         cn(
-          'hover:bg-accent w-full cursor-pointer rounded-md border-2 p-4 transition-colors',
+          'w-full cursor-pointer rounded-md border-2 p-4 transition-colors hover:bg-accent',
           isDragging && 'bg-accent',
           fileData.length > 0 && 'bg-accent',
         )
@@ -74,7 +74,7 @@ export const MediaFileDropInput = ({
     >
       {({ isDragging, fileData, removeFile }) => (
         <div className="flex flex-col items-center gap-2 text-center">
-          <CloudUploadIcon className="stroke-muted-foreground size-6" />
+          <CloudUploadIcon className="size-6 stroke-muted-foreground" />
           {isDragging ? (
             <p>ファイルをここにドロップ</p>
           ) : (
@@ -82,7 +82,7 @@ export const MediaFileDropInput = ({
               {fileData.map((data, index) => (
                 <div
                   key={`${data.file.name}_${index}`}
-                  className="text-muted-foreground grid w-full grid-cols-1 place-items-center gap-4 p-4 italic"
+                  className="grid w-full grid-cols-1 place-items-center gap-4 p-4 italic text-muted-foreground"
                 >
                   <Stack align="center">
                     <strong>

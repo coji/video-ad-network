@@ -39,7 +39,7 @@ const SidebarMenuItemLink = ({
     <SidebarMenuButton asChild>
       <NavLink
         to={to}
-        className="aria-[current]:bg-primary aria-[current]:text-primary-foreground aria-[current]:hover:bg-primary/80 aria-[current]:border-transparent aria-[current]:shadow"
+        className="aria-[current]:border-transparent aria-[current]:bg-primary aria-[current]:text-primary-foreground aria-[current]:shadow aria-[current]:hover:bg-primary/80"
       >
         {children}
       </NavLink>

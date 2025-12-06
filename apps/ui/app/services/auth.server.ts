@@ -1,19 +1,14 @@
-import { getAuth } from '@clerk/react-router/ssr.server'
-import { redirect, type AppLoadContext } from 'react-router'
+import { getAuth } from '@clerk/react-router/server'
+import { redirect, type LoaderFunctionArgs } from 'react-router'
 
-type AuthArgs = {
-  request: Request
-  params: Record<string, string | undefined>
-  context: AppLoadContext
-}
 type SignedInAuthObject = Awaited<ReturnType<typeof requireUser>>
 
-export const getUser = async (args: AuthArgs) => {
-  const user = await getAuth(args)
-  return user.userId ? user : null
+export const getUser = async (args: LoaderFunctionArgs) => {
+  const auth = await getAuth(args)
+  return auth.isAuthenticated ? auth : null
 }
 
-export const requireUser = async (args: AuthArgs) => {
+export const requireUser = async (args: LoaderFunctionArgs) => {
   const user = await getUser(args)
   if (!user) {
     throw redirect('/login')
@@ -27,7 +22,7 @@ function isOrgUser(
   return !!user.orgId && !!user.orgRole
 }
 
-export const requireOrgUser = async (args: AuthArgs) => {
+export const requireOrgUser = async (args: LoaderFunctionArgs) => {
   const user = await requireUser(args)
   if (!isOrgUser(user)) {
     throw redirect('/login')
