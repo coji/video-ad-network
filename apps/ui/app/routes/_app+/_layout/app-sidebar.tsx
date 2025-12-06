@@ -1,4 +1,5 @@
 import {
+  BuildingIcon,
   FileVideoIcon,
   GoalIcon,
   GroupIcon,
@@ -6,6 +7,7 @@ import {
   NewspaperIcon,
   PlusIcon,
   ScanIcon,
+  ShieldIcon,
   UserIcon,
 } from 'lucide-react'
 import { useState, useEffect, type ReactNode } from 'react'
@@ -63,6 +65,7 @@ type User = {
   name: string
   email: string
   image?: string | null
+  role?: string | null
 }
 
 export function AppSidebar() {
@@ -84,6 +87,7 @@ export function AppSidebar() {
             name: session.data.user.name,
             email: session.data.user.email,
             image: session.data.user.image,
+            role: session.data.user.role,
           })
         }
 
@@ -166,6 +170,23 @@ export function AppSidebar() {
                 <SidebarMenuItemLink to="/media/ad-slots">
                   <ScanIcon />
                   広告枠
+                </SidebarMenuItemLink>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
+
+        {user?.role === 'admin' && (
+          <SidebarGroup>
+            <SidebarGroupLabel>
+              <ShieldIcon className="mr-1 inline h-4 w-4" />
+              Admin
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <SidebarMenuItemLink to="/admin/tenants">
+                  <BuildingIcon />
+                  テナント管理
                 </SidebarMenuItemLink>
               </SidebarMenu>
             </SidebarGroupContent>

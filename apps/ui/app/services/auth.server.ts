@@ -49,3 +49,11 @@ export const requireOrgUser = async (args: LoaderFunctionArgs) => {
   }
   return session
 }
+
+export const requireAdmin = async (args: LoaderFunctionArgs) => {
+  const session = await requireUser(args)
+  if (session.user.role !== 'admin') {
+    throw redirect('/')
+  }
+  return session
+}
