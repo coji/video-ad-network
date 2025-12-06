@@ -5,6 +5,11 @@ datasource db {
   url      = "file:../../../data/dev.db"
 }
 
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
 generator kysely {
   provider  = "prisma-kysely"
   output    = "../src"

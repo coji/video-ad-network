@@ -13,12 +13,14 @@
   },
   "scripts": {
     "build": "tsc -b",
-    "format": "prettier --check ."
+    "format": "prettier --experimental-cli --check .",
+    "format:fix": "prettier --experimental-cli --write ."
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@cloudflare/workers-types": "catalog:",
     "@date-fns/tz": "catalog:",
     "@date-fns/utc": "catalog:",
     "@types/node": "catalog:",
@@ -33,8 +35,9 @@
     "zx": "catalog:"
   },
   "dependencies": {
-    "@clerk/react-router": "0.1.5",
+    "@clerk/react-router": "2.3.2",
     "@libsql/kysely-libsql": "catalog:",
+    "@prisma/client": "6.19.0",
     "kysely": "catalog:"
   },
   "prisma": {

@@ -1,0 +1,22 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "video-ad-network",
+  "main": "src/index.ts",
+  "workers_dev": true,
+  // https://developers.cloudflare.com/workers/platform/compatibility-dates
+  "compatibility_flags": ["nodejs_compat"],
+  "compatibility_date": "2025-12-06",
+  // 環境変数の型定義用（実際の値は .dev.vars または Cloudflare secrets で設定）
+  "vars": {
+    "TRACKER_ORIGIN": "",
+    "TURSO_DATABASE_URL": "",
+    "TURSO_AUTH_TOKEN": "",
+  },
+  // https://developers.cloudflare.com/workers/static-assets/binding/
+  "assets": {
+    "directory": "./public",
+  },
+  "observability": {
+    "enabled": true,
+  },
+}

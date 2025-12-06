@@ -8,17 +8,11 @@ import {
 } from './handlers'
 import { uidMiddleware } from './middlewares/uid'
 
-interface Bindings {
-  TRACKER_ORIGIN: string
-  TURSO_DATABASE_URL: string
-  TURSO_AUTH_TOKEN: string
-}
-
 interface UIDState {
   uid: string
 }
 
-const app = new Hono<{ Bindings: Bindings; State: UIDState }>()
+const app = new Hono<{ Bindings: Cloudflare.Env; State: UIDState }>()
 
 app.use('*', uidMiddleware)
 app.use(

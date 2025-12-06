@@ -1,7 +1,31 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
-  "extends": ["../../biome.json"],
+  "$schema": "https://biomejs.dev/schemas/2.3.8/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "includes": [
+      "**",
+      "!.turbo",
+      "!**/.react-router",
+      "!worker-configuration.d.ts"
+    ]
+  },
+  "css": {
+    "parser": {
+      "cssModules": true
+    },
+    "linter": {
+      "enabled": false
+    }
+  },
   "linter": {
-    "ignore": [".react-router/**", "./worker-configuration.d.ts"]
+    "rules": {
+      "a11y": {
+        "useMediaCaption": "off"
+      }
+    }
   }
 }

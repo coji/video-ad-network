@@ -1,22 +1,22 @@
-import { getDB } from '@video-ad-network/db'
 import { match } from 'ts-pattern'
+import { db } from '~/services/db.server'
 import type { Route } from './+types/route'
 import {
   createOrgamizationMembershipOps,
   createOrganizationOps,
   createUserOps,
   verifyClerkWebhookOrThrow,
-} from './functions.server'
+} from './.server'
 
-export const action = async ({ request, context }: Route.ActionArgs) => {
-  const db = getDB(context.cloudflare.env)
+export const action = async ({ request }: Route.ActionArgs) => {
+  const kysely = db()
 
-  const user = createUserOps(db)
-  const org = createOrganizationOps(db)
-  const member = createOrgamizationMembershipOps(db)
+  const user = createUserOps(kysely)
+  const org = createOrganizationOps(kysely)
+  const member = createOrgamizationMembershipOps(kysely)
 
-  const event = await verifyClerkWebhookOrThrow(request, context)
-  const ret = await match(event)
+  const event = await verifyClerkWebhookOrThrow(request)
+  await match(event)
     .with({ type: 'user.created' }, (e) => user.upsert(e))
     .with({ type: 'user.updated' }, (e) => user.upsert(e))
     .with({ type: 'user.deleted' }, (e) => user.del(e))

@@ -1,4 +1,3 @@
-
 # Video Ad Network Project
 
 ## 目次
@@ -42,22 +41,40 @@ video-ad-network/
 
 ## 開発環境の設定
 
-### コードベースの準備
+### クイックスタート
 
-1. リポジトリをクローンします:
+1. リポジトリをクローンし、依存関係をインストールします:
 
    ```sh
    git clone https://github.com/coji/video-ad-network.git
    cd video-ad-network
-   ```
-
-2. 依存関係をインストールします:
-
-   ```sh
    pnpm install
    ```
 
-3. 各コンポーネントの設定を行います（以下のセクションを参照）。
+2. 開発環境をセットアップします:
+
+   ```sh
+   pnpm run setup
+   ```
+
+   これにより以下が自動で行われます:
+   - `data/` ディレクトリの作成
+   - `packages/db/.env` の作成
+   - `apps/ad-server/.dev.vars` の作成
+   - Prisma クライアントの生成
+   - データベースのマイグレーションと seed データの投入
+
+3. 開発サーバーを起動します:
+
+   ```sh
+   pnpm run dev
+   ```
+
+   これにより、ローカル DB サーバー（Turso dev）と全アプリケーションの開発サーバーが同時に起動します。
+
+4. 動作確認:
+   - 広告配信サーバー: http://localhost:5173/index.html
+   - 管理 UI: http://localhost:5175/
 
 ### Clerk Development 環境の準備 (開発チームごとに、初回のみ必要)
 
@@ -69,68 +86,86 @@ Clerk でアカウントを作成し、今回のアプリケーションを新�
 3. 開発環境での seed データとして使うため、Organization を適当な名前で２つ作成します。slug は空欄で構いません。
 4. 作成した２つの Organization それぞれの設定にて、 public organization metadata に以下を設定することで、管理UIでの広告主メニュー・媒体社メニューそれぞれを有効にします。
 
-    ```json
-    {
-      "isMedia": true,
-      "isAdvertiser": true
-    }
-    ```
+   ```json
+   {
+     "isMedia": true,
+     "isAdvertiser": true
+   }
+   ```
 
 5. 作成した Organization それぞれで、1. で作成した開発者個人のユーザアカウントを member として追加します。role は Admin にしてください。
 
-### 開発時環境変数を設定
+### 環境変数の設定（手動で行う場合）
 
-ad-serverアプリケーションでは、本番環境では分散SQLiteデータベースである Turso を使用しますが、ローカル開発環境では SQLite を使用します。ここではローカル開発環境での準備を行います。
+`pnpm run setup` を使わずに手動で設定する場合は、以下を参照してください。
 
-1. ad-server アプリのローカル開発環境での環境変数設定を行います。 `apps/ad-server/.dev.vars.example` を `apps/ad-server/.dev.vars` にコピーします。
+#### ad-server の環境変数
 
-   ```sh
-   TRACKER_ORIGIN = "http://localhost:5173"
-   TURSO_DATABASE_URL=file:../../data/dev.db
-   TURSO_AUTH_TOKEN=your_auth_token_here
-   ```
-
-2. ui アプリのローカル開発環境での環境変数設定を行います。`apps/ui/.dev.vars.example` を `apps/ui/.dev.vars` にコピーし、取得した React Router 用の Clerk のキーを設定します。Clerk webhook secret は組織やユーザの追加・削除を動作テストするときに必要になりますが、ここを設定しなくてもその部分以外は動作はします。
-
-    ```sh
-    TURSO_DATABASE_URL=file:../../data/dev.db
-    TURSO_AUTH_TOKEN=your_turso_auth_token
-
-    VITE_CLERK_PUBLISHABLE_KEY="取得したPublishable Key"
-    CLERK_SECRET_KEY="取得したSecret Key"
-    CLERK_WEBHOOK_SECRET="取得した Webhook Secret Key"
-    ```
-
-3. データベースモジュールのローカル開発環境での環境変数設定を行います。`packages/db/.env.example` を `packages/db/.env` にコピーし、取得した Clerk のキーを設定します。seed データの作成のために Clerk のキーが必要になります。
-
-    ```sh
-    DATABASE_URL=file:../../data/dev.db
-    CLERK_SECRET_KEY="取得したSecret Key"
-    ```
-
-### ローカル開発用データベースの準備
-
-ローカル開発用の SQLite データベースの準備するには、以下のコマンドを実行します:
+`apps/ad-server/.dev.vars` を作成:
 
 ```sh
-pnpm -C packages/db exec prisma migrate reset
+TRACKER_ORIGIN=http://localhost:5173
+TURSO_DATABASE_URL=http://127.0.0.1:8080
+TURSO_AUTH_TOKEN=
+```
+
+#### ui の環境変数
+
+`apps/ui/.dev.vars` を作成し、Clerk のキーを設定:
+
+```sh
+TURSO_DATABASE_URL=http://127.0.0.1:8080
+TURSO_AUTH_TOKEN=
+
+VITE_CLERK_PUBLISHABLE_KEY="取得したPublishable Key"
+CLERK_SECRET_KEY="取得したSecret Key"
+CLERK_WEBHOOK_SECRET="取得した Webhook Secret Key"
+```
+
+#### packages/db の環境変数
+
+`packages/db/.env` を作成:
+
+```sh
+DATABASE_URL=file:/path/to/video-ad-network/data/dev.db
+CLERK_SECRET_KEY="取得したSecret Key"
+```
+
+### データベースの手動セットアップ
+
+```sh
+# マイグレーションの適用
+pnpm -C packages/db exec prisma migrate deploy
+
+# seed データの投入
+pnpm -C packages/db exec prisma db seed
 ```
 
 ## 開発
 
-プロジェクト全体の開発サーバーを起動するには、以下のコマンドを実行します:
+### 全体の起動
 
 ```sh
 pnpm run dev
 ```
 
-これにより、ローカルにて、すべてのアプリケーションの開発サーバーが並行して起動されます。
+これにより以下が同時に起動します:
 
-起動したら以下のURLをブラウザで開いて動作確認をしてください。
+- **db**: ローカル SQLite DB サーバー（Turso dev、ポート 8080）
+- **ad-server**: 広告配信サーバー（ポート 5173）
+- **ui**: 管理 UI（ポート 5175）
 
-http://localhost:5173/index.html
+### 個別の起動
 
-各アプリケーションの開発サーバーを個別に起動する場合は、以下のコマンドを使用します:
+```sh
+# DB サーバーのみ
+pnpm run dev:db
+
+# アプリのみ（DB は別途起動が必要）
+pnpm run dev:apps
+```
+
+### 各アプリケーションの個別起動
 
 ### ad-server
 

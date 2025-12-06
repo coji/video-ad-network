@@ -1,6 +1,5 @@
 import { getFormProps, getInputProps, useForm } from '@conform-to/react'
-import { getZodConstraint, parseWithZod } from '@conform-to/zod'
-import { getDB } from '@video-ad-network/db'
+import { getZodConstraint, parseWithZod } from '@conform-to/zod/v4'
 import {
   FileVideoIcon,
   GoalIcon,
@@ -10,7 +9,7 @@ import {
 } from 'lucide-react'
 import { Form, Link, useNavigation } from 'react-router'
 import { dataWithError, dataWithSuccess } from 'remix-toast'
-import { z } from 'zod'
+import { z } from 'zod/v4'
 import { DatePickerWithRange } from '~/components/date-picker-with-range'
 import { FieldError } from '~/components/field-error'
 import { MediaFileDropInput } from '~/components/media-file-drop-input'
@@ -27,6 +26,7 @@ import {
   Stack,
 } from '~/components/ui'
 import { requireOrgUser } from '~/services/auth.server'
+import { db } from '~/services/db.server'
 import type { Route } from './+types/route'
 import { submitEntries } from './mutations.server'
 import { getAdvertiserByOrganizationId } from './queries.server'
@@ -35,8 +35,8 @@ export const schema = z.object({
   tzOffset: z.number().int().min(-720).max(840),
 
   campaignName: z.string().max(200),
-  campaignStartAt: z.string({ required_error: '開始日は必須です' }).date(),
-  campaignEndAt: z.string({ required_error: '終了日は必須です' }).date(),
+  campaignStartAt: z.string({ error: '開始日は必須です' }).date(),
+  campaignEndAt: z.string({ error: '終了日は必須です' }).date(),
   campaignBudget: z.number().int().min(0),
   campaignBudgetType: z.union([z.literal('UNLIMITED'), z.literal('TOTAL')]),
   campaignDeliveryPace: z.literal('ASMUCHASPOSSIBLE'),
@@ -54,19 +54,13 @@ export const schema = z.object({
   adName: z.string().max(200),
   adType: z.union([z.literal('video'), z.literal('audio')]),
   adMediaFile: z
-    .instanceof(File, {
-      message: 'ファイルを選択してください',
-    })
+    .file({ error: 'ファイルを選択してください' })
+    .max(100 * 1024 * 1024, '最大 100MB までのファイルを選択してください')
     .refine(
       (file) =>
         file.type.startsWith('video/') || file.type.startsWith('audio/'),
-      {
-        message: '動画または音声ファイルを選択してください',
-      },
-    )
-    .refine((file) => file.size <= 100 * 1024 * 1024, {
-      message: '最大 100MB までのファイルを選択してください',
-    }),
+      '動画または音声ファイルを選択してください',
+    ),
   adDuration: z.number().int().positive(),
   adMimeType: z.string(),
   adWidth: z.number().int().positive().optional(),
@@ -77,13 +71,12 @@ export const schema = z.object({
   companionBanners: z.array(
     z.object({
       mediaFile: z
-        .instanceof(File, { message: 'ファイルを選択してください' })
-        .refine((file) => file.type.startsWith('image/'), {
-          message: '画像ファイルを選択してください',
-        })
-        .refine((file) => file.size <= 100 * 1024 * 1024, {
-          message: '最大 100MB までのファイルを選択してください',
-        }),
+        .file({ error: 'ファイルを選択してください' })
+        .max(100 * 1024 * 1024, '最大 100MB までのファイルを選択してください')
+        .refine(
+          (file) => file.type.startsWith('image/'),
+          '画像ファイルを選択してください',
+        ),
       width: z.number().int().positive(),
       height: z.number().int().positive(),
       mimeType: z.string(),
@@ -91,27 +84,23 @@ export const schema = z.object({
   ),
 })
 
-export async function action({ request, params, context }: Route.ActionArgs) {
-  const orgUser = await requireOrgUser({ request, params, context })
+export async function action(args: Route.ActionArgs) {
+  const orgUser = await requireOrgUser(args)
+  const { request } = args
   const submission = await parseWithZod(await request.formData(), { schema })
   if (submission.status !== 'success') {
     return { lastResult: submission.reply() }
   }
 
-  const db = getDB(context.cloudflare.env)
-  const advertiser = await getAdvertiserByOrganizationId(db, orgUser.orgId)
+  const kysely = db()
+  const advertiser = await getAdvertiserByOrganizationId(kysely, orgUser.orgId)
   if (!advertiser) {
     throw dataWithError(null, '広告主情報が見つかりませんでした', {
       status: 422, // Unprocessable Entity
     })
   }
 
-  const entries = await submitEntries(
-    db,
-    context.cloudflare.env,
-    advertiser.id,
-    submission.value,
-  )
+  const entries = await submitEntries(kysely, advertiser.id, submission.value)
 
   return dataWithSuccess(
     { lastResult: submission.reply({ resetForm: true }) },
@@ -527,7 +516,7 @@ export default function NewCampaign({ actionData }: Route.ComponentProps) {
                         id={cbFields.mediaFile.id}
                         name={cbFields.mediaFile.name}
                         type="image"
-                        onMetadataReady={(file, type, metadata) => {
+                        onMetadataReady={(file, _type, metadata) => {
                           form.update({
                             name: cbFields.width.name,
                             value: metadata.width,

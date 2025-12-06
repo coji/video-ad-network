@@ -1,4 +1,4 @@
-import { getDB, sql } from '@video-ad-network/db'
+import { sql } from '@video-ad-network/db'
 import {
   Card,
   CardContent,
@@ -13,13 +13,14 @@ import {
   TableRow,
 } from '~/components/ui'
 import { requireOrgUser } from '~/services/auth.server'
+import { db } from '~/services/db.server'
 import type { Route } from './+types/route'
 
 export const loader = async (args: Route.LoaderArgs) => {
   const user = await requireOrgUser(args)
 
-  const db = getDB(args.context.cloudflare.env)
-  const adSlots = await db
+  const kysely = db()
+  const adSlots = await kysely
     .selectFrom('adSlots')
     .innerJoin('media', 'media.id', 'adSlots.mediaId')
     .innerJoin('companionSlots', 'adSlots.id', 'companionSlots.adSlotId')

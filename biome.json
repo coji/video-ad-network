@@ -1,35 +1,26 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.0/schema.json",
+  "root": true,
+  "$schema": "https://biomejs.dev/schemas/2.3.8/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
     "useIgnoreFile": true
   },
-  "organizeImports": {
-    "enabled": true,
-    "ignore": ["apps/ad-server/public/js/**"]
+  "files": {
+    "includes": ["**", "!.turbo"]
   },
   "linter": {
-    "ignore": ["apps/ad-server/public/js/**"],
     "rules": {
       "a11y": {
         "useMediaCaption": "off"
       }
     }
   },
-  "formatter": {
-    "ignore": ["apps/ad-server/public/js/**"]
-  },
-  "javascript": {
-    "formatter": {
-      "quoteStyle": "single",
-      "semicolons": "asNeeded",
-      "trailingCommas": "all"
-    }
-  },
-  "json": {
-    "formatter": {
-      "trailingCommas": "none"
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "off"
+      }
     }
   }
 }

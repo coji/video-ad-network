@@ -1,13 +1,13 @@
 import { createId } from '@paralleldrive/cuid2'
 import type { DB, Kysely, Selectable } from '@video-ad-network/db'
+import { env } from 'cloudflare:workers'
 import { addSeconds } from 'date-fns'
-import type { z } from 'zod'
+import type { z } from 'zod/v4'
 import { serializeDateTime } from '~/lib/datetime'
 import type { schema } from './route'
 
 export const submitEntries = async (
   db: Kysely<DB>,
-  env: Env,
   advertiserId: string,
   value: z.infer<typeof schema>,
 ) => {

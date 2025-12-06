@@ -1,4 +1,3 @@
-import { getDB } from '@video-ad-network/db'
 import {
   Badge,
   Card,
@@ -15,13 +14,14 @@ import {
 } from '~/components/ui'
 import { formatDateTime } from '~/lib/datetime'
 import { requireOrgUser } from '~/services/auth.server'
+import { db } from '~/services/db.server'
 import type { Route } from './+types/route'
 
 export const loader = async (args: Route.LoaderArgs) => {
   const user = await requireOrgUser(args)
 
-  const db = getDB(args.context.cloudflare.env)
-  const campaigns = await db
+  const kysely = db()
+  const campaigns = await kysely
     .selectFrom('campaigns')
     .innerJoin('advertisers', 'campaigns.advertiserId', 'advertisers.id')
     .selectAll()

@@ -22,7 +22,7 @@ export interface AdCandidate {
 
 async function fetchAds(
   db: Kysely<DB>, // Added db parameter
-  categories: string[] | null,
+  _categories: string[] | null,
   mediaType: string,
   companionSizes: { width: number; height: number }[],
 ): Promise<AdCandidate[]> {
