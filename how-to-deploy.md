@@ -54,8 +54,8 @@ Bytes Synced:   0 B
 Is Schema:      No
 
 Database Instances:
-NAME     TYPE        LOCATION 
-hkg      primary     hkg 
+NAME     TYPE        LOCATION
+hkg      primary     hkg
 ```
 
 ### Turso データベースアクセストークンの発行
@@ -109,12 +109,12 @@ pnpm -C apps/ad-server exec wrangler secret put TURSO_DATABASE_URL
 ? Enter a secret value: libsql://video-ad-network-mizoguchicoji.turso.io
 ```
 
-※ 実際に入力した値は *** でマスクされます。
+※ 実際に入力した値は \*\*\* でマスクされます。
 Worker が作成されていない状態なので、"ad-server" Worker を作成するか確認が入るので、`y` を入力します。
 
 ```sh
-🌀 Creating the secret for the Worker "ad-server" 
-✔ There doesn't seem to be a Worker called "ad-server". Do you want to create a new Worker with that name and add secrets to it? … 
+🌀 Creating the secret for the Worker "ad-server"
+✔ There doesn't seem to be a Worker called "ad-server". Do you want to create a new Worker with that name and add secrets to it? …
 ```
 
 以下のように Worker が新しく作成され、secret がアップロードされた旨表示されれば成功です。
@@ -136,7 +136,7 @@ pnpm -C apps/ad-server exec wrangler secret put TURSO_AUTH_TOKEN
 --------------------------------------------------------
 
 ✔ Enter a secret value: … ***************************************************************************************************************************************************************************************************************
-🌀 Creating the secret for the Worker "ad-server" 
+🌀 Creating the secret for the Worker "ad-server"
 ✨ Success! Uploaded secret TURSO_AUTH_TOKEN
 ```
 

@@ -1,5 +1,5 @@
 import { getFormProps, getInputProps, useForm } from '@conform-to/react'
-import { getZodConstraint, parseWithZod } from '@conform-to/zod'
+import { getZodConstraint, parseWithZod } from '@conform-to/zod/v4'
 import { getDB } from '@video-ad-network/db'
 import {
   FileVideoIcon,
@@ -527,7 +527,7 @@ export default function NewCampaign({ actionData }: Route.ComponentProps) {
                         id={cbFields.mediaFile.id}
                         name={cbFields.mediaFile.name}
                         type="image"
-                        onMetadataReady={(file, type, metadata) => {
+                        onMetadataReady={(file, _type, metadata) => {
                           form.update({
                             name: cbFields.width.name,
                             value: metadata.width,

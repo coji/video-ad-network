@@ -20,7 +20,7 @@ export const createUserOps = (db: Kysely<DB>) => {
         email: event.data.email_addresses[0].email_address,
       })
       .onConflict((oc) =>
-        oc.column('id').doUpdateSet((eb) => ({
+        oc.column('id').doUpdateSet(() => ({
           email: event.data.email_addresses[0].email_address,
         })),
       )

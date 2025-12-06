@@ -13,7 +13,8 @@
   },
   "scripts": {
     "build": "tsc -b",
-    "format": "prettier --check ."
+    "format": "prettier --experimental-cli --check .",
+    "format:fix": "prettier --experimental-cli --write ."
   },
   "keywords": [],
   "author": "",
@@ -33,7 +34,7 @@
     "zx": "catalog:"
   },
   "dependencies": {
-    "@clerk/react-router": "0.1.5",
+    "@clerk/react-router": "2.3.2",
     "@libsql/kysely-libsql": "catalog:",
     "kysely": "catalog:"
   },

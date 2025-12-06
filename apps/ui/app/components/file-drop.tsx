@@ -80,14 +80,13 @@ export const useFileDrop = ({
     setFileData(newFileData)
   }
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     return () => {
       for (const data of fileData) {
         URL.revokeObjectURL(data.url)
       }
     }
-  }, [])
+  }, [fileData])
 
   return {
     fileData,
@@ -99,11 +98,10 @@ export const useFileDrop = ({
   }
 }
 
-interface FileDropProps
-  extends Omit<
-    React.ComponentProps<'div'>,
-    'children' | 'className' | 'onError' | 'onSelect'
-  > {
+interface FileDropProps extends Omit<
+  React.ComponentProps<'div'>,
+  'children' | 'className' | 'onError' | 'onSelect'
+> {
   children:
     | React.ReactNode
     | ((props: {
@@ -163,7 +161,9 @@ export const FileDrop = ({
   const acceptAttr = accepts.length > 0 ? accepts.join(',') : undefined
 
   return (
+    // biome-ignore lint/a11y/useSemanticElements: div required for drag-and-drop file upload styling
     <div
+      role="button"
       className={computedClassName}
       onClick={() => {
         if (fileData.length === 0) fileInputRef.current?.click()
@@ -184,7 +184,6 @@ export const FileDrop = ({
         e.preventDefault()
         if (!disabled) handleFileChange(e.dataTransfer.files)
       }}
-      // biome-ignore lint/a11y/noNoninteractiveTabindex: <explanation>
       tabIndex={0}
       aria-label="Choose file or drag and drop"
       {...props}

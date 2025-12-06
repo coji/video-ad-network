@@ -9,7 +9,8 @@
     "build:dev": "tsc && vite build --mode development",
     "preview": "vite preview",
     "lint": "biome lint .",
-    "format": "prettier --check .",
+    "format": "prettier --experimental-cli --check .",
+    "format:fix": "prettier --experimental-cli --write .",
     "test": "vitest"
   },
   "keywords": [],

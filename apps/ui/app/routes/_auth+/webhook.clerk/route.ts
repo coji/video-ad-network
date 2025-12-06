@@ -16,7 +16,7 @@ export const action = async ({ request, context }: Route.ActionArgs) => {
   const member = createOrgamizationMembershipOps(db)
 
   const event = await verifyClerkWebhookOrThrow(request, context)
-  const ret = await match(event)
+  await match(event)
     .with({ type: 'user.created' }, (e) => user.upsert(e))
     .with({ type: 'user.updated' }, (e) => user.upsert(e))
     .with({ type: 'user.deleted' }, (e) => user.del(e))

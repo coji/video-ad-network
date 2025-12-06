@@ -12,8 +12,10 @@ import {
 } from '~/components/ui/popover'
 import { cn } from '~/lib/utils'
 
-interface DatePickerWithRangeProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onSelect'> {
+interface DatePickerWithRangeProps extends Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  'onSelect'
+> {
   defaultValues?: DateRange
   names?: { from?: string; to?: string }
   onSelect?: (range: DateRange | undefined) => void

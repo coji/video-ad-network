@@ -29,6 +29,10 @@
       "dependsOn": ["^format"],
       "cache": false
     },
+    "format:fix": {
+      "dependsOn": ["^format:fix"],
+      "cache": false
+    },
     "test": {
       "dependsOn": ["^test"],
       "cache": false

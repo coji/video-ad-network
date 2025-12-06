@@ -8,7 +8,8 @@
     "build:api": "vite build",
     "deploy": "wrangler deploy --minify src/index.ts",
     "typegen": "wrangler types --env-interface CloudflareBindings",
-    "format": "prettier --check .",
+    "format": "prettier --experimental-cli --check .",
+    "format:fix": "prettier --experimental-cli --write .",
     "lint": "biome lint ."
   },
   "dependencies": {
