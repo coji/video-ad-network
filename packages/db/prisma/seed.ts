@@ -2,15 +2,106 @@ import { TZDate } from '@date-fns/tz'
 import { format } from 'date-fns'
 import dotenv from 'dotenv'
 import { getDB } from '~/index'
-import { importClerkObjects } from './clerk/import-clark-objects'
 dotenv.config()
 const tz = 'Asia/Tokyo'
 
 const seed = async () => {
   const db = getDB(process.env.DATABASE_URL ?? '')
 
-  const { users, organizations, organizationMemberships } =
-    await importClerkObjects(db)
+  // Create users
+  const now = new Date().toISOString()
+  await db
+    .insertInto('user')
+    .values([
+      {
+        id: 'user1',
+        name: 'Admin User',
+        email: 'admin@example.com',
+        emailVerified: 1,
+        createdAt: now,
+        updatedAt: now,
+        role: 'admin',
+      },
+      {
+        id: 'user2',
+        name: 'Test User',
+        email: 'test@example.com',
+        emailVerified: 1,
+        createdAt: now,
+        updatedAt: now,
+      },
+    ])
+    .execute()
+
+  // Create accounts (password: "password123")
+  // Note: In production, use better-auth's password hashing
+  await db
+    .insertInto('account')
+    .values([
+      {
+        id: 'account1',
+        accountId: 'user1',
+        providerId: 'credential',
+        userId: 'user1',
+        password:
+          '$2a$10$abcdefghijklmnopqrstuv', // placeholder - use better-auth to create real accounts
+        createdAt: now,
+        updatedAt: now,
+      },
+      {
+        id: 'account2',
+        accountId: 'user2',
+        providerId: 'credential',
+        userId: 'user2',
+        password:
+          '$2a$10$abcdefghijklmnopqrstuv', // placeholder - use better-auth to create real accounts
+        createdAt: now,
+        updatedAt: now,
+      },
+    ])
+    .execute()
+
+  // Create organizations
+  await db
+    .insertInto('organization')
+    .values([
+      {
+        id: 'org1',
+        name: 'Tech Corp',
+        slug: 'tech-corp',
+        createdAt: now,
+        metadata: JSON.stringify({ isAdvertiser: true, isMedia: true }),
+      },
+      {
+        id: 'org2',
+        name: 'News Ltd',
+        slug: 'news-ltd',
+        createdAt: now,
+        metadata: JSON.stringify({ isAdvertiser: true, isMedia: true }),
+      },
+    ])
+    .execute()
+
+  // Create members
+  await db
+    .insertInto('member')
+    .values([
+      {
+        id: 'member1',
+        organizationId: 'org1',
+        userId: 'user1',
+        role: 'owner',
+        createdAt: now,
+      },
+      {
+        id: 'member2',
+        organizationId: 'org2',
+        userId: 'user2',
+        role: 'owner',
+        createdAt: now,
+      },
+    ])
+    .execute()
 
   // media
   await db
@@ -18,13 +109,13 @@ const seed = async () => {
     .values([
       {
         id: 'media1',
-        organizationId: organizations[0].id,
+        organizationId: 'org1',
         name: 'Tech Blog 1',
         categories: JSON.stringify(['tech', 'blog']),
       },
       {
         id: 'media2',
-        organizationId: organizations[1].id,
+        organizationId: 'org2',
         name: 'News',
         categories: JSON.stringify(['entertainment']),
       },
@@ -91,12 +182,12 @@ const seed = async () => {
       {
         id: 'adv1',
         name: 'Tech Corp',
-        organizationId: organizations[0].id,
+        organizationId: 'org1',
       },
       {
         id: 'adv2',
         name: 'News Ltd',
-        organizationId: organizations[1].id,
+        organizationId: 'org2',
       },
     ])
     .execute()

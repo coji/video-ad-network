@@ -93,7 +93,7 @@ export async function action(args: Route.ActionArgs) {
   }
 
   const kysely = db()
-  const advertiser = await getAdvertiserByOrganizationId(kysely, orgUser.orgId)
+  const advertiser = await getAdvertiserByOrganizationId(kysely, orgUser.session.activeOrganizationId)
   if (!advertiser) {
     throw dataWithError(null, '広告主情報が見つかりませんでした', {
       status: 422, // Unprocessable Entity

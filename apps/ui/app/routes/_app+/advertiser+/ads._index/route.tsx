@@ -58,7 +58,7 @@ export const loader = async (args: Route.LoaderArgs) => {
           'companionBannerSizes',
         ),
     ])
-    .where('advertisers.organizationId', '==', user.orgId)
+    .where('advertisers.organizationId', '==', user.session.activeOrganizationId)
     .groupBy('ads.id')
     .limit(100)
     .execute()

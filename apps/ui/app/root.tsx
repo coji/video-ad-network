@@ -1,8 +1,13 @@
-import { ClerkProvider } from '@clerk/react-router'
-import { rootAuthLoader } from '@clerk/react-router/ssr.server'
 import { useEffect } from 'react'
 import type { LinksFunction } from 'react-router'
-import { Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router'
+import {
+  Links,
+  Meta,
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+  data,
+} from 'react-router'
 import { getToast } from 'remix-toast'
 import { toast } from 'sonner'
 import { Toaster } from '~/components/ui/sonner'
@@ -29,16 +34,7 @@ export const links: LinksFunction = () => [
 
 export const loader = async (args: Route.LoaderArgs) => {
   const { toast, headers } = await getToast(args.request)
-
-  return rootAuthLoader(
-    args,
-    () => {
-      return Response.json({ toastData: toast }, { headers }) as unknown as {
-        toastData: typeof toast
-      }
-    },
-    {},
-  )
+  return data({ toastData: toast }, { headers })
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -81,9 +77,7 @@ const App = ({ loaderData }: Route.ComponentProps) => {
   }, [toastData])
 
   return (
-    <ClerkProvider loaderData={loaderData}>
       <Outlet />
-    </ClerkProvider>
   )
 }
 

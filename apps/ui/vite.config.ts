@@ -13,7 +13,9 @@ export default defineConfig({
   ],
   build: {
     rollupOptions: {
-      external: ['cloudflare:workers'],
+      // cloudflare:* modules are virtual modules provided by the Workers runtime
+      // They need to be externalized for the client build
+      external: [/^cloudflare:.*/],
     },
   },
   server: {

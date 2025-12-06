@@ -39,8 +39,5 @@
     "@libsql/kysely-libsql": "catalog:",
     "@prisma/client": "6.19.0",
     "kysely": "catalog:"
-  },
-  "prisma": {
-    "seed": "tsx --env-file .env prisma/seed.ts"
   }
 }

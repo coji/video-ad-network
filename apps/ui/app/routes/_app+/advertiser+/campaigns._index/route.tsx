@@ -25,7 +25,7 @@ export const loader = async (args: Route.LoaderArgs) => {
     .selectFrom('campaigns')
     .innerJoin('advertisers', 'campaigns.advertiserId', 'advertisers.id')
     .selectAll()
-    .where('advertisers.organizationId', '==', user.orgId)
+    .where('advertisers.organizationId', '==', user.session.activeOrganizationId)
     .limit(100)
     .execute()
 
