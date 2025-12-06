@@ -53,6 +53,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "catalog:",
+    "@cloudflare/vite-plugin": "1.17.0",
     "@cloudflare/workers-types": "catalog:",
     "@react-router/dev": "catalog:",
     "@types/nprogress": "catalog:",

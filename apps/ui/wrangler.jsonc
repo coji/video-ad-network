@@ -1,7 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "video-ad-network-ui",
-  "main": "./server.ts",
   "workers_dev": true,
   // https://developers.cloudflare.com/workers/platform/compatibility-dates
   "compatibility_flags": ["nodejs_compat"],
