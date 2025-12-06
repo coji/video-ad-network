@@ -46,7 +46,6 @@
     "sonner": "catalog:",
     "svix": "1.82.0",
     "tailwind-merge": "catalog:",
-    "tailwindcss-animate": "catalog:",
     "ts-pattern": "5.9.0",
     "vaul": "catalog:",
     "zod": "4.1.13"
@@ -59,9 +58,8 @@
     "@types/nprogress": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "autoprefixer": "catalog:",
+    "@tailwindcss/vite": "catalog:",
     "npm-run-all": "catalog:",
-    "postcss": "catalog:",
     "prettier": "catalog:",
     "prettier-plugin-organize-imports": "catalog:",
     "prettier-plugin-tailwindcss": "catalog:",
