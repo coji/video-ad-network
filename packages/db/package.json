@@ -37,6 +37,7 @@
   "dependencies": {
     "@clerk/react-router": "2.3.2",
     "@libsql/kysely-libsql": "catalog:",
+    "@prisma/client": "6.19.0",
     "kysely": "catalog:"
   },
   "prisma": {

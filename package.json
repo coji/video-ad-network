@@ -5,7 +5,10 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "turbo dev",
+    "setup": "./scripts/setup-dev.sh",
+    "dev": "concurrently -n db,apps -c blue,green \"pnpm run dev:db\" \"turbo dev\"",
+    "dev:db": "turso dev --db-file ./data/dev.db",
+    "dev:apps": "turbo dev",
     "build": "turbo build",
     "lint": "turbo lint",
     "format": "turbo format && prettier --experimental-cli --check .",
@@ -21,10 +24,13 @@
   "license": "ISC",
   "devDependencies": {
     "@biomejs/biome": "catalog:",
+    "@types/node": "catalog:",
+    "cc-hooks-ts": "2.0.56",
     "concurrently": "catalog:",
     "npm-run-all": "catalog:",
     "prettier": "catalog:",
     "prettier-plugin-organize-imports": "catalog:",
+    "tsx": "catalog:",
     "turbo": "catalog:"
   },
   "packageManager": "pnpm@10.24.0"

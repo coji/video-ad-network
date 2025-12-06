@@ -4,7 +4,7 @@
   "workers_dev": true,
   // https://developers.cloudflare.com/workers/platform/compatibility-dates
   "compatibility_flags": ["nodejs_compat"],
-  "compatibility_date": "2024-12-05",
+  "compatibility_date": "2025-12-06",
   // 環境変数の型定義用（実際の値は .dev.vars または Cloudflare secrets で設定）
   "vars": {
     "VITE_CLERK_PUBLISHABLE_KEY": "",

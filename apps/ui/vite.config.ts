@@ -9,6 +9,11 @@ export default defineConfig({
     reactRouter(),
     tsconfigPaths(),
   ],
+  build: {
+    rollupOptions: {
+      external: ['cloudflare:workers'],
+    },
+  },
   server: {
     port: 5175,
   },

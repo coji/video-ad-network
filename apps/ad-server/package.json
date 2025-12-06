@@ -20,10 +20,8 @@
   },
   "devDependencies": {
     "@biomejs/biome": "catalog:",
+    "@cloudflare/vite-plugin": "catalog:",
     "@cloudflare/workers-types": "catalog:",
-    "@hono/vite-build": "catalog:",
-    "@hono/vite-dev-server": "catalog:",
-    "cloudflare-workeres": "link:@hono/vite-build/cloudflare-workeres",
     "prettier": "catalog:",
     "prettier-plugin-organize-imports": "catalog:",
     "vite": "catalog:",

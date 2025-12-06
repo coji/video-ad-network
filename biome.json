@@ -1,4 +1,5 @@
 {
+  "root": true,
   "$schema": "https://biomejs.dev/schemas/2.3.8/schema.json",
   "vcs": {
     "enabled": true,
@@ -12,6 +13,13 @@
     "rules": {
       "a11y": {
         "useMediaCaption": "off"
+      }
+    }
+  },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "off"
       }
     }
   }
