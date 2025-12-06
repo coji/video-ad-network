@@ -1,8 +1,8 @@
-import { getDB } from '@video-ad-network/db'
 import type { Context } from 'hono'
 import { getCookie, setCookie } from 'hono/cookie'
 import { saveAdEvent } from '~/functions/ad-events'
 import { selectAd } from '~/functions/ad-selection'
+import { db } from '~/functions/db'
 import {
   deserializeFrequencyData,
   FREQUENCY_COOKIE_OPTIONS,
@@ -30,15 +30,15 @@ export async function handleVastRequest(c: Context) {
     return c.text('Missing required parameters', 400)
   }
 
-  const db = getDB(c.env)
+  const kysely = db()
   const uid = c.get('uid') as string
   const { ip, userAgent } = getRequestContext(c)
   const frequencyData = deserializeFrequencyData(getCookie(c, 'ad_frequency'))
   const now = new Date()
 
-  const adSlot = await getAdSlot(db, mediaId, adSlotId)
+  const adSlot = await getAdSlot(kysely, mediaId, adSlotId)
   if (!adSlot) {
-    await saveAdEvent(db, 'vast', {
+    await saveAdEvent(kysely, 'vast', {
       mediaId,
       adSlotId,
       ipAddress: ip,
@@ -49,7 +49,7 @@ export async function handleVastRequest(c: Context) {
   }
 
   const ad = await selectAd(
-    db,
+    kysely,
     now.getTime(),
     frequencyData,
     adSlot.categories,
@@ -57,7 +57,7 @@ export async function handleVastRequest(c: Context) {
     adSlot.companionSizes,
   )
   if (!ad) {
-    await saveAdEvent(db, 'vast', {
+    await saveAdEvent(kysely, 'vast', {
       mediaId,
       adSlotId,
       ipAddress: ip,
@@ -67,7 +67,7 @@ export async function handleVastRequest(c: Context) {
     return c.notFound()
   }
 
-  await saveAdEvent(db, 'vast', {
+  await saveAdEvent(kysely, 'vast', {
     mediaId,
     adSlotId,
     advertiserId: ad.advertiserId,
@@ -79,7 +79,7 @@ export async function handleVastRequest(c: Context) {
     uid,
   })
 
-  const companionBanners = await getCompanionBanners(db, ad.id)
+  const companionBanners = await getCompanionBanners(kysely, ad.id)
 
   incrementFrequencyCount(
     frequencyData,

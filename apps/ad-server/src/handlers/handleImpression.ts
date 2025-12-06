@@ -1,6 +1,6 @@
-import { getDB } from '@video-ad-network/db'
 import type { Context } from 'hono'
 import { saveAdEvent } from '~/functions/ad-events'
+import { db } from '~/functions/db'
 import { PIXEL } from '~/functions/pixel'
 
 export async function handleImpression(c: Context) {
@@ -14,9 +14,8 @@ export async function handleImpression(c: Context) {
     impression_id: impressionId,
   } = c.req.query()
 
-  const db = getDB(c.env)
   const uid = c.get('uid') as string
-  await saveAdEvent(db, 'impression', {
+  await saveAdEvent(db(), 'impression', {
     adSlotId,
     mediaId,
     advertiserId,

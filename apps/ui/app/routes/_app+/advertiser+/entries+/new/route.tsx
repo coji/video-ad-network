@@ -1,7 +1,5 @@
 import { getFormProps, getInputProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod/v4'
-import { env } from 'cloudflare:workers'
-import { getDB } from '@video-ad-network/db'
 import {
   FileVideoIcon,
   GoalIcon,
@@ -28,6 +26,7 @@ import {
   Stack,
 } from '~/components/ui'
 import { requireOrgUser } from '~/services/auth.server'
+import { db } from '~/services/db.server'
 import type { Route } from './+types/route'
 import { submitEntries } from './mutations.server'
 import { getAdvertiserByOrganizationId } from './queries.server'
@@ -93,15 +92,15 @@ export async function action(args: Route.ActionArgs) {
     return { lastResult: submission.reply() }
   }
 
-  const db = getDB(env)
-  const advertiser = await getAdvertiserByOrganizationId(db, orgUser.orgId)
+  const kysely = db()
+  const advertiser = await getAdvertiserByOrganizationId(kysely, orgUser.orgId)
   if (!advertiser) {
     throw dataWithError(null, '広告主情報が見つかりませんでした', {
       status: 422, // Unprocessable Entity
     })
   }
 
-  const entries = await submitEntries(db, env, advertiser.id, submission.value)
+  const entries = await submitEntries(kysely, advertiser.id, submission.value)
 
   return dataWithSuccess(
     { lastResult: submission.reply({ resetForm: true }) },

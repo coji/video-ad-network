@@ -13,14 +13,11 @@ import type { DB } from './database-schema'
 export { Kysely, sql }
 export type { DB, Insertable, Selectable, Updateable }
 
-export const getDB = (env: {
-  TURSO_DATABASE_URL: string
-  TURSO_AUTH_TOKEN: string
-}) => {
+export const getDB = (databaseUrl: string, authToken?: string) => {
   const kysely = new Kysely<DB>({
     dialect: new LibsqlDialect({
-      url: env.TURSO_DATABASE_URL,
-      authToken: env.TURSO_AUTH_TOKEN,
+      url: databaseUrl,
+      authToken,
     }),
     plugins: [
       new CamelCasePlugin(),

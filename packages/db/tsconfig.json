@@ -2,7 +2,7 @@
   "include": ["**/*.ts"],
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ES2022"],
-    "types": ["node"],
+    "types": ["node", "@cloudflare/workers-types"],
     "isolatedModules": true,
     "esModuleInterop": true,
     "module": "ESNext",

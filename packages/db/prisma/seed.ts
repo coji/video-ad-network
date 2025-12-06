@@ -7,10 +7,7 @@ dotenv.config()
 const tz = 'Asia/Tokyo'
 
 const seed = async () => {
-  const db = getDB({
-    TURSO_DATABASE_URL: process.env.DATABASE_URL ?? '',
-    TURSO_AUTH_TOKEN: '',
-  })
+  const db = getDB(process.env.DATABASE_URL ?? '')
 
   const { users, organizations, organizationMemberships } =
     await importClerkObjects(db)

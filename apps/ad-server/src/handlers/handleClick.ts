@@ -1,6 +1,6 @@
-import { getDB } from '@video-ad-network/db'
 import type { Context } from 'hono'
 import { saveAdEvent } from '~/functions/ad-events'
+import { db } from '~/functions/db'
 import { utcNow } from '~/functions/utc-now'
 
 export async function handleClick(c: Context) {
@@ -18,20 +18,20 @@ export async function handleClick(c: Context) {
   const ipAddress = c.req.header('CF-Connecting-IP')
   const userAgent = c.req.header('User-Agent')
 
-  const db = getDB(c.env)
+  const kysely = db()
   const uid = c.get('uid') as string
 
   // リダイレクト先を取得
   let clickThroughUrl: string
   if (isCompanion && companionId) {
-    const companion = await db
+    const companion = await kysely
       .selectFrom('companionBanners')
       .select('clickThroughUrl')
       .where('id', '==', companionId)
       .executeTakeFirst()
     clickThroughUrl = companion?.clickThroughUrl ?? ''
   } else {
-    const ad = await db
+    const ad = await kysely
       .selectFrom('ads')
       .select('clickThroughUrl')
       .where('id', '==', adId)
@@ -40,7 +40,7 @@ export async function handleClick(c: Context) {
   }
 
   // クリックを記録
-  await db
+  await kysely
     .insertInto('clicks')
     .values({
       id: crypto.randomUUID(),
@@ -61,7 +61,7 @@ export async function handleClick(c: Context) {
     .execute()
     .catch(console.error)
 
-  await saveAdEvent(db, 'click', {
+  await saveAdEvent(kysely, 'click', {
     mediaId,
     adSlotId,
     advertiserId,

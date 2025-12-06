@@ -444,6 +444,9 @@ importers:
         specifier: 'catalog:'
         version: 0.28.8
     devDependencies:
+      '@cloudflare/workers-types':
+        specifier: 'catalog:'
+        version: 4.20251205.0
       '@date-fns/tz':
         specifier: 'catalog:'
         version: 1.4.1

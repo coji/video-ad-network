@@ -1,20 +1,19 @@
-import { env } from 'cloudflare:workers'
-import { getDB } from '@video-ad-network/db'
 import { match } from 'ts-pattern'
+import { db } from '~/services/db.server'
 import type { Route } from './+types/route'
 import {
   createOrgamizationMembershipOps,
   createOrganizationOps,
   createUserOps,
   verifyClerkWebhookOrThrow,
-} from './functions.server'
+} from './.server'
 
 export const action = async ({ request }: Route.ActionArgs) => {
-  const db = getDB(env)
+  const kysely = db()
 
-  const user = createUserOps(db)
-  const org = createOrganizationOps(db)
-  const member = createOrgamizationMembershipOps(db)
+  const user = createUserOps(kysely)
+  const org = createOrganizationOps(kysely)
+  const member = createOrgamizationMembershipOps(kysely)
 
   const event = await verifyClerkWebhookOrThrow(request)
   await match(event)

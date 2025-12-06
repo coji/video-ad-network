@@ -1,6 +1,6 @@
-import { getDB } from '@video-ad-network/db'
 import type { Context } from 'hono'
 import { saveAdEvent } from '~/functions/ad-events'
+import { db } from '~/functions/db'
 import { PIXEL } from '~/functions/pixel'
 
 export async function handleProgress(c: Context) {
@@ -15,9 +15,8 @@ export async function handleProgress(c: Context) {
     progress,
   } = c.req.query()
 
-  const db = getDB(c.env)
   const uid = c.get('uid') as string
-  await saveAdEvent(db, 'progress', {
+  await saveAdEvent(db(), 'progress', {
     adSlotId,
     mediaId,
     advertiserId,
