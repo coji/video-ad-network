@@ -16,12 +16,16 @@ export default defineConfig({
     resolve: {
       conditions: ['workerd', 'worker', 'browser'],
     },
+    external: ['cloudflare:workers'],
   },
   resolve: {
     mainFields: ['browser', 'module', 'main'],
   },
   build: {
     minify: true,
+    rollupOptions: {
+      external: ['cloudflare:workers'],
+    },
   },
   server: {
     port: 5175,

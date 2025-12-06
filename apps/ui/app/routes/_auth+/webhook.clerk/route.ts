@@ -1,3 +1,4 @@
+import { env } from 'cloudflare:workers'
 import { getDB } from '@video-ad-network/db'
 import { match } from 'ts-pattern'
 import type { Route } from './+types/route'
@@ -8,14 +9,14 @@ import {
   verifyClerkWebhookOrThrow,
 } from './functions.server'
 
-export const action = async ({ request, context }: Route.ActionArgs) => {
-  const db = getDB(context.cloudflare.env)
+export const action = async ({ request }: Route.ActionArgs) => {
+  const db = getDB(env)
 
   const user = createUserOps(db)
   const org = createOrganizationOps(db)
   const member = createOrgamizationMembershipOps(db)
 
-  const event = await verifyClerkWebhookOrThrow(request, context)
+  const event = await verifyClerkWebhookOrThrow(request)
   await match(event)
     .with({ type: 'user.created' }, (e) => user.upsert(e))
     .with({ type: 'user.updated' }, (e) => user.upsert(e))

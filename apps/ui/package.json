@@ -12,7 +12,7 @@
     "format": "prettier --experimental-cli --check .",
     "format:fix": "prettier --experimental-cli --write .",
     "typecheck": "react-router typegen && tsc",
-    "typegen": "wrangler types",
+    "typegen": "wrangler types --strict-vars=false",
     "validate": "run-p format lint && run-p typecheck"
   },
   "dependencies": {

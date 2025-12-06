@@ -1,3 +1,4 @@
+import { env } from 'cloudflare:workers'
 import { getDB } from '@video-ad-network/db'
 import {
   Badge,
@@ -19,7 +20,7 @@ import type { Route } from './+types/route'
 
 export const loader = async (args: Route.LoaderArgs) => {
   const user = await requireOrgUser(args)
-  const db = getDB(args.context.cloudflare.env)
+  const db = getDB(env)
   const media = await db
     .selectFrom('media')
     .innerJoin('adSlots', 'media.id', 'adSlots.mediaId')

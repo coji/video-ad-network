@@ -1,5 +1,5 @@
 import type { WebhookEvent } from '@clerk/react-router/ssr.server'
-import type { AppLoadContext } from 'react-router'
+import { env } from 'cloudflare:workers'
 import { Webhook } from 'svix'
 
 /**
@@ -10,7 +10,6 @@ import { Webhook } from 'svix'
  */
 export const verifyClerkWebhookOrThrow = async (
   request: Request,
-  context: AppLoadContext,
 ): Promise<WebhookEvent> => {
   const payload = await request.json()
   const payloadString = JSON.stringify(payload)
@@ -27,7 +26,7 @@ export const verifyClerkWebhookOrThrow = async (
     'svix-timestamp': svixTimestamp,
     'svix-signature': svixSignature,
   }
-  const wh = new Webhook(context.cloudflare.env.CLERK_WEBHOOK_SECRET)
+  const wh = new Webhook(env.CLERK_WEBHOOK_SECRET)
   try {
     const event = wh.verify(payloadString, svixHeaders) as WebhookEvent
     return event

@@ -1,5 +1,6 @@
 import { getFormProps, getInputProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod/v4'
+import { env } from 'cloudflare:workers'
 import { getDB } from '@video-ad-network/db'
 import {
   FileVideoIcon,
@@ -86,13 +87,13 @@ export const schema = z.object({
 
 export async function action(args: Route.ActionArgs) {
   const orgUser = await requireOrgUser(args)
-  const { request, context } = args
+  const { request } = args
   const submission = await parseWithZod(await request.formData(), { schema })
   if (submission.status !== 'success') {
     return { lastResult: submission.reply() }
   }
 
-  const db = getDB(context.cloudflare.env)
+  const db = getDB(env)
   const advertiser = await getAdvertiserByOrganizationId(db, orgUser.orgId)
   if (!advertiser) {
     throw dataWithError(null, '広告主情報が見つかりませんでした', {
@@ -100,12 +101,7 @@ export async function action(args: Route.ActionArgs) {
     })
   }
 
-  const entries = await submitEntries(
-    db,
-    context.cloudflare.env,
-    advertiser.id,
-    submission.value,
-  )
+  const entries = await submitEntries(db, env, advertiser.id, submission.value)
 
   return dataWithSuccess(
     { lastResult: submission.reply({ resetForm: true }) },

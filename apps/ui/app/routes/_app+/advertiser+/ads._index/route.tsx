@@ -1,3 +1,4 @@
+import { env } from 'cloudflare:workers'
 import { getDB, sql } from '@video-ad-network/db'
 import { ExternalLinkIcon } from 'lucide-react'
 import {
@@ -26,7 +27,7 @@ import type { Route } from './+types/route'
 export const loader = async (args: Route.LoaderArgs) => {
   const user = await requireOrgUser(args)
 
-  const db = getDB(args.context.cloudflare.env)
+  const db = getDB(env)
   const ads = await db
     .selectFrom('ads')
     .innerJoin('adGroups', 'ads.adGroupId', 'adGroups.id')
