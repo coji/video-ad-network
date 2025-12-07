@@ -16,25 +16,9 @@ import {
   TableHeader,
   TableRow,
 } from '~/components/ui'
+import { parseOrganizationMetadata } from '~/lib/organization'
 import { db, requireAdmin } from '~/services/auth.server'
 import type { Route } from './+types/tenants._index'
-
-type OrganizationMetadata = {
-  isAdvertiser?: boolean
-  isMedia?: boolean
-}
-
-function parseMetadata(
-  metadata: string | object | null | undefined,
-): OrganizationMetadata | null {
-  if (!metadata) return null
-  if (typeof metadata === 'object') return metadata as OrganizationMetadata
-  try {
-    return JSON.parse(metadata) as OrganizationMetadata
-  } catch {
-    return null
-  }
-}
 
 export const loader = async (args: Route.LoaderArgs) => {
   await requireAdmin(args)
@@ -57,7 +41,7 @@ export const loader = async (args: Route.LoaderArgs) => {
 
   return {
     tenants: tenants.map((tenant) => {
-      const metadata = parseMetadata(tenant.metadata)
+      const metadata = parseOrganizationMetadata(tenant.metadata)
       return {
         ...tenant,
         isAdvertiser: metadata?.isAdvertiser ?? false,

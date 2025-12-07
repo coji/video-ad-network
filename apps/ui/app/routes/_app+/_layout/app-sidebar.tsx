@@ -36,6 +36,7 @@ import {
   SidebarRail,
   useSidebar,
 } from '~/components/ui'
+import { parseOrganizationMetadata } from '~/lib/organization'
 import { authClient } from '~/services/auth.client'
 
 const SidebarMenuItemLink = ({
@@ -56,22 +57,6 @@ const SidebarMenuItemLink = ({
     </SidebarMenuButton>
   </SidebarMenuItem>
 )
-
-type OrganizationMetadata = {
-  isAdvertiser?: boolean
-  isMedia?: boolean
-}
-
-function parseMetadata(
-  metadata: string | null | undefined,
-): OrganizationMetadata | null {
-  if (!metadata) return null
-  try {
-    return JSON.parse(metadata) as OrganizationMetadata
-  } catch {
-    return null
-  }
-}
 
 type Organization = {
   id: string
@@ -131,7 +116,7 @@ export function AppSidebar() {
     fetchData()
   }, [])
 
-  const metadata = parseMetadata(activeOrg?.metadata)
+  const metadata = parseOrganizationMetadata(activeOrg?.metadata)
 
   const handleLogout = async () => {
     await authClient.signOut()

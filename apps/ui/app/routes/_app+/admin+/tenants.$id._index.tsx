@@ -40,25 +40,9 @@ import {
   TableHeader,
   TableRow,
 } from '~/components/ui'
+import { parseOrganizationMetadata } from '~/lib/organization'
 import { auth, db, requireAdmin } from '~/services/auth.server'
 import type { Route } from './+types/tenants.$id._index'
-
-type OrganizationMetadata = {
-  isAdvertiser?: boolean
-  isMedia?: boolean
-}
-
-function parseMetadata(
-  metadata: string | object | null | undefined,
-): OrganizationMetadata | null {
-  if (!metadata) return null
-  if (typeof metadata === 'object') return metadata as OrganizationMetadata
-  try {
-    return JSON.parse(metadata) as OrganizationMetadata
-  } catch {
-    return null
-  }
-}
 
 const updateTenantSchema = z.object({
   _action: z.literal('update'),
@@ -131,7 +115,7 @@ export const loader = async (args: Route.LoaderArgs) => {
     .orderBy('member.createdAt', 'asc')
     .execute()
 
-  const metadata = parseMetadata(tenant.metadata)
+  const metadata = parseOrganizationMetadata(tenant.metadata)
 
   return {
     tenant: {
@@ -438,14 +422,11 @@ export default function TenantDetailPage({
                             name="role"
                             defaultValue={member.role}
                             onValueChange={(value) => {
-                              const form = document.createElement('form')
-                              form.method = 'post'
-                              form.innerHTML = `
-                                <input type="hidden" name="_action" value="updateMemberRole" />
-                                <input type="hidden" name="memberId" value="${member.id}" />
-                                <input type="hidden" name="role" value="${value}" />
-                              `
-                              fetcher.submit(form)
+                              const formData = new FormData()
+                              formData.set('_action', 'updateMemberRole')
+                              formData.set('memberId', member.id)
+                              formData.set('role', value)
+                              fetcher.submit(formData, { method: 'post' })
                             }}
                           >
                             <SelectTrigger className="w-[120px]">
