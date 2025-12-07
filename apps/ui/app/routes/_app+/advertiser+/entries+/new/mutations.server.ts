@@ -1,7 +1,7 @@
 import { createId } from '@paralleldrive/cuid2'
 import type { DB, Kysely, Selectable } from '@video-ad-network/db'
 import { env } from 'cloudflare:workers'
-import { addSeconds } from 'date-fns'
+import dayjs from 'dayjs'
 import type { z } from 'zod/v4'
 import { serializeDateTime } from '~/lib/datetime'
 import type { schema } from './route'
@@ -21,7 +21,7 @@ export const submitEntries = async (
         name: value.campaignName,
         startAt: serializeDateTime(value.campaignStartAt, value.tzOffset),
         endAt: serializeDateTime(
-          addSeconds(value.campaignEndAt, 1 * 60 * 60 * 24 - 1), // 終了日の 23:59:59 にするために 1 日加算
+          dayjs(value.campaignEndAt).add(1, 'day').subtract(1, 'second').toDate(), // 終了日の 23:59:59 にする
           value.tzOffset,
         ),
         budget: value.campaignBudget,

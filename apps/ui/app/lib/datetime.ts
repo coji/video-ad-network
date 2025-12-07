@@ -1,5 +1,9 @@
-import { TZDate } from '@date-fns/tz'
-import { addMinutes, format } from 'date-fns'
+import dayjs from 'dayjs'
+import timezone from 'dayjs/plugin/timezone'
+import utc from 'dayjs/plugin/utc'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 const tz = 'Asia/Tokyo'
 
@@ -11,12 +15,9 @@ const tz = 'Asia/Tokyo'
  */
 export const formatDateTime = (
   input: string,
-  formatStr = 'yyyy-MM-dd HH:mm',
+  formatStr = 'YYYY-MM-DD HH:mm',
 ) => {
-  const isoString = `${input.replace(' ', 'T')}Z`
-  const utcDate = new TZDate(isoString, 'utc')
-  const tzDate = utcDate.withTimeZone(tz)
-  return format(tzDate, formatStr)
+  return dayjs.utc(input).tz(tz).format(formatStr)
 }
 
 /**
@@ -25,7 +26,7 @@ export const formatDateTime = (
  * @throws {Error} If the date string is invalid
  * @param date
  * @param timezoneOffset
- * @returns {string} Date string in 'yyyy-MM-dd HH:mm:ss' format
+ * @returns {string} Date string in 'YYYY-MM-DD HH:mm:ss' format
  */
 export const serializeDateTime = (
   dateStr: string | Date,
@@ -38,8 +39,5 @@ export const serializeDateTime = (
     throw new Error('Invalid timezone offset')
   }
 
-  return format(
-    new TZDate(addMinutes(dateStr, timezoneOffset), 'utc'),
-    'yyyy-MM-dd HH:mm:ss',
-  )
+  return dayjs(dateStr).add(timezoneOffset, 'minute').utc().format('YYYY-MM-DD HH:mm:ss')
 }

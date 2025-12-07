@@ -19,7 +19,6 @@
   "dependencies": {
     "@conform-to/react": "1.14.1",
     "@conform-to/zod": "1.14.1",
-    "@date-fns/tz": "catalog:",
     "@paralleldrive/cuid2": "3.0.4",
     "@react-router/cloudflare": "catalog:",
     "@react-router/remix-routes-option-adapter": "catalog:",
@@ -29,6 +28,7 @@
     "clsx": "catalog:",
     "cmdk": "catalog:",
     "date-fns": "catalog:",
+    "dayjs": "catalog:",
     "isbot": "catalog:",
     "lucide-react": "catalog:",
     "mime": "4.1.0",

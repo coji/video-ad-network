@@ -21,9 +21,8 @@
   "license": "ISC",
   "devDependencies": {
     "@cloudflare/workers-types": "catalog:",
-    "@date-fns/tz": "catalog:",
     "@types/node": "catalog:",
-    "date-fns": "catalog:",
+    "dayjs": "catalog:",
     "dotenv": "catalog:",
     "prettier": "catalog:",
     "prettier-plugin-organize-imports": "catalog:",

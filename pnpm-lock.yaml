@@ -15,9 +15,6 @@ catalogs:
     '@cloudflare/workers-types':
       specifier: 4.20251205.0
       version: 4.20251205.0
-    '@date-fns/tz':
-      specifier: 1.4.1
-      version: 1.4.1
     '@libsql/kysely-libsql':
       specifier: 0.4.1
       version: 0.4.1
@@ -63,6 +60,9 @@ catalogs:
     date-fns:
       specifier: 4.1.0
       version: 4.1.0
+    dayjs:
+      specifier: 1.11.13
+      version: 1.11.13
     dotenv:
       specifier: 17.2.3
       version: 17.2.3
@@ -240,9 +240,6 @@ importers:
       '@conform-to/zod':
         specifier: 1.14.1
         version: 1.14.1(zod@4.1.13)
-      '@date-fns/tz':
-        specifier: 'catalog:'
-        version: 1.4.1
       '@paralleldrive/cuid2':
         specifier: 3.0.4
         version: 3.0.4
@@ -270,6 +267,9 @@ importers:
       date-fns:
         specifier: 'catalog:'
         version: 4.1.0
+      dayjs:
+        specifier: 'catalog:'
+        version: 1.11.13
       isbot:
         specifier: 'catalog:'
         version: 5.1.32
@@ -435,15 +435,12 @@ importers:
       '@cloudflare/workers-types':
         specifier: 'catalog:'
         version: 4.20251205.0
-      '@date-fns/tz':
-        specifier: 'catalog:'
-        version: 1.4.1
       '@types/node':
         specifier: 'catalog:'
         version: 24.10.1
-      date-fns:
+      dayjs:
         specifier: 'catalog:'
-        version: 4.1.0
+        version: 1.11.13
       dotenv:
         specifier: 'catalog:'
         version: 17.2.3
@@ -2958,6 +2955,9 @@ packages:
 
   date-fns@4.1.0:
     resolution: {integrity: sha512-Ukq0owbQXxa/U3EGtsdVBkR1w7KOQ5gIBqdH2hkvknzZPYvBxb/aa6E8L7tmjFtkwZBu3UXBbjIgPo/Ez4xaNg==}
+
+  dayjs@1.11.13:
+    resolution: {integrity: sha512-oaMBel6gjolK862uaPQOVTA7q3TZhuSvuMQAAglQDOWYO9A91IrAOUJEyKVlqJlHE0vq5p5UXxzdPfMH/x6xNg==}
 
   debug@4.4.3:
     resolution: {integrity: sha512-RGwwWnwQvkVfavKVt22FGLw+xYSdzARwm0ru6DhTVA3umU5hZc28V3kO4stgYryrTlLpuvgI9GiijltAjNbcqA==}
@@ -6947,6 +6947,8 @@ snapshots:
   date-fns-jalali@4.1.0-0: {}
 
   date-fns@4.1.0: {}
+
+  dayjs@1.11.13: {}
 
   debug@4.4.3:
     dependencies:

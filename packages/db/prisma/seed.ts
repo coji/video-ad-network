@@ -1,7 +1,11 @@
-import { TZDate } from '@date-fns/tz'
-import { format } from 'date-fns'
+import dayjs from 'dayjs'
+import timezone from 'dayjs/plugin/timezone'
+import utc from 'dayjs/plugin/utc'
 import dotenv from 'dotenv'
 import { getDB } from '~/index'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
 dotenv.config()
 const tz = 'Asia/Tokyo'
 
@@ -200,14 +204,8 @@ const seed = async () => {
         id: 'camp1',
         name: 'Campaign One',
         advertiserId: 'adv1',
-        startAt: format(
-          new TZDate('2023-10-01 00:00', tz).withTimeZone('UTC'),
-          'yyyy-MM-dd HH:mm:ss',
-        ),
-        endAt: format(
-          new TZDate('2030-12-31 23:59', tz).withTimeZone('UTC'),
-          'yyyy-MM-dd HH:mm:ss',
-        ),
+        startAt: dayjs.tz('2023-10-01 00:00', tz).utc().format('YYYY-MM-DD HH:mm:ss'),
+        endAt: dayjs.tz('2030-12-31 23:59', tz).utc().format('YYYY-MM-DD HH:mm:ss'),
         budget: 50000,
         budgetType: 'CPM',
         deliveryPace: 'EVENLY',
@@ -219,14 +217,8 @@ const seed = async () => {
         id: 'camp2',
         name: 'Campaign Two',
         advertiserId: 'adv2',
-        startAt: format(
-          new TZDate('2023-11-01 00:00', tz).withTimeZone('UTC'),
-          'yyyy-MM-dd HH:mm:ss',
-        ),
-        endAt: format(
-          new TZDate('2030-01-31 23:59', tz).withTimeZone('UTC'),
-          'yyyy-MM-dd HH:mm:ss',
-        ),
+        startAt: dayjs.tz('2023-11-01 00:00', tz).utc().format('YYYY-MM-DD HH:mm:ss'),
+        endAt: dayjs.tz('2030-01-31 23:59', tz).utc().format('YYYY-MM-DD HH:mm:ss'),
         budget: 75000,
         budgetType: 'CPM',
         deliveryPace: 'AS_MUCH_AS_POSSIBLE',
