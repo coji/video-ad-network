@@ -1,8 +1,7 @@
 TURSO_DATABASE_URL=file:../../data/dev.db
 TURSO_AUTH_TOKEN=your_turso_auth_token
 
-VITE_CLERK_PUBLISHABLE_KEY=pk_test_your_clerk_publishable_key
-CLERK_SECRET_KEY=sk_test_your_clerk_secret_key
-CLERK_WEBHOOK_SECRET=whsec_your_clerk_webhook_secret
+BETTER_AUTH_URL=http://localhost:5174
+BETTER_AUTH_SECRET=your_better_auth_secret_key
 
 CREATIVE_BASE_URL=http://localhost:5175/resources/creative/

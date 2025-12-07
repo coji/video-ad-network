@@ -66,7 +66,7 @@ export const schema = z.object({
   adWidth: z.number().int().positive().optional(),
   adHeight: z.number().int().positive().optional(),
   adDescription: z.string().max(1000).optional(),
-  adClickThroughUrl: z.string().url().startsWith('https://'),
+  adClickThroughUrl: z.url().startsWith('https://'),
 
   companionBanners: z.array(
     z.object({
@@ -93,7 +93,10 @@ export async function action(args: Route.ActionArgs) {
   }
 
   const kysely = db()
-  const advertiser = await getAdvertiserByOrganizationId(kysely, orgUser.orgId)
+  const advertiser = await getAdvertiserByOrganizationId(
+    kysely,
+    orgUser.session.activeOrganizationId,
+  )
   if (!advertiser) {
     throw dataWithError(null, '広告主情報が見つかりませんでした', {
       status: 422, // Unprocessable Entity

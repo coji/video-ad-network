@@ -29,7 +29,7 @@ export const loader = async (args: Route.LoaderArgs) => {
       'media.categories',
       (eb) => eb.fn('count', [eb.ref('adSlots.id')]).as('adSlotCount'),
     ])
-    .where('media.organizationId', '==', user.orgId)
+    .where('media.organizationId', '==', user.session.activeOrganizationId)
     .groupBy('media.id')
     .limit(100)
     .execute()

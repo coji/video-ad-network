@@ -76,7 +76,7 @@ aB3-dE5fG7hI9jK1lM2nO4pQ6rS8tU0vW1xY.3zA5bC7dE9-fG0hI2jK4lM6nO8pQ0rS2tU4vW6xY8zA
 
 Cloudflare Workers で使う secret や環境変数を設定します。
 
-secret はWorkers アプリでサーバ側環境変数として取得できる内容ですが、内容が暗号化され Cloudflare 側に保存されるものです。ad-server では、Turso の DB アクセス情報や、Clerk のキーを secret で定義して使います。
+secret はWorkers アプリでサーバ側環境変数として取得できる内容ですが、内容が暗号化され Cloudflare 側に保存されるものです。ad-server では、Turso の DB アクセス情報を secret で定義して使います。
 
 環境変数は secret と似ていますが、公開される情報です。ad-server は TRACKER_ORIGIN というトラッキングのためのオリジンURLを環境変数で設定するようになっています。
 
@@ -157,9 +157,8 @@ ad-server 同様に必要な以下の secret を設定していきます。
 
 1. TURSO_DATABASE_URL
 2. TURSO_AUTH_TOKEN
-3. VITE_CLERK_PUBLISHABLE_KEY
-4. CLERK_SECRET_KEY
-5. CLERK_WEBHOOK_SECRET
+3. BETTER_AUTH_URL
+4. BETTER_AUTH_SECRET
 
 ```sh
 pnpm -C apps/ui exec wrangler secret put TURSO_DATABASE_URL
@@ -169,23 +168,18 @@ pnpm -C apps/ui exec wrangler secret put TURSO_DATABASE_URL
 pnpm -C apps/ui exec wrangler secret put TURSO_AUTH_TOKEN
 ```
 
-以下は UI の認証に使う Clerk 関連のものです。
-Clerk で Production 環境を追加した上でキーを発行した内容を使いますが、
-Clerk の Production 環境の作成は一度デプロイして URL を決める必要がありますので、
-あとから設定することになります。
+以下は UI の認証に使う better-auth 関連のものです。
+
+BETTER_AUTH_URL はデプロイ後の公開URLを設定します（例: `https://ui.example.workers.dev`）。
 
 ```sh
-pnpm -C apps/ui exec wrangler secret put VITE_CLERK_PUBLISHABLE_KEY
+pnpm -C apps/ui exec wrangler secret put BETTER_AUTH_URL
 ```
 
-```sh
-pnpm -C apps/ui exec wrangler secret put CLERK_SECRET_KEY
-```
-
-以下は Clerk からの Webhook を検証するためのキーになります。Clerk Production 環境にて Webhook の設定をすると発行されますが、まずは ui をデプロイして Webhook を受ける URL を準備する必要があるので、あとから設定することになります。
+BETTER_AUTH_SECRET は認証用の秘密鍵です。`openssl rand -base64 32` などで生成した値を使用してください。
 
 ```sh
-pnpm -C apps/ad-server exec wrangler secret put CLERK_WEBHOOK_SECRET
+pnpm -C apps/ui exec wrangler secret put BETTER_AUTH_SECRET
 ```
 
 # デプロイ

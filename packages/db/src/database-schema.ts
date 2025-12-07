@@ -5,6 +5,21 @@ export type Generated<T> =
     : ColumnType<T, T | undefined, T>
 export type Timestamp = ColumnType<Date, Date | string, Date | string>
 
+export type Account = {
+  id: string
+  accountId: string
+  providerId: string
+  userId: string
+  accessToken: string | null
+  refreshToken: string | null
+  idToken: string | null
+  accessTokenExpiresAt: string | null
+  refreshTokenExpiresAt: string | null
+  scope: string | null
+  password: string | null
+  createdAt: string
+  updatedAt: string
+}
 export type Ad = {
   id: string
   advertiserId: string
@@ -131,6 +146,16 @@ export type DailyReport = {
   createdAt: Generated<string>
   updatedAt: Generated<string>
 }
+export type Invitation = {
+  id: string
+  organizationId: string
+  email: string
+  role: string | null
+  status: string
+  expiresAt: string
+  createdAt: string
+  inviterId: string
+}
 export type Media = {
   id: string
   name: string
@@ -139,28 +164,56 @@ export type Media = {
   createdAt: Generated<string>
   updatedAt: Generated<string>
 }
+export type Member = {
+  id: string
+  organizationId: string
+  userId: string
+  role: string
+  createdAt: string
+}
 export type Organization = {
   id: string
   name: string
-  createdAt: Generated<string>
-  updatedAt: Generated<string>
+  slug: string
+  logo: string | null
+  createdAt: string
+  metadata: string | null
 }
-export type OrganizationMembership = {
+export type Session = {
   id: string
+  expiresAt: string
+  token: string
+  createdAt: string
+  updatedAt: string
+  ipAddress: string | null
+  userAgent: string | null
   userId: string
-  organizationId: string
-  role: string
-  permissions: string
-  createdAt: Generated<string>
-  updatedAt: Generated<string>
+  activeOrganizationId: string | null
+  impersonatedBy: string | null
 }
 export type User = {
   id: string
+  name: string
   email: string
-  createdAt: Generated<string>
-  updatedAt: Generated<string>
+  emailVerified: number
+  image: string | null
+  createdAt: string
+  updatedAt: string
+  role: string | null
+  banned: number | null
+  banReason: string | null
+  banExpires: string | null
+}
+export type Verification = {
+  id: string
+  identifier: string
+  value: string
+  expiresAt: string
+  createdAt: string
+  updatedAt: string
 }
 export type DB = {
+  account: Account
   adEvents: AdEvent
   adGroups: AdGroup
   adSlots: AdSlot
@@ -171,8 +224,11 @@ export type DB = {
   companionBanners: CompanionBanner
   companionSlots: CompanionSlot
   dailyReports: DailyReport
+  invitation: Invitation
   media: Media
-  organizationMemberships: OrganizationMembership
-  organizations: Organization
-  users: User
+  member: Member
+  organization: Organization
+  session: Session
+  user: User
+  verification: Verification
 }

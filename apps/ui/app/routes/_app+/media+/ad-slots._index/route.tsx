@@ -38,7 +38,7 @@ export const loader = async (args: Route.LoaderArgs) => {
           'companionSlotSizes',
         ),
     ])
-    .where('media.organizationId', '==', user.orgId)
+    .where('media.organizationId', '==', user.session.activeOrganizationId)
     .limit(100)
     .execute()
 

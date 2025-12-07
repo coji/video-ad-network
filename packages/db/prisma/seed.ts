@@ -1,16 +1,85 @@
-import { TZDate } from '@date-fns/tz'
-import { format } from 'date-fns'
+import dayjs from 'dayjs'
+import timezone from 'dayjs/plugin/timezone'
+import utc from 'dayjs/plugin/utc'
 import dotenv from 'dotenv'
 import { getDB } from '~/index'
-import { importClerkObjects } from './clerk/import-clark-objects'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
 dotenv.config()
 const tz = 'Asia/Tokyo'
 
 const seed = async () => {
   const db = getDB(process.env.DATABASE_URL ?? '')
 
-  const { users, organizations, organizationMemberships } =
-    await importClerkObjects(db)
+  const now = new Date().toISOString()
+
+  // Create users (without passwords - use auth:create-admin script to set passwords)
+  // Run: pnpm -C apps/ui run auth:create-admin <email> <password> <name>
+  await db
+    .insertInto('user')
+    .values([
+      {
+        id: 'user1',
+        name: 'Admin User',
+        email: 'admin@example.com',
+        emailVerified: 1,
+        createdAt: now,
+        updatedAt: now,
+        role: 'admin',
+      },
+      {
+        id: 'user2',
+        name: 'Test User',
+        email: 'test@example.com',
+        emailVerified: 1,
+        createdAt: now,
+        updatedAt: now,
+      },
+    ])
+    .execute()
+
+  // Create organizations
+  await db
+    .insertInto('organization')
+    .values([
+      {
+        id: 'org1',
+        name: 'Tech Corp',
+        slug: 'tech-corp',
+        createdAt: now,
+        metadata: JSON.stringify({ isAdvertiser: true, isMedia: true }),
+      },
+      {
+        id: 'org2',
+        name: 'News Ltd',
+        slug: 'news-ltd',
+        createdAt: now,
+        metadata: JSON.stringify({ isAdvertiser: true, isMedia: true }),
+      },
+    ])
+    .execute()
+
+  // Create members
+  await db
+    .insertInto('member')
+    .values([
+      {
+        id: 'member1',
+        organizationId: 'org1',
+        userId: 'user1',
+        role: 'owner',
+        createdAt: now,
+      },
+      {
+        id: 'member2',
+        organizationId: 'org2',
+        userId: 'user2',
+        role: 'owner',
+        createdAt: now,
+      },
+    ])
+    .execute()
 
   // media
   await db
@@ -18,13 +87,13 @@ const seed = async () => {
     .values([
       {
         id: 'media1',
-        organizationId: organizations[0].id,
+        organizationId: 'org1',
         name: 'Tech Blog 1',
         categories: JSON.stringify(['tech', 'blog']),
       },
       {
         id: 'media2',
-        organizationId: organizations[1].id,
+        organizationId: 'org2',
         name: 'News',
         categories: JSON.stringify(['entertainment']),
       },
@@ -91,12 +160,12 @@ const seed = async () => {
       {
         id: 'adv1',
         name: 'Tech Corp',
-        organizationId: organizations[0].id,
+        organizationId: 'org1',
       },
       {
         id: 'adv2',
         name: 'News Ltd',
-        organizationId: organizations[1].id,
+        organizationId: 'org2',
       },
     ])
     .execute()
@@ -109,14 +178,8 @@ const seed = async () => {
         id: 'camp1',
         name: 'Campaign One',
         advertiserId: 'adv1',
-        startAt: format(
-          new TZDate('2023-10-01 00:00', tz).withTimeZone('UTC'),
-          'yyyy-MM-dd HH:mm:ss',
-        ),
-        endAt: format(
-          new TZDate('2030-12-31 23:59', tz).withTimeZone('UTC'),
-          'yyyy-MM-dd HH:mm:ss',
-        ),
+        startAt: dayjs.tz('2023-10-01 00:00', tz).utc().format('YYYY-MM-DD HH:mm:ss'),
+        endAt: dayjs.tz('2030-12-31 23:59', tz).utc().format('YYYY-MM-DD HH:mm:ss'),
         budget: 50000,
         budgetType: 'CPM',
         deliveryPace: 'EVENLY',
@@ -128,14 +191,8 @@ const seed = async () => {
         id: 'camp2',
         name: 'Campaign Two',
         advertiserId: 'adv2',
-        startAt: format(
-          new TZDate('2023-11-01 00:00', tz).withTimeZone('UTC'),
-          'yyyy-MM-dd HH:mm:ss',
-        ),
-        endAt: format(
-          new TZDate('2030-01-31 23:59', tz).withTimeZone('UTC'),
-          'yyyy-MM-dd HH:mm:ss',
-        ),
+        startAt: dayjs.tz('2023-11-01 00:00', tz).utc().format('YYYY-MM-DD HH:mm:ss'),
+        endAt: dayjs.tz('2030-01-31 23:59', tz).utc().format('YYYY-MM-DD HH:mm:ss'),
         budget: 75000,
         budgetType: 'CPM',
         deliveryPace: 'AS_MUCH_AS_POSSIBLE',

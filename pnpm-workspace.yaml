@@ -4,11 +4,8 @@ packages:
 
 catalog:
   '@biomejs/biome': 2.3.8
-  '@clerk/react-router': 2.3.2
   '@cloudflare/vite-plugin': 1.17.0
   '@cloudflare/workers-types': 4.20251205.0
-  '@date-fns/tz': 1.4.1
-  '@date-fns/utc': 2.1.1
   '@hono/node-server': 1.13.7
   '@hono/vite-build': 1.8.0
   '@hono/vite-dev-server': 0.23.0
@@ -32,18 +29,20 @@ catalog:
   '@react-router/cloudflare': 7.10.1
   '@react-router/dev': 7.10.1
   '@react-router/remix-routes-option-adapter': 7.10.1
+  '@tailwindcss/vite': 4.1.10
   '@types/node': 24.10.1
   '@types/nprogress': 0.2.3
   '@types/react': 19.2.7
   '@types/react-dom': 19.2.3
   '@typescript-eslint/eslint-plugin': 6.7.4
   '@typescript-eslint/parser': 6.7.4
-  '@tailwindcss/vite': 4.1.10
+  better-auth: 1.4.5
   class-variance-authority: 0.7.1
   clsx: 2.1.1
   cmdk: 1.1.1
   concurrently: 9.2.1
   date-fns: 4.1.0
+  dayjs: 1.11.13
   dotenv: 17.2.3
   fast-xml-parser: 5.3.2
   hono: 4.10.7
@@ -81,7 +80,6 @@ ignoredBuiltDependencies:
   - prisma
 
 onlyBuiltDependencies:
-  - '@clerk/shared'
   - '@prisma/engines'
   - '@tailwindcss/oxide'
   - b

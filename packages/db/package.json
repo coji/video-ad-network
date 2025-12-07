@@ -21,10 +21,8 @@
   "license": "ISC",
   "devDependencies": {
     "@cloudflare/workers-types": "catalog:",
-    "@date-fns/tz": "catalog:",
-    "@date-fns/utc": "catalog:",
     "@types/node": "catalog:",
-    "date-fns": "catalog:",
+    "dayjs": "catalog:",
     "dotenv": "catalog:",
     "prettier": "catalog:",
     "prettier-plugin-organize-imports": "catalog:",
@@ -35,12 +33,8 @@
     "zx": "catalog:"
   },
   "dependencies": {
-    "@clerk/react-router": "2.3.2",
     "@libsql/kysely-libsql": "catalog:",
     "@prisma/client": "6.19.0",
     "kysely": "catalog:"
-  },
-  "prisma": {
-    "seed": "tsx --env-file .env prisma/seed.ts"
   }
 }

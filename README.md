@@ -37,7 +37,6 @@ video-ad-network/
 - pnpm (バージョン 9.11.0 以上) Node.js インストール後に `npm i -g pnpm` でインストールしてください。
 - [Cloudflare](https://www.cloudflare.com/ja-jp/) アカウント (広告配信サーバー, 管理UI用)
 - [Turso](https://turso.tech/) アカウント (データベース)
-- [Clerk](https://clerk.com/) アカウント (管理UI認証用)
 
 ## 開発環境の設定
 
@@ -76,25 +75,6 @@ video-ad-network/
    - 広告配信サーバー: http://localhost:5173/index.html
    - 管理 UI: http://localhost:5175/
 
-### Clerk Development 環境の準備 (開発チームごとに、初回のみ必要)
-
-Clerk でアカウントを作成し、今回のアプリケーションを新たに作成します。
-ローカル開発環境での初期 organization / user を作成するために、Clerk アプリケーション作成直後に準備されている "Development" インスタンスで以下の設定を行います。
-
-1. Users で開発者全員のユーザアカウントを招待/作成します。
-2. Enable Organizations (Default ability to delete, Allow users to create organizations を無効に)
-3. 開発環境での seed データとして使うため、Organization を適当な名前で２つ作成します。slug は空欄で構いません。
-4. 作成した２つの Organization それぞれの設定にて、 public organization metadata に以下を設定することで、管理UIでの広告主メニュー・媒体社メニューそれぞれを有効にします。
-
-   ```json
-   {
-     "isMedia": true,
-     "isAdvertiser": true
-   }
-   ```
-
-5. 作成した Organization それぞれで、1. で作成した開発者個人のユーザアカウントを member として追加します。role は Admin にしてください。
-
 ### 環境変数の設定（手動で行う場合）
 
 `pnpm run setup` を使わずに手動で設定する場合は、以下を参照してください。
@@ -111,15 +91,13 @@ TURSO_AUTH_TOKEN=
 
 #### ui の環境変数
 
-`apps/ui/.dev.vars` を作成し、Clerk のキーを設定:
+`apps/ui/.dev.vars` を作成:
 
 ```sh
 TURSO_DATABASE_URL=http://127.0.0.1:8080
 TURSO_AUTH_TOKEN=
-
-VITE_CLERK_PUBLISHABLE_KEY="取得したPublishable Key"
-CLERK_SECRET_KEY="取得したSecret Key"
-CLERK_WEBHOOK_SECRET="取得した Webhook Secret Key"
+BETTER_AUTH_URL=http://localhost:5175
+BETTER_AUTH_SECRET="ランダムな秘密鍵（openssl rand -base64 32 で生成）"
 ```
 
 #### packages/db の環境変数
@@ -128,7 +106,6 @@ CLERK_WEBHOOK_SECRET="取得した Webhook Secret Key"
 
 ```sh
 DATABASE_URL=file:/path/to/video-ad-network/data/dev.db
-CLERK_SECRET_KEY="取得したSecret Key"
 ```
 
 ### データベースの手動セットアップ

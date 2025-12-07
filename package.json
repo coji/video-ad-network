@@ -17,7 +17,13 @@
     "validate": "turbo validate",
     "deploy": "run-s deploy:*",
     "deploy:ad-server": "pnpm run --filter @video-ad-network/ad-server deploy",
-    "deploy:ui": "pnpm run --filter @video-ad-network/ui deploy"
+    "deploy:ui": "pnpm run --filter @video-ad-network/ui deploy",
+    "prisma": "pnpm --filter @video-ad-network/db exec prisma",
+    "db:migrate": "pnpm --filter @video-ad-network/db exec prisma migrate dev",
+    "db:reset": "pnpm --filter @video-ad-network/db exec prisma migrate reset",
+    "db:generate": "pnpm --filter @video-ad-network/db exec prisma generate",
+    "db:studio": "pnpm --filter @video-ad-network/db exec prisma studio",
+    "auth:create-admin": "pnpm --filter @video-ad-network/ui run auth:create-admin"
   },
   "keywords": [],
   "author": "",
