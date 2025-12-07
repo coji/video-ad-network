@@ -113,15 +113,31 @@ pnpm db:generate    # Kysely 型定義の生成
 
 ### データベースコマンド一覧
 
-| コマンド              | 説明                                 |
-| --------------------- | ------------------------------------ |
-| `pnpm db:reset`       | DB削除→スキーマ適用→seed投入         |
-| `pnpm db:push`        | スキーマを直接適用（開発用）         |
-| `pnpm db:seed`        | seedデータを投入                     |
-| `pnpm db:diff <name>` | スキーマ変更からマイグレーション作成 |
-| `pnpm db:apply`       | マイグレーション適用                 |
-| `pnpm db:status`      | マイグレーション状態確認             |
-| `pnpm db:generate`    | DBからKysely型定義を生成             |
+| コマンド               | 説明                                 |
+| ---------------------- | ------------------------------------ |
+| `pnpm db:reset`        | DB削除→スキーマ適用→seed投入         |
+| `pnpm db:push`         | スキーマを直接適用（開発用）         |
+| `pnpm db:seed`         | seedデータを投入                     |
+| `pnpm db:diff <name>`  | スキーマ変更からマイグレーション作成 |
+| `pnpm db:apply`        | マイグレーション適用                 |
+| `pnpm db:status`       | マイグレーション状態確認             |
+| `pnpm db:generate`     | DBからKysely型定義を生成             |
+| `pnpm db:apply:turso`  | 本番Tursoにマイグレーション適用      |
+| `pnpm db:status:turso` | 本番Tursoのマイグレーション状態確認  |
+
+### 管理者ユーザーの作成
+
+開発環境で管理者ユーザーを作成するには:
+
+```sh
+pnpm auth:create-admin <email> <password> <name>
+```
+
+例:
+
+```sh
+pnpm auth:create-admin admin@example.com mypassword123 "Admin User"
+```
 
 ## 開発
 
@@ -301,6 +317,33 @@ pnpm run deploy:ui
 このコマンドは、Cloudflare Workers に ui をデプロイします。デプロイ前に、Cloudflare の認証情報が正しく設定されていることを確認してください。
 
 注意: 初回デプロイ時や設定変更時には、追加の手順や確認が必要な場合があります。各プラットフォーム（Cloudflare Workers）のドキュメントを参照してください。
+
+### 本番環境での管理者ユーザー作成
+
+初回デプロイ後、管理UIにログインするための管理者ユーザーを作成する必要があります。
+
+1. `.dev.vars` に本番のTurso接続情報を設定:
+
+   ```sh
+   # apps/ui/.dev.vars
+   TURSO_DATABASE_URL=libsql://your-db.turso.io
+   TURSO_AUTH_TOKEN=your-token
+   ```
+
+2. 管理者ユーザーを作成:
+
+   ```sh
+   pnpm auth:create-admin admin@example.com your-secure-password "Admin User"
+   ```
+
+   または、環境変数を直接指定して実行:
+
+   ```sh
+   cd apps/ui
+   TURSO_DATABASE_URL="libsql://your-db.turso.io" \
+   TURSO_AUTH_TOKEN="$(turso db tokens create video-ad-network)" \
+   tsx scripts/create-admin.ts admin@example.com your-secure-password "Admin User"
+   ```
 
 ## 貢献
 
