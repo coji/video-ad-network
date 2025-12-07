@@ -64,8 +64,8 @@ export default function CampaignIndexPage({
                 <TableCell>{campaign.name}</TableCell>
                 <TableCell>{campaign.budgetType}</TableCell>
                 <TableCell>
-                  {campaign.spentBudget.toLocaleString()}
-                  <small>円</small> / {campaign.budget.toLocaleString()}
+                  {Number(campaign.spentBudget).toLocaleString()}
+                  <small>円</small> / {Number(campaign.budget).toLocaleString()}
                   <small>円</small>
                 </TableCell>
                 <TableCell>

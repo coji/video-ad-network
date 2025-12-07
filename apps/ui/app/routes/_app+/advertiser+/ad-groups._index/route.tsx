@@ -80,7 +80,7 @@ export default function AdGroupsIndexPage({
                   {adGroup.frequencyCapImpressions}
                 </TableCell>
                 <TableCell>
-                  {adGroup.bidPriceCpm.toLocaleString()}
+                  {Number(adGroup.bidPriceCpm).toLocaleString()}
                   <small>円</small>
                 </TableCell>
                 <TableCell>{adGroup.campaignName}</TableCell>
