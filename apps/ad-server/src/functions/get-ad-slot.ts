@@ -15,8 +15,8 @@ export const getAdSlot = async (
       'adSlots.type',
       'media.categories as categories',
     ])
-    .where('adSlots.id', '==', adSlotId)
-    .where('adSlots.mediaId', '==', mediaId)
+    .where('adSlots.id', '=', adSlotId)
+    .where('adSlots.mediaId', '=', mediaId)
     .executeTakeFirst()
 
   if (!adSlot) {
@@ -26,7 +26,7 @@ export const getAdSlot = async (
   const companionSlots = await db
     .selectFrom('companionSlots')
     .select(['id', 'width', 'height'])
-    .where('adSlotId', '==', adSlotId)
+    .where('adSlotId', '=', adSlotId)
     .execute()
 
   return {

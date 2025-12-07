@@ -10,7 +10,9 @@
     "typegen": "wrangler types --env-interface CloudflareBindings",
     "format": "prettier --experimental-cli --check .",
     "format:fix": "prettier --experimental-cli --write .",
-    "lint": "biome lint ."
+    "lint": "biome lint .",
+    "typecheck": "tsc --noEmit",
+    "validate": "run-p format lint typecheck"
   },
   "dependencies": {
     "@video-ad-network/ad-sdk": "workspace:*",
@@ -22,8 +24,10 @@
     "@biomejs/biome": "catalog:",
     "@cloudflare/vite-plugin": "catalog:",
     "@cloudflare/workers-types": "catalog:",
+    "npm-run-all": "catalog:",
     "prettier": "catalog:",
     "prettier-plugin-organize-imports": "catalog:",
+    "typescript": "catalog:",
     "vite": "catalog:",
     "vite-tsconfig-paths": "catalog:",
     "wrangler": "catalog:"

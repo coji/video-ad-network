@@ -94,39 +94,69 @@ async function seed() {
 
   console.log('Created members')
 
-  // Create media (use fixed ID for example HTML)
-  const mediaId = 'media1'
+  // Create media (use fixed IDs for example HTML)
+  const media1Id = 'media1'
+  const media2Id = 'media2'
 
   await db
     .insertInto('media')
-    .values({
-      id: mediaId,
-      name: 'Example Media Site',
-      categories: JSON.stringify(['entertainment', 'news']),
-      organizationId: org2Id,
-      createdAt: now,
-      updatedAt: now,
-    })
+    .values([
+      {
+        id: media1Id,
+        name: 'Example Media Site 1',
+        categories: JSON.stringify(['entertainment', 'news']),
+        organizationId: org2Id,
+        createdAt: now,
+        updatedAt: now,
+      },
+      {
+        id: media2Id,
+        name: 'Example Media Site 2',
+        categories: JSON.stringify(['music', 'podcast']),
+        organizationId: org2Id,
+        createdAt: now,
+        updatedAt: now,
+      },
+    ])
     .execute()
 
   console.log('Created media')
 
-  // Create ad slot (use fixed ID for example HTML)
-  const adSlotId = 'adslot1'
-
+  // Create ad slots (use fixed IDs for example HTML)
+  // adslot1: media1 video (300x250 companion)
+  // adslot2: media2 audio (300x250 companion)
+  // adslot3: media1 video (728x90 companion)
   await db
     .insertInto('adSlots')
-    .values({
-      id: adSlotId,
-      name: 'Main Video Player',
-      mediaId: mediaId,
-      type: 'video',
-      createdAt: now,
-      updatedAt: now,
-    })
+    .values([
+      {
+        id: 'adslot1',
+        name: 'Main Video Player',
+        mediaId: media1Id,
+        type: 'video',
+        createdAt: now,
+        updatedAt: now,
+      },
+      {
+        id: 'adslot2',
+        name: 'Audio Player',
+        mediaId: media2Id,
+        type: 'audio',
+        createdAt: now,
+        updatedAt: now,
+      },
+      {
+        id: 'adslot3',
+        name: 'Secondary Video Player',
+        mediaId: media1Id,
+        type: 'video',
+        createdAt: now,
+        updatedAt: now,
+      },
+    ])
     .execute()
 
-  console.log('Created ad slot')
+  console.log('Created ad slots')
 
   // Create advertiser
   const advertiserId = createId()
@@ -180,7 +210,7 @@ async function seed() {
       name: 'Example Ad Group',
       categories: JSON.stringify(['entertainment']),
       bidPriceCpm: '500',
-      frequencyCapImpressions: 3,
+      frequencyCapImpressions: 10,
       frequencyCapWindow: 24,
       frequencyCapUnit: 'HOUR',
       advertiserId: advertiserId,
@@ -192,63 +222,147 @@ async function seed() {
 
   console.log('Created ad group')
 
-  // Create ad
-  const adId = createId()
+  // Create ads (video1 Beach, video2 Mountain, audio)
+  const videoAd1Id = createId() // Beach video
+  const videoAd2Id = createId() // Mountain video
+  const audioAdId = createId()
+
   await db
     .insertInto('ads')
-    .values({
-      id: adId,
-      advertiserId: advertiserId,
-      adGroupId: adGroupId,
-      type: 'video',
-      url: '/example/ads/example_video1.mp4',
-      duration: 30,
-      width: 1920,
-      height: 1080,
-      mimeType: 'video/mp4',
-      clickThroughUrl: 'https://example.com/landing',
-      description: 'Example video ad',
-      createdAt: now,
-      updatedAt: now,
-    })
+    .values([
+      {
+        id: videoAd1Id,
+        advertiserId: advertiserId,
+        adGroupId: adGroupId,
+        type: 'video',
+        url: '/example/ads/example_video1.mp4',
+        duration: 30,
+        width: 1920,
+        height: 1080,
+        mimeType: 'video/mp4',
+        clickThroughUrl: 'https://example.com/landing',
+        description: 'Beach video ad',
+        createdAt: now,
+        updatedAt: now,
+      },
+      {
+        id: videoAd2Id,
+        advertiserId: advertiserId,
+        adGroupId: adGroupId,
+        type: 'video',
+        url: '/example/ads/example_video2.mp4',
+        duration: 30,
+        width: 1920,
+        height: 1080,
+        mimeType: 'video/mp4',
+        clickThroughUrl: 'https://example.com/landing',
+        description: 'Mountain video ad',
+        createdAt: now,
+        updatedAt: now,
+      },
+      {
+        id: audioAdId,
+        advertiserId: advertiserId,
+        adGroupId: adGroupId,
+        type: 'audio',
+        url: '/example/ads/example_audio1.m4a',
+        duration: 30,
+        width: null,
+        height: null,
+        mimeType: 'audio/mp4',
+        clickThroughUrl: 'https://example.com/landing',
+        description: 'Example audio ad',
+        createdAt: now,
+        updatedAt: now,
+      },
+    ])
     .execute()
 
-  console.log('Created ad')
+  console.log('Created ads')
 
-  // Create companion slot for ad slot
-  const companionSlotId = createId()
+  // Create companion slots for each ad slot
+  // adslot1: 300x250, adslot2: 300x250, adslot3: 728x90
   await db
     .insertInto('companionSlots')
-    .values({
-      id: companionSlotId,
-      name: 'Sidebar Banner',
-      adSlotId: adSlotId,
-      width: 300,
-      height: 250,
-      createdAt: now,
-      updatedAt: now,
-    })
+    .values([
+      {
+        id: createId(),
+        name: 'Sidebar Banner',
+        adSlotId: 'adslot1',
+        width: 300,
+        height: 250,
+        createdAt: now,
+        updatedAt: now,
+      },
+      {
+        id: createId(),
+        name: 'Audio Companion',
+        adSlotId: 'adslot2',
+        width: 300,
+        height: 250,
+        createdAt: now,
+        updatedAt: now,
+      },
+      {
+        id: createId(),
+        name: 'Leaderboard Banner',
+        adSlotId: 'adslot3',
+        width: 728,
+        height: 90,
+        createdAt: now,
+        updatedAt: now,
+      },
+    ])
     .execute()
 
-  console.log('Created companion slot')
+  console.log('Created companion slots')
 
-  // Create companion banner for ad
+  // Create companion banners for ads
+  // Actual file sizes:
+  //   banner1: 300x250 (Beach), banner2: 728x90 (Mountain Peak), banner3: 300x250 (Zenboost)
+  // Beach video (videoAd1): 300x250 (banner1) - for adslot1
+  // Mountain video (videoAd2): 728x90 (banner2) - for adslot3
+  // Audio ad: 300x250 (banner3) - for adslot2
   await db
     .insertInto('companionBanners')
-    .values({
-      id: createId(),
-      adId: adId,
-      url: '/example/ads/example_companion_banner1.png',
-      width: 300,
-      height: 250,
-      mimeType: 'image/png',
-      clickThroughUrl: 'https://example.com/landing',
-      createdAt: now,
-      updatedAt: now,
-    })
+    .values([
+      {
+        id: createId(),
+        adId: videoAd1Id,
+        url: '/example/ads/example_companion_banner1.png',
+        width: 300,
+        height: 250,
+        mimeType: 'image/png',
+        clickThroughUrl: 'https://example.com/landing',
+        createdAt: now,
+        updatedAt: now,
+      },
+      {
+        id: createId(),
+        adId: videoAd2Id,
+        url: '/example/ads/example_companion_banner2.png',
+        width: 728,
+        height: 90,
+        mimeType: 'image/png',
+        clickThroughUrl: 'https://example.com/landing',
+        createdAt: now,
+        updatedAt: now,
+      },
+      {
+        id: createId(),
+        adId: audioAdId,
+        url: '/example/ads/example_companion_banner3.png',
+        width: 300,
+        height: 250,
+        mimeType: 'image/png',
+        clickThroughUrl: 'https://example.com/landing',
+        createdAt: now,
+        updatedAt: now,
+      },
+    ])
     .execute()
 
-  console.log('Created companion banner')
+  console.log('Created companion banners')
 
   console.log('Seeding completed!')
 }

@@ -11,6 +11,8 @@
     "lint": "biome lint .",
     "format": "prettier --experimental-cli --check .",
     "format:fix": "prettier --experimental-cli --write .",
+    "typecheck": "tsc --noEmit",
+    "validate": "run-p format lint typecheck",
     "test": "vitest"
   },
   "keywords": [],
@@ -19,6 +21,7 @@
   "devDependencies": {
     "@biomejs/biome": "catalog:",
     "@types/node": "catalog:",
+    "npm-run-all": "catalog:",
     "prettier": "catalog:",
     "prettier-plugin-organize-imports": "catalog:",
     "typescript": "catalog:",
