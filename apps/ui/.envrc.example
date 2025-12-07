@@ -1,0 +1,8 @@
+# Turso production database URL for admin scripts
+# 1. Copy this file to .envrc
+# 2. Get token: turso db tokens create video-ad-network
+# 3. Set the URL and token below
+# 4. Run: direnv allow
+
+export TURSO_DATABASE_URL="libsql://your-db.turso.io"
+export TURSO_AUTH_TOKEN="your-token"

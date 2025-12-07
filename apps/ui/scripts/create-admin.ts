@@ -3,8 +3,12 @@ import { getDB } from '@video-ad-network/db'
 import { hashPassword } from 'better-auth/crypto'
 import { config } from 'dotenv'
 
-// .dev.vars ファイルから環境変数を読み込む
-config({ path: '.dev.vars' })
+// --turso フラグがない場合は .dev.vars から読み込む（開発用）
+// --turso フラグがある場合は環境変数/direnv を使用（本番用）
+const useTurso = process.argv.includes('--turso')
+if (!useTurso) {
+  config({ path: '.dev.vars' })
+}
 
 async function createAdmin() {
   const email = process.argv[2] || 'admin@example.com'
@@ -15,9 +19,16 @@ async function createAdmin() {
   const TURSO_DATABASE_URL = process.env.TURSO_DATABASE_URL
 
   if (!TURSO_DATABASE_URL) {
-    console.error('Error: TURSO_DATABASE_URL is required in .dev.vars')
+    console.error('Error: TURSO_DATABASE_URL is required')
+    if (useTurso) {
+      console.error('Set it via environment variable or direnv (.envrc)')
+    } else {
+      console.error('Set it in .dev.vars file')
+    }
     process.exit(1)
   }
+
+  console.log(`Database: ${useTurso ? 'Turso (production)' : 'Local (.dev.vars)'}`)
 
   const db = getDB(TURSO_DATABASE_URL, process.env.TURSO_AUTH_TOKEN)
 
