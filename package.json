@@ -20,11 +20,13 @@
     "deploy:ui": "pnpm run --filter @video-ad-network/ui deploy",
     "db:diff": "pnpm --filter @video-ad-network/db run db:diff",
     "db:apply": "pnpm --filter @video-ad-network/db run db:apply",
+    "db:apply:turso": "pnpm --filter @video-ad-network/db run db:apply:turso",
     "db:push": "pnpm --filter @video-ad-network/db run db:push",
     "db:reset": "pnpm --filter @video-ad-network/db run db:reset",
     "db:seed": "pnpm --filter @video-ad-network/db run db:seed",
     "db:generate": "pnpm --filter @video-ad-network/db run db:generate",
     "db:status": "pnpm --filter @video-ad-network/db run db:status",
+    "db:status:turso": "pnpm --filter @video-ad-network/db run db:status:turso",
     "auth:create-admin": "pnpm --filter @video-ad-network/ui run auth:create-admin"
   },
   "keywords": [],

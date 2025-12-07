@@ -20,7 +20,9 @@
     "db:generate": "kysely-codegen --camel-case --dialect sqlite --url ../../data/dev.db --out-file src/database-schema.ts",
     "db:diff": "atlas migrate diff --env local",
     "db:apply": "atlas migrate apply --env local",
+    "db:apply:turso": "atlas migrate apply --env turso",
     "db:status": "atlas migrate status --env local",
+    "db:status:turso": "atlas migrate status --env turso",
     "db:push": "atlas schema apply --env local --auto-approve",
     "db:reset": "rm -f ../../data/dev.db && atlas schema apply --env local --auto-approve && tsx seed.ts",
     "db:seed": "tsx seed.ts"
