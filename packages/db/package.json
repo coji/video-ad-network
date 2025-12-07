@@ -20,7 +20,8 @@
     "db:apply": "atlas migrate apply --env local",
     "db:status": "atlas migrate status --env local",
     "db:push": "atlas schema apply --env local --auto-approve",
-    "db:reset": "rm -f ../../data/dev.db && atlas schema apply --env local --auto-approve && tsx seed.ts"
+    "db:reset": "rm -f ../../data/dev.db && atlas schema apply --env local --auto-approve && tsx seed.ts",
+    "db:seed": "tsx seed.ts"
   },
   "keywords": [],
   "author": "",

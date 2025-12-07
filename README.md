@@ -117,6 +117,7 @@ pnpm db:generate    # Kysely 型定義の生成
 | --------------------- | ------------------------------------ |
 | `pnpm db:reset`       | DB削除→スキーマ適用→seed投入         |
 | `pnpm db:push`        | スキーマを直接適用（開発用）         |
+| `pnpm db:seed`        | seedデータを投入                     |
 | `pnpm db:diff <name>` | スキーマ変更からマイグレーション作成 |
 | `pnpm db:apply`       | マイグレーション適用                 |
 | `pnpm db:status`      | マイグレーション状態確認             |
