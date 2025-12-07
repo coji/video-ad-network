@@ -22,7 +22,6 @@
   "devDependencies": {
     "@cloudflare/workers-types": "catalog:",
     "@date-fns/tz": "catalog:",
-    "@date-fns/utc": "catalog:",
     "@types/node": "catalog:",
     "date-fns": "catalog:",
     "dotenv": "catalog:",
@@ -35,7 +34,6 @@
     "zx": "catalog:"
   },
   "dependencies": {
-    "@clerk/react-router": "2.3.2",
     "@libsql/kysely-libsql": "catalog:",
     "@prisma/client": "6.19.0",
     "kysely": "catalog:"
