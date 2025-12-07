@@ -48,6 +48,18 @@ type OrganizationMetadata = {
   isMedia?: boolean
 }
 
+function parseMetadata(
+  metadata: string | object | null | undefined,
+): OrganizationMetadata | null {
+  if (!metadata) return null
+  if (typeof metadata === 'object') return metadata as OrganizationMetadata
+  try {
+    return JSON.parse(metadata) as OrganizationMetadata
+  } catch {
+    return null
+  }
+}
+
 const updateTenantSchema = z.object({
   _action: z.literal('update'),
   name: z.string().min(1, '名前を入力してください'),
@@ -119,9 +131,7 @@ export const loader = async (args: Route.LoaderArgs) => {
     .orderBy('member.createdAt', 'asc')
     .execute()
 
-  const metadata = tenant.metadata
-    ? (JSON.parse(tenant.metadata) as OrganizationMetadata)
-    : null
+  const metadata = parseMetadata(tenant.metadata)
 
   return {
     tenant: {

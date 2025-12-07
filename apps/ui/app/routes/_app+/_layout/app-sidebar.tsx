@@ -1,5 +1,7 @@
 import {
   BuildingIcon,
+  CheckIcon,
+  ChevronsUpDownIcon,
   FileVideoIcon,
   GoalIcon,
   GroupIcon,
@@ -10,7 +12,7 @@ import {
   UserIcon,
 } from 'lucide-react'
 import { useEffect, useState, type ReactNode } from 'react'
-import { NavLink, useNavigate } from 'react-router'
+import { NavLink, useNavigate, useRevalidator } from 'react-router'
 import {
   Avatar,
   AvatarFallback,
@@ -60,6 +62,25 @@ type OrganizationMetadata = {
   isMedia?: boolean
 }
 
+function parseMetadata(
+  metadata: string | null | undefined,
+): OrganizationMetadata | null {
+  if (!metadata) return null
+  try {
+    return JSON.parse(metadata) as OrganizationMetadata
+  } catch {
+    return null
+  }
+}
+
+type Organization = {
+  id: string
+  name: string
+  slug: string
+  logo?: string | null
+  metadata?: string | null
+}
+
 type User = {
   name: string
   email: string
@@ -70,17 +91,19 @@ type User = {
 export function AppSidebar() {
   const { open } = useSidebar()
   const navigate = useNavigate()
-  const [metadata, setMetadata] = useState<OrganizationMetadata | null>(null)
+  const revalidator = useRevalidator()
+
   const [user, setUser] = useState<User | null>(null)
-  const [isMounted, setIsMounted] = useState(false)
+  const [activeOrg, setActiveOrg] = useState<Organization | null>(null)
+  const [organizations, setOrganizations] = useState<Organization[]>([])
+  const [isLoaded, setIsLoaded] = useState(false)
 
+  // Sync with better-auth session and organizations (external auth state)
   useEffect(() => {
-    setIsMounted(true)
-
     const fetchData = async () => {
       try {
-        // Fetch session to get user info
         const session = await authClient.getSession()
+        console.log('session:', session)
         if (session.data?.user) {
           setUser({
             name: session.data.user.name,
@@ -90,24 +113,42 @@ export function AppSidebar() {
           })
         }
 
-        // Fetch active organization
-        const result = await authClient.organization.getFullOrganization()
-        if (result.data?.metadata) {
-          setMetadata(
-            JSON.parse(result.data.metadata as string) as OrganizationMetadata,
-          )
+        const orgResult = await authClient.organization.getFullOrganization()
+        console.log('activeOrg:', orgResult)
+        if (orgResult.data) {
+          setActiveOrg(orgResult.data as Organization)
         }
-      } catch {
-        // No active organization or error - ignore
+
+        const orgsResult = await authClient.organization.list()
+        console.log('organizations:', orgsResult)
+        if (orgsResult.data) {
+          setOrganizations(orgsResult.data as Organization[])
+        }
+      } catch (error) {
+        console.error('Error fetching auth data:', error)
+      } finally {
+        setIsLoaded(true)
       }
     }
 
     fetchData()
   }, [])
 
+  const metadata = parseMetadata(activeOrg?.metadata)
+
   const handleLogout = async () => {
     await authClient.signOut()
     navigate('/login')
+  }
+
+  const handleSwitchOrganization = async (organizationId: string) => {
+    await authClient.organization.setActive({ organizationId })
+    // Refresh local state after switching
+    const orgResult = await authClient.organization.getFullOrganization()
+    if (orgResult.data) {
+      setActiveOrg(orgResult.data as Organization)
+    }
+    revalidator.revalidate()
   }
 
   const getInitials = (name: string) => {
@@ -119,15 +160,74 @@ export function AppSidebar() {
       .slice(0, 2)
   }
 
+  const hasMultipleOrgs = organizations && organizations.length > 1
+  const hasNoOrgs = organizations.length === 0
+  const displayName = activeOrg?.name ?? 'Video Ad Network'
+
   return (
     <Sidebar collapsible="icon">
-      {open && (
-        <SidebarHeader>
+      <SidebarHeader>
+        {/* アプリ名 */}
+        {open ? (
           <div className="px-2 py-1 text-sm font-semibold">
             Video Ad Network
           </div>
-        </SidebarHeader>
-      )}
+        ) : (
+          <div className="flex justify-center py-1">
+            <BuildingIcon className="h-4 w-4" />
+          </div>
+        )}
+
+        {/* 組織セレクター */}
+        {open &&
+          (hasNoOrgs ? (
+            // 組織がない場合：作成を誘導
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full justify-start gap-2"
+              asChild
+            >
+              <NavLink to="/admin/tenants/new">
+                <PlusIcon className="h-4 w-4" />
+                <span className="text-sm">組織を作成</span>
+              </NavLink>
+            </Button>
+          ) : hasMultipleOrgs ? (
+            // 複数組織がある場合：ドロップダウンで切り替え
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full justify-between"
+                >
+                  <span className="truncate">{displayName}</span>
+                  <ChevronsUpDownIcon className="h-4 w-4 opacity-50" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56">
+                {organizations?.map((org) => (
+                  <DropdownMenuItem
+                    key={org.id}
+                    onClick={() => handleSwitchOrganization(org.id)}
+                    className="flex items-center justify-between"
+                  >
+                    <span className="truncate">{org.name}</span>
+                    {org.id === activeOrg?.id && (
+                      <CheckIcon className="h-4 w-4" />
+                    )}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            // 1つだけの場合：組織名を表示
+            <div className="text-muted-foreground truncate px-2 text-xs">
+              {displayName}
+            </div>
+          ))}
+      </SidebarHeader>
 
       <SidebarContent>
         {metadata?.isAdvertiser && (
@@ -190,7 +290,7 @@ export function AppSidebar() {
         )}
       </SidebarContent>
       <SidebarFooter>
-        {isMounted && user && (
+        {isLoaded && user && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button

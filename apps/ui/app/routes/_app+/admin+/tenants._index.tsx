@@ -24,6 +24,18 @@ type OrganizationMetadata = {
   isMedia?: boolean
 }
 
+function parseMetadata(
+  metadata: string | object | null | undefined,
+): OrganizationMetadata | null {
+  if (!metadata) return null
+  if (typeof metadata === 'object') return metadata as OrganizationMetadata
+  try {
+    return JSON.parse(metadata) as OrganizationMetadata
+  } catch {
+    return null
+  }
+}
+
 export const loader = async (args: Route.LoaderArgs) => {
   await requireAdmin(args)
 
@@ -45,9 +57,7 @@ export const loader = async (args: Route.LoaderArgs) => {
 
   return {
     tenants: tenants.map((tenant) => {
-      const metadata = tenant.metadata
-        ? (JSON.parse(tenant.metadata) as OrganizationMetadata)
-        : null
+      const metadata = parseMetadata(tenant.metadata)
       return {
         ...tenant,
         isAdvertiser: metadata?.isAdvertiser ?? false,
@@ -60,7 +70,6 @@ export const loader = async (args: Route.LoaderArgs) => {
 export default function TenantsIndexPage({
   loaderData: { tenants },
 }: Route.ComponentProps) {
-
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
