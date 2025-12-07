@@ -96,6 +96,7 @@ export const clientAction = async ({ request }: Route.ClientActionArgs) => {
 export default function ProfileSettingsPage() {
   const [user, setUser] = useState<{ name: string; email: string } | null>(null)
 
+  // Sync with external auth state: fetch user session from better-auth API
   useEffect(() => {
     const fetchUser = async () => {
       const session = await authClient.getSession()
