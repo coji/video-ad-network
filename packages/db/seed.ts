@@ -193,14 +193,15 @@ async function seed() {
   console.log('Created ad group')
 
   // Create ad
+  const adId = createId()
   await db
     .insertInto('ads')
     .values({
-      id: createId(),
+      id: adId,
       advertiserId: advertiserId,
       adGroupId: adGroupId,
       type: 'video',
-      url: 'https://example.com/video-ad.mp4',
+      url: '/example/ads/example_video1.mp4',
       duration: 30,
       width: 1920,
       height: 1080,
@@ -213,6 +214,41 @@ async function seed() {
     .execute()
 
   console.log('Created ad')
+
+  // Create companion slot for ad slot
+  const companionSlotId = createId()
+  await db
+    .insertInto('companionSlots')
+    .values({
+      id: companionSlotId,
+      name: 'Sidebar Banner',
+      adSlotId: adSlotId,
+      width: 300,
+      height: 250,
+      createdAt: now,
+      updatedAt: now,
+    })
+    .execute()
+
+  console.log('Created companion slot')
+
+  // Create companion banner for ad
+  await db
+    .insertInto('companionBanners')
+    .values({
+      id: createId(),
+      adId: adId,
+      url: '/example/ads/example_companion_banner1.png',
+      width: 300,
+      height: 250,
+      mimeType: 'image/png',
+      clickThroughUrl: 'https://example.com/landing',
+      createdAt: now,
+      updatedAt: now,
+    })
+    .execute()
+
+  console.log('Created companion banner')
 
   console.log('Seeding completed!')
 }
