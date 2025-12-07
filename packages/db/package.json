@@ -14,7 +14,13 @@
   "scripts": {
     "build": "tsc -b",
     "format": "prettier --experimental-cli --check .",
-    "format:fix": "prettier --experimental-cli --write ."
+    "format:fix": "prettier --experimental-cli --write .",
+    "db:generate": "kysely-codegen --camel-case --dialect sqlite --url ../../data/dev.db --out-file src/database-schema.ts",
+    "db:diff": "atlas migrate diff --env local",
+    "db:apply": "atlas migrate apply --env local",
+    "db:status": "atlas migrate status --env local",
+    "db:push": "atlas schema apply --env local --auto-approve",
+    "db:reset": "rm -f ../../data/dev.db && atlas schema apply --env local --auto-approve && tsx seed.ts"
   },
   "keywords": [],
   "author": "",
@@ -24,17 +30,16 @@
     "@types/node": "catalog:",
     "dayjs": "catalog:",
     "dotenv": "catalog:",
+    "kysely-codegen": "catalog:",
     "prettier": "catalog:",
     "prettier-plugin-organize-imports": "catalog:",
-    "prisma": "catalog:",
-    "prisma-kysely": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",
     "zx": "catalog:"
   },
   "dependencies": {
     "@libsql/kysely-libsql": "catalog:",
-    "@prisma/client": "6.19.0",
+    "@paralleldrive/cuid2": "3.0.4",
     "kysely": "catalog:"
   }
 }

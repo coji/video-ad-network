@@ -27,7 +27,7 @@ export const submitEntries = async (
             .toDate(), // 終了日の 23:59:59 にする
           value.tzOffset,
         ),
-        budget: value.campaignBudget,
+        budget: String(value.campaignBudget),
         budgetType: value.campaignBudgetType,
         deliveryPace: value.campaignDeliveryPace,
       })
@@ -42,7 +42,7 @@ export const submitEntries = async (
         advertiserId,
         campaignId: campaign.id,
         name: value.adGroupName,
-        bidPriceCpm: value.adGroupBidPriceCpm,
+        bidPriceCpm: String(value.adGroupBidPriceCpm),
         frequencyCapImpressions: value.adGroupFrequencyCapImpression,
         frequencyCapWindow: value.adGroupFrequencyCapWindow,
         frequencyCapUnit: value.adGroupFrequencyCapUnit,

@@ -1,0 +1,6 @@
+# Turso production database URL
+# 1. Get token: turso db tokens create video-ad-network
+# 2. Copy this file to .envrc and set the token
+# 3. Run: direnv allow
+
+export TURSO_DATABASE_URL="libsql://your-db.turso.io?authToken=your-token"

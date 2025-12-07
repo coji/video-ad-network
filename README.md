@@ -35,6 +35,7 @@ video-ad-network/
 
 - Node.js (バージョン 20 以上) [mise](https://zenn.dev/light_planck/articles/mise-node-20240603) を使ってインストールするのをオススメします。
 - pnpm (バージョン 9.11.0 以上) Node.js インストール後に `npm i -g pnpm` でインストールしてください。
+- [Atlas CLI](https://atlasgo.io/getting-started#installation) データベースマイグレーション管理ツール。`brew install ariga/tap/atlas` でインストールできます。
 - [Cloudflare](https://www.cloudflare.com/ja-jp/) アカウント (広告配信サーバー, 管理UI用)
 - [Turso](https://turso.tech/) アカウント (データベース)
 
@@ -58,10 +59,9 @@ video-ad-network/
 
    これにより以下が自動で行われます:
    - `data/` ディレクトリの作成
-   - `packages/db/.env` の作成
    - `apps/ad-server/.dev.vars` の作成
-   - Prisma クライアントの生成
-   - データベースのマイグレーションと seed データの投入
+   - `apps/ui/.dev.vars` の作成
+   - データベースのスキーマ適用と seed データの投入
 
 3. 開発サーバーを起動します:
 
@@ -100,23 +100,27 @@ BETTER_AUTH_URL=http://localhost:5175
 BETTER_AUTH_SECRET="ランダムな秘密鍵（openssl rand -base64 32 で生成）"
 ```
 
-#### packages/db の環境変数
-
-`packages/db/.env` を作成:
-
-```sh
-DATABASE_URL=file:/path/to/video-ad-network/data/dev.db
-```
-
 ### データベースの手動セットアップ
 
 ```sh
-# マイグレーションの適用
-pnpm -C packages/db exec prisma migrate deploy
+# スキーマの適用と seed データの投入
+pnpm db:reset
 
-# seed データの投入
-pnpm -C packages/db exec prisma db seed
+# または個別に
+pnpm db:push        # スキーマの適用のみ
+pnpm db:generate    # Kysely 型定義の生成
 ```
+
+### データベースコマンド一覧
+
+| コマンド              | 説明                                 |
+| --------------------- | ------------------------------------ |
+| `pnpm db:reset`       | DB削除→スキーマ適用→seed投入         |
+| `pnpm db:push`        | スキーマを直接適用（開発用）         |
+| `pnpm db:diff <name>` | スキーマ変更からマイグレーション作成 |
+| `pnpm db:apply`       | マイグレーション適用                 |
+| `pnpm db:status`      | マイグレーション状態確認             |
+| `pnpm db:generate`    | DBからKysely型定義を生成             |
 
 ## 開発
 

@@ -182,6 +182,97 @@ BETTER_AUTH_SECRET は認証用の秘密鍵です。`openssl rand -base64 32` �
 pnpm -C apps/ui exec wrangler secret put BETTER_AUTH_SECRET
 ```
 
+# データベースマイグレーション
+
+本番環境の Turso データベースにスキーマ変更を適用する手順です。
+
+## マイグレーションファイルの作成
+
+開発中にスキーマを変更した場合、以下のコマンドでマイグレーションファイルを作成します：
+
+```sh
+pnpm db:diff <マイグレーション名>
+```
+
+例：
+
+```sh
+pnpm db:diff add_user_preferences
+```
+
+これにより `packages/db/migrations/` ディレクトリに新しいマイグレーションファイルが作成されます。
+
+## 本番環境へのマイグレーション適用
+
+Turso 本番データベースにマイグレーションを適用するには、環境変数 `TURSO_DATABASE_URL` を設定してから `atlas migrate apply` を実行します。
+
+### 方法1: direnv を使う（推奨）
+
+direnv を使うと、`packages/db` ディレクトリに入ると自動で環境変数がセットされます。
+
+```sh
+# direnv のインストール
+brew install direnv
+
+# シェルのフックを設定（.zshrc に追加）
+echo 'eval "$(direnv hook zsh)"' >> ~/.zshrc
+source ~/.zshrc
+
+# .envrc.example をコピーしてトークンを設定
+cd packages/db
+cp .envrc.example .envrc
+# .envrc の TURSO_DATABASE_URL にトークンを設定
+
+# direnv を許可
+direnv allow
+
+# マイグレーション実行
+atlas migrate apply --env turso
+```
+
+### 方法2: コマンド実行時に環境変数を指定
+
+```sh
+cd packages/db
+TURSO_DATABASE_URL="libsql://your-db.turso.io?authToken=your-token" atlas migrate apply --env turso
+```
+
+実際の例：
+
+```sh
+cd packages/db
+TURSO_DATABASE_URL="libsql://video-ad-network-xxx.turso.io?authToken=$(turso db tokens create video-ad-network)" atlas migrate apply --env turso
+```
+
+## マイグレーション状態の確認
+
+ローカル環境の場合：
+
+```sh
+pnpm db:status
+```
+
+本番環境の場合：
+
+```sh
+cd packages/db
+TURSO_DATABASE_URL="libsql://your-db.turso.io?authToken=your-token" atlas migrate status --env turso
+```
+
+## 初回デプロイ時の注意
+
+本番環境に初めてデプロイする場合、既存のテーブルがあると `atlas migrate apply` が失敗することがあります。その場合は `--baseline` オプションで初期マイグレーションをスキップします：
+
+```sh
+TURSO_DATABASE_URL="..." atlas migrate apply --env turso --baseline <初期マイグレーションのバージョン>
+```
+
+例：
+
+```sh
+TURSO_DATABASE_URL="libsql://..." atlas migrate apply --env turso --baseline 20251207121113
+```
+
 # デプロイ
 
 以下のコマンドで ad-server と ui をまとめてビルド・デプロイします。
