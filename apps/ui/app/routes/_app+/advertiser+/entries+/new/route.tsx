@@ -66,7 +66,7 @@ export const schema = z.object({
   adWidth: z.number().int().positive().optional(),
   adHeight: z.number().int().positive().optional(),
   adDescription: z.string().max(1000).optional(),
-  adClickThroughUrl: z.string().url().startsWith('https://'),
+  adClickThroughUrl: z.url().startsWith('https://'),
 
   companionBanners: z.array(
     z.object({

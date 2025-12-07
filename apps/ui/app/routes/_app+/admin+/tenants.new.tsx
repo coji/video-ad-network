@@ -26,11 +26,7 @@ const createTenantSchema = z.object({
       /^[a-z0-9-]+$/,
       'スラッグは英小文字、数字、ハイフンのみ使用できます',
     ),
-  logo: z
-    .string()
-    .url('有効なURLを入力してください')
-    .optional()
-    .or(z.literal('')),
+  logo: z.url('有効なURLを入力してください').optional().or(z.literal('')),
   isAdvertiser: z.boolean().optional(),
   isMedia: z.boolean().optional(),
 })
