@@ -94,8 +94,8 @@ async function seed() {
 
   console.log('Created members')
 
-  // Create media
-  const mediaId = createId()
+  // Create media (use fixed ID for example HTML)
+  const mediaId = 'media1'
 
   await db
     .insertInto('media')
@@ -111,8 +111,8 @@ async function seed() {
 
   console.log('Created media')
 
-  // Create ad slot
-  const adSlotId = createId()
+  // Create ad slot (use fixed ID for example HTML)
+  const adSlotId = 'adslot1'
 
   await db
     .insertInto('adSlots')
