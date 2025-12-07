@@ -12,8 +12,10 @@ const tz = 'Asia/Tokyo'
 const seed = async () => {
   const db = getDB(process.env.DATABASE_URL ?? '')
 
-  // Create users
   const now = new Date().toISOString()
+
+  // Create users (without passwords - use auth:create-admin script to set passwords)
+  // Run: pnpm -C apps/ui run auth:create-admin <email> <password> <name>
   await db
     .insertInto('user')
     .values([
@@ -31,34 +33,6 @@ const seed = async () => {
         name: 'Test User',
         email: 'test@example.com',
         emailVerified: 1,
-        createdAt: now,
-        updatedAt: now,
-      },
-    ])
-    .execute()
-
-  // Create accounts (password: "password123")
-  // Note: In production, use better-auth's password hashing
-  await db
-    .insertInto('account')
-    .values([
-      {
-        id: 'account1',
-        accountId: 'user1',
-        providerId: 'credential',
-        userId: 'user1',
-        password:
-          '$2a$10$abcdefghijklmnopqrstuv', // placeholder - use better-auth to create real accounts
-        createdAt: now,
-        updatedAt: now,
-      },
-      {
-        id: 'account2',
-        accountId: 'user2',
-        providerId: 'credential',
-        userId: 'user2',
-        password:
-          '$2a$10$abcdefghijklmnopqrstuv', // placeholder - use better-auth to create real accounts
         createdAt: now,
         updatedAt: now,
       },

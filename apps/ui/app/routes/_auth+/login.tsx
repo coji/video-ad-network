@@ -24,7 +24,7 @@ const loginSchema = z.object({
 export const loader = async (args: Route.LoaderArgs) => {
   const session = await getSession(args)
   if (session) {
-    throw redirect('/')
+    throw redirect('/admin/tenants')
   }
   return null
 }
@@ -52,7 +52,7 @@ export const clientAction = async ({ request }: Route.ClientActionArgs) => {
     }
   }
 
-  return redirect('/')
+  return redirect('/admin/tenants')
 }
 
 export default function LoginPage() {

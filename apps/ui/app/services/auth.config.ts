@@ -101,14 +101,9 @@ export const createAuth = (env: AuthEnv) => {
             },
           },
         },
-        async sendInvitationEmail(data) {
+        async sendInvitationEmail(_data) {
           // TODO: Implement email sending
-          console.log('Invitation email:', {
-            email: data.email,
-            inviteLink: `${env.BETTER_AUTH_URL}/accept-invitation/${data.id}`,
-            invitedBy: data.inviter.user.name,
-            organization: data.organization.name,
-          })
+          // In production, integrate with an email service (e.g., SendGrid, Resend)
         },
       }),
     ],

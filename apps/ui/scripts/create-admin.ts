@@ -81,7 +81,6 @@ async function createAdmin() {
     console.log('\nAdmin account created successfully!')
     console.log(`  User ID: ${userId}`)
     console.log(`  Email: ${email}`)
-    console.log(`  Password: ${password}`)
     console.log(`  Role: admin`)
   } catch (error) {
     if (error instanceof Error) {
