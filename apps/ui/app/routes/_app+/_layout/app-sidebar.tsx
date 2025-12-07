@@ -103,7 +103,6 @@ export function AppSidebar() {
     const fetchData = async () => {
       try {
         const session = await authClient.getSession()
-        console.log('session:', session)
         if (session.data?.user) {
           setUser({
             name: session.data.user.name,
@@ -114,13 +113,11 @@ export function AppSidebar() {
         }
 
         const orgResult = await authClient.organization.getFullOrganization()
-        console.log('activeOrg:', orgResult)
         if (orgResult.data) {
           setActiveOrg(orgResult.data as Organization)
         }
 
         const orgsResult = await authClient.organization.list()
-        console.log('organizations:', orgsResult)
         if (orgsResult.data) {
           setOrganizations(orgsResult.data as Organization[])
         }
