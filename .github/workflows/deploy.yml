@@ -23,7 +23,7 @@ jobs:
 
       - name: Install Atlas CLI
         run: |
-          curl -sSf https://atlasgo.sh | sh -s -- --version v0.31.0
+          curl -sSf https://atlasgo.sh | sh -s -- --version v0.38.0
 
       - name: Apply database migrations
         id: migrate
