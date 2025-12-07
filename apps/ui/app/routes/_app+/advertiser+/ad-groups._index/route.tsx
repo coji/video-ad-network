@@ -36,7 +36,11 @@ export const loader = async (args: Route.LoaderArgs) => {
       'campaigns.name as campaignName',
       'campaigns.status as campaignStatus',
     ])
-    .where('advertisers.organizationId', '==', user.session.activeOrganizationId)
+    .where(
+      'advertisers.organizationId',
+      '==',
+      user.session.activeOrganizationId,
+    )
     .limit(100)
     .execute()
 

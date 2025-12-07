@@ -43,7 +43,7 @@ export default function LogoutPage() {
       </CardHeader>
       <CardContent className="space-y-4">
         {fetcher.data?.error && (
-          <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+          <div className="bg-destructive/10 text-destructive rounded-md p-3 text-sm">
             {fetcher.data.error}
           </div>
         )}

@@ -1,5 +1,9 @@
 import { Outlet } from 'react-router'
-import { SidebarProvider, SidebarTrigger } from '~/components/ui/sidebar'
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from '~/components/ui/sidebar'
 import { requireUser } from '~/services/auth.server'
 import type { Route } from './+types/route'
 import { AppSidebar } from './app-sidebar'
@@ -14,15 +18,13 @@ export default function AppLayout() {
     <SidebarProvider>
       <AppSidebar />
 
-      <div className="flex-1">
-        <header className="p-2">
+      <SidebarInset className="px-4 py-2 md:px-8 md:py-4">
+        <header className="mb-4 flex items-center gap-2">
           <SidebarTrigger />
         </header>
 
-        <main className="px-4 py-2 md:px-8 md:py-4">
-          <Outlet />
-        </main>
-      </div>
+        <Outlet />
+      </SidebarInset>
     </SidebarProvider>
   )
 }

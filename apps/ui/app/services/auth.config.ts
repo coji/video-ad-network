@@ -1,7 +1,7 @@
+import { createDialect } from '@video-ad-network/db'
 import { betterAuth } from 'better-auth'
 import { admin } from 'better-auth/plugins/admin'
 import { organization } from 'better-auth/plugins/organization'
-import { createDialect } from '@video-ad-network/db'
 
 export type AuthEnv = {
   TURSO_DATABASE_URL: string

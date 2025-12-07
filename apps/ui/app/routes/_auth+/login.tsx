@@ -83,7 +83,7 @@ export default function LoginPage() {
           className="space-y-4"
         >
           {form.errors && (
-            <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+            <div className="bg-destructive/10 text-destructive rounded-md p-3 text-sm">
               {form.errors[0]}
             </div>
           )}
@@ -96,7 +96,7 @@ export default function LoginPage() {
               autoComplete="email"
             />
             {fields.email.errors && (
-              <p className="text-sm text-destructive">
+              <p className="text-destructive text-sm">
                 {fields.email.errors[0]}
               </p>
             )}
@@ -110,7 +110,7 @@ export default function LoginPage() {
               autoComplete="current-password"
             />
             {fields.password.errors && (
-              <p className="text-sm text-destructive">
+              <p className="text-destructive text-sm">
                 {fields.password.errors[0]}
               </p>
             )}
@@ -121,7 +121,10 @@ export default function LoginPage() {
           </Button>
 
           <div className="text-center text-sm">
-            <Link to="/forgot-password" className="text-primary hover:underline">
+            <Link
+              to="/forgot-password"
+              className="text-primary hover:underline"
+            >
               パスワードをお忘れですか？
             </Link>
           </div>

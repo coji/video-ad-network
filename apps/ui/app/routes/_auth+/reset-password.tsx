@@ -138,7 +138,7 @@ export default function ResetPasswordPage() {
           <input type="hidden" name="token" value={token ?? ''} />
 
           {form.errors && (
-            <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+            <div className="bg-destructive/10 text-destructive rounded-md p-3 text-sm">
               {form.errors[0]}
             </div>
           )}
@@ -151,7 +151,7 @@ export default function ResetPasswordPage() {
               autoComplete="new-password"
             />
             {fields.password.errors && (
-              <p className="text-sm text-destructive">
+              <p className="text-destructive text-sm">
                 {fields.password.errors[0]}
               </p>
             )}
@@ -165,7 +165,7 @@ export default function ResetPasswordPage() {
               autoComplete="new-password"
             />
             {fields.confirmPassword.errors && (
-              <p className="text-sm text-destructive">
+              <p className="text-destructive text-sm">
                 {fields.confirmPassword.errors[0]}
               </p>
             )}

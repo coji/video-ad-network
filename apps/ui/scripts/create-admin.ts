@@ -1,7 +1,7 @@
-import { config } from 'dotenv'
 import { createId } from '@paralleldrive/cuid2'
 import { getDB } from '@video-ad-network/db'
 import { hashPassword } from 'better-auth/crypto'
+import { config } from 'dotenv'
 
 // .dev.vars ファイルから環境変数を読み込む
 config({ path: '.dev.vars' })

@@ -54,8 +54,15 @@ const updateTenantSchema = z.object({
   slug: z
     .string()
     .min(1, 'スラッグを入力してください')
-    .regex(/^[a-z0-9-]+$/, 'スラッグは英小文字、数字、ハイフンのみ使用できます'),
-  logo: z.string().url('有効なURLを入力してください').optional().or(z.literal('')),
+    .regex(
+      /^[a-z0-9-]+$/,
+      'スラッグは英小文字、数字、ハイフンのみ使用できます',
+    ),
+  logo: z
+    .string()
+    .url('有効なURLを入力してください')
+    .optional()
+    .or(z.literal('')),
   isAdvertiser: z.boolean().optional(),
   isMedia: z.boolean().optional(),
 })
@@ -252,7 +259,10 @@ export default function TenantDetailPage() {
               <AlertDialogCancel>キャンセル</AlertDialogCancel>
               <fetcher.Form method="post">
                 <input type="hidden" name="_action" value="delete" />
-                <AlertDialogAction type="submit" className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                <AlertDialogAction
+                  type="submit"
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
                   削除する
                 </AlertDialogAction>
               </fetcher.Form>
@@ -279,7 +289,7 @@ export default function TenantDetailPage() {
               <input type="hidden" name="_action" value="update" />
 
               {form.errors && (
-                <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+                <div className="bg-destructive/10 text-destructive rounded-md p-3 text-sm">
                   {form.errors[0]}
                 </div>
               )}
@@ -288,7 +298,7 @@ export default function TenantDetailPage() {
                 <Label htmlFor={fields.name.id}>名前</Label>
                 <Input {...getInputProps(fields.name, { type: 'text' })} />
                 {fields.name.errors && (
-                  <p className="text-sm text-destructive">
+                  <p className="text-destructive text-sm">
                     {fields.name.errors[0]}
                   </p>
                 )}
@@ -298,7 +308,7 @@ export default function TenantDetailPage() {
                 <Label htmlFor={fields.slug.id}>スラッグ</Label>
                 <Input {...getInputProps(fields.slug, { type: 'text' })} />
                 {fields.slug.errors && (
-                  <p className="text-sm text-destructive">
+                  <p className="text-destructive text-sm">
                     {fields.slug.errors[0]}
                   </p>
                 )}
@@ -308,7 +318,7 @@ export default function TenantDetailPage() {
                 <Label htmlFor={fields.logo.id}>ロゴURL</Label>
                 <Input {...getInputProps(fields.logo, { type: 'url' })} />
                 {fields.logo.errors && (
-                  <p className="text-sm text-destructive">
+                  <p className="text-destructive text-sm">
                     {fields.logo.errors[0]}
                   </p>
                 )}
@@ -323,7 +333,10 @@ export default function TenantDetailPage() {
                       name={fields.isAdvertiser.name}
                       defaultChecked={tenant.isAdvertiser}
                     />
-                    <Label htmlFor={fields.isAdvertiser.id} className="font-normal">
+                    <Label
+                      htmlFor={fields.isAdvertiser.id}
+                      className="font-normal"
+                    >
                       広告主
                     </Label>
                   </div>
@@ -377,7 +390,10 @@ export default function TenantDetailPage() {
               <TableBody>
                 {members.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={3} className="text-center text-muted-foreground">
+                    <TableCell
+                      colSpan={3}
+                      className="text-muted-foreground text-center"
+                    >
                       メンバーがいません
                     </TableCell>
                   </TableRow>
@@ -387,15 +403,26 @@ export default function TenantDetailPage() {
                       <TableCell>
                         <div>
                           <div className="font-medium">{member.userName}</div>
-                          <div className="text-sm text-muted-foreground">
+                          <div className="text-muted-foreground text-sm">
                             {member.userEmail}
                           </div>
                         </div>
                       </TableCell>
                       <TableCell>
-                        <fetcher.Form method="post" className="flex items-center gap-2">
-                          <input type="hidden" name="_action" value="updateMemberRole" />
-                          <input type="hidden" name="memberId" value={member.id} />
+                        <fetcher.Form
+                          method="post"
+                          className="flex items-center gap-2"
+                        >
+                          <input
+                            type="hidden"
+                            name="_action"
+                            value="updateMemberRole"
+                          />
+                          <input
+                            type="hidden"
+                            name="memberId"
+                            value={member.id}
+                          />
                           <Select
                             name="role"
                             defaultValue={member.role}
@@ -430,7 +457,9 @@ export default function TenantDetailPage() {
                           </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
-                              <AlertDialogTitle>メンバーを削除しますか？</AlertDialogTitle>
+                              <AlertDialogTitle>
+                                メンバーを削除しますか？
+                              </AlertDialogTitle>
                               <AlertDialogDescription>
                                 {member.userName} をテナントから削除します。
                               </AlertDialogDescription>
@@ -438,9 +467,20 @@ export default function TenantDetailPage() {
                             <AlertDialogFooter>
                               <AlertDialogCancel>キャンセル</AlertDialogCancel>
                               <fetcher.Form method="post">
-                                <input type="hidden" name="_action" value="removeMember" />
-                                <input type="hidden" name="memberId" value={member.id} />
-                                <AlertDialogAction type="submit" className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                                <input
+                                  type="hidden"
+                                  name="_action"
+                                  value="removeMember"
+                                />
+                                <input
+                                  type="hidden"
+                                  name="memberId"
+                                  value={member.id}
+                                />
+                                <AlertDialogAction
+                                  type="submit"
+                                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                >
                                   削除する
                                 </AlertDialogAction>
                               </fetcher.Form>

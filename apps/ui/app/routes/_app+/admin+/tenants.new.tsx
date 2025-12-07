@@ -22,8 +22,15 @@ const createTenantSchema = z.object({
   slug: z
     .string()
     .min(1, 'スラッグを入力してください')
-    .regex(/^[a-z0-9-]+$/, 'スラッグは英小文字、数字、ハイフンのみ使用できます'),
-  logo: z.string().url('有効なURLを入力してください').optional().or(z.literal('')),
+    .regex(
+      /^[a-z0-9-]+$/,
+      'スラッグは英小文字、数字、ハイフンのみ使用できます',
+    ),
+  logo: z
+    .string()
+    .url('有効なURLを入力してください')
+    .optional()
+    .or(z.literal('')),
   isAdvertiser: z.boolean().optional(),
   isMedia: z.boolean().optional(),
 })
@@ -110,7 +117,9 @@ export default function NewTenantPage() {
       <Card className="max-w-2xl">
         <CardHeader>
           <CardTitle>基本情報</CardTitle>
-          <CardDescription>テナントの基本情報を入力してください</CardDescription>
+          <CardDescription>
+            テナントの基本情報を入力してください
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <fetcher.Form
@@ -119,7 +128,7 @@ export default function NewTenantPage() {
             className="space-y-6"
           >
             {form.errors && (
-              <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+              <div className="bg-destructive/10 text-destructive rounded-md p-3 text-sm">
                 {form.errors[0]}
               </div>
             )}
@@ -131,7 +140,9 @@ export default function NewTenantPage() {
                 placeholder="例: 株式会社サンプル"
               />
               {fields.name.errors && (
-                <p className="text-sm text-destructive">{fields.name.errors[0]}</p>
+                <p className="text-destructive text-sm">
+                  {fields.name.errors[0]}
+                </p>
               )}
             </div>
 
@@ -141,11 +152,13 @@ export default function NewTenantPage() {
                 {...getInputProps(fields.slug, { type: 'text' })}
                 placeholder="例: sample-company"
               />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-muted-foreground text-xs">
                 URLの一部として使用されます。英小文字、数字、ハイフンのみ使用できます。
               </p>
               {fields.slug.errors && (
-                <p className="text-sm text-destructive">{fields.slug.errors[0]}</p>
+                <p className="text-destructive text-sm">
+                  {fields.slug.errors[0]}
+                </p>
               )}
             </div>
 
@@ -156,7 +169,9 @@ export default function NewTenantPage() {
                 placeholder="https://example.com/logo.png"
               />
               {fields.logo.errors && (
-                <p className="text-sm text-destructive">{fields.logo.errors[0]}</p>
+                <p className="text-destructive text-sm">
+                  {fields.logo.errors[0]}
+                </p>
               )}
             </div>
 
@@ -169,7 +184,10 @@ export default function NewTenantPage() {
                     name={fields.isAdvertiser.name}
                     defaultChecked={fields.isAdvertiser.initialValue === 'on'}
                   />
-                  <Label htmlFor={fields.isAdvertiser.id} className="font-normal">
+                  <Label
+                    htmlFor={fields.isAdvertiser.id}
+                    className="font-normal"
+                  >
                     広告主
                   </Label>
                 </div>
@@ -184,7 +202,7 @@ export default function NewTenantPage() {
                   </Label>
                 </div>
               </div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-muted-foreground text-xs">
                 テナントの役割を選択してください。複数選択可能です。
               </p>
             </div>

@@ -16,7 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from '~/components/ui'
-import { requireAdmin, db } from '~/services/auth.server'
+import { db, requireAdmin } from '~/services/auth.server'
 import type { Route } from './+types/tenants._index'
 
 type OrganizationMetadata = {
@@ -99,7 +99,10 @@ export default function TenantsIndexPage() {
             <TableBody>
               {tenants.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center text-muted-foreground">
+                  <TableCell
+                    colSpan={6}
+                    className="text-muted-foreground text-center"
+                  >
                     テナントがありません
                   </TableCell>
                 </TableRow>
@@ -108,7 +111,7 @@ export default function TenantsIndexPage() {
                   <TableRow key={tenant.id}>
                     <TableCell className="font-medium">{tenant.name}</TableCell>
                     <TableCell>
-                      <code className="rounded bg-muted px-1.5 py-0.5 text-sm">
+                      <code className="bg-muted rounded px-1.5 py-0.5 text-sm">
                         {tenant.slug}
                       </code>
                     </TableCell>
@@ -125,7 +128,9 @@ export default function TenantsIndexPage() {
                         )}
                       </div>
                     </TableCell>
-                    <TableCell className="text-right">{tenant.memberCount}</TableCell>
+                    <TableCell className="text-right">
+                      {tenant.memberCount}
+                    </TableCell>
                     <TableCell>
                       {new Date(tenant.createdAt).toLocaleDateString('ja-JP')}
                     </TableCell>

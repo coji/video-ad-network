@@ -109,7 +109,7 @@ export default function ForgotPasswordPage() {
           className="space-y-4"
         >
           {form.errors && (
-            <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+            <div className="bg-destructive/10 text-destructive rounded-md p-3 text-sm">
               {form.errors[0]}
             </div>
           )}
@@ -122,7 +122,7 @@ export default function ForgotPasswordPage() {
               autoComplete="email"
             />
             {fields.email.errors && (
-              <p className="text-sm text-destructive">
+              <p className="text-destructive text-sm">
                 {fields.email.errors[0]}
               </p>
             )}

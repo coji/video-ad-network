@@ -7,10 +7,9 @@ import {
   NewspaperIcon,
   PlusIcon,
   ScanIcon,
-  ShieldIcon,
   UserIcon,
 } from 'lucide-react'
-import { useState, useEffect, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { NavLink, useNavigate } from 'react-router'
 import {
   Avatar,
@@ -48,7 +47,7 @@ const SidebarMenuItemLink = ({
     <SidebarMenuButton asChild>
       <NavLink
         to={to}
-        className="aria-[current]:border-transparent aria-[current]:bg-primary aria-[current]:text-primary-foreground aria-[current]:shadow aria-[current]:hover:bg-primary/80"
+        className="aria-[current]:bg-primary aria-[current]:text-primary-foreground aria-[current]:hover:bg-primary/80 aria-[current]:border-transparent aria-[current]:shadow"
       >
         {children}
       </NavLink>
@@ -178,10 +177,7 @@ export function AppSidebar() {
 
         {user?.role === 'admin' && (
           <SidebarGroup>
-            <SidebarGroupLabel>
-              <ShieldIcon className="mr-1 inline h-4 w-4" />
-              Admin
-            </SidebarGroupLabel>
+            <SidebarGroupLabel>Admin</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 <SidebarMenuItemLink to="/admin/tenants">
@@ -206,13 +202,15 @@ export function AppSidebar() {
                 }
               >
                 <Avatar className="h-8 w-8">
-                  {user.image && <AvatarImage src={user.image} alt={user.name} />}
+                  {user.image && (
+                    <AvatarImage src={user.image} alt={user.name} />
+                  )}
                   <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
                 </Avatar>
                 {open && (
                   <div className="flex flex-col items-start text-left">
                     <span className="text-sm font-medium">{user.name}</span>
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-muted-foreground text-xs">
                       {user.email}
                     </span>
                   </div>
@@ -222,7 +220,7 @@ export function AppSidebar() {
             <DropdownMenuContent align="end" className="w-56">
               <div className="px-2 py-1.5">
                 <p className="text-sm font-medium">{user.name}</p>
-                <p className="text-xs text-muted-foreground">{user.email}</p>
+                <p className="text-muted-foreground text-xs">{user.email}</p>
               </div>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>

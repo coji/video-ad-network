@@ -23,7 +23,9 @@ const updateProfileSchema = z.object({
 const changePasswordSchema = z
   .object({
     currentPassword: z.string().min(1, '現在のパスワードを入力してください'),
-    newPassword: z.string().min(8, '新しいパスワードは8文字以上で入力してください'),
+    newPassword: z
+      .string()
+      .min(8, '新しいパスワードは8文字以上で入力してください'),
     confirmPassword: z.string().min(1, '確認用パスワードを入力してください'),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
@@ -160,7 +162,9 @@ export default function ProfileSettingsPage() {
       <Card>
         <CardHeader>
           <CardTitle>プロフィール</CardTitle>
-          <CardDescription>名前やメールアドレスを確認・変更できます</CardDescription>
+          <CardDescription>
+            名前やメールアドレスを確認・変更できます
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <profileFetcher.Form
@@ -171,7 +175,7 @@ export default function ProfileSettingsPage() {
             <input type="hidden" name="intent" value="updateProfile" />
 
             {profileForm.errors && (
-              <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+              <div className="bg-destructive/10 text-destructive rounded-md p-3 text-sm">
                 {profileForm.errors[0]}
               </div>
             )}
@@ -189,7 +193,7 @@ export default function ProfileSettingsPage() {
                 defaultValue={user.name}
               />
               {profileFields.name.errors && (
-                <p className="text-sm text-destructive">
+                <p className="text-destructive text-sm">
                   {profileFields.name.errors[0]}
                 </p>
               )}
@@ -198,7 +202,7 @@ export default function ProfileSettingsPage() {
             <div className="space-y-2">
               <Label>メールアドレス</Label>
               <Input type="email" value={user.email} disabled />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-muted-foreground text-xs">
                 メールアドレスは変更できません
               </p>
             </div>
@@ -224,7 +228,7 @@ export default function ProfileSettingsPage() {
             <input type="hidden" name="intent" value="changePassword" />
 
             {passwordForm.errors && (
-              <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+              <div className="bg-destructive/10 text-destructive rounded-md p-3 text-sm">
                 {passwordForm.errors[0]}
               </div>
             )}
@@ -246,7 +250,7 @@ export default function ProfileSettingsPage() {
                 autoComplete="current-password"
               />
               {passwordFields.currentPassword.errors && (
-                <p className="text-sm text-destructive">
+                <p className="text-destructive text-sm">
                   {passwordFields.currentPassword.errors[0]}
                 </p>
               )}
@@ -263,7 +267,7 @@ export default function ProfileSettingsPage() {
                 autoComplete="new-password"
               />
               {passwordFields.newPassword.errors && (
-                <p className="text-sm text-destructive">
+                <p className="text-destructive text-sm">
                   {passwordFields.newPassword.errors[0]}
                 </p>
               )}
@@ -280,7 +284,7 @@ export default function ProfileSettingsPage() {
                 autoComplete="new-password"
               />
               {passwordFields.confirmPassword.errors && (
-                <p className="text-sm text-destructive">
+                <p className="text-destructive text-sm">
                   {passwordFields.confirmPassword.errors[0]}
                 </p>
               )}

@@ -76,9 +76,7 @@ const App = ({ loaderData }: Route.ComponentProps) => {
     })
   }, [toastData])
 
-  return (
-      <Outlet />
-  )
+  return <Outlet />
 }
 
 export default App

@@ -126,7 +126,7 @@ export default function InviteMemberPage() {
             className="space-y-4"
           >
             {form.errors && (
-              <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+              <div className="bg-destructive/10 text-destructive rounded-md p-3 text-sm">
                 {form.errors[0]}
               </div>
             )}
@@ -138,7 +138,7 @@ export default function InviteMemberPage() {
                 placeholder="user@example.com"
               />
               {fields.email.errors && (
-                <p className="text-sm text-destructive">
+                <p className="text-destructive text-sm">
                   {fields.email.errors[0]}
                 </p>
               )}
@@ -156,11 +156,12 @@ export default function InviteMemberPage() {
                   <SelectItem value="member">メンバー</SelectItem>
                 </SelectContent>
               </Select>
-              <p className="text-xs text-muted-foreground">
-                オーナー: 全権限 / 管理者: メンバー管理可能 / メンバー: 基本操作のみ
+              <p className="text-muted-foreground text-xs">
+                オーナー: 全権限 / 管理者: メンバー管理可能 / メンバー:
+                基本操作のみ
               </p>
               {fields.role.errors && (
-                <p className="text-sm text-destructive">
+                <p className="text-destructive text-sm">
                   {fields.role.errors[0]}
                 </p>
               )}
