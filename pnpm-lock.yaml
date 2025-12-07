@@ -246,9 +246,6 @@ importers:
       '@date-fns/tz':
         specifier: 'catalog:'
         version: 1.4.1
-      '@date-fns/utc':
-        specifier: 'catalog:'
-        version: 2.1.1
       '@paralleldrive/cuid2':
         specifier: 3.0.4
         version: 3.0.4
@@ -324,9 +321,6 @@ importers:
       tailwind-merge:
         specifier: 'catalog:'
         version: 3.4.0
-      ts-pattern:
-        specifier: 5.9.0
-        version: 5.9.0
       tw-animate-css:
         specifier: 1.4.0
         version: 1.4.0
@@ -4337,9 +4331,6 @@ packages:
   tree-kill@1.2.2:
     resolution: {integrity: sha512-L0Orpi8qGpRG//Nd+H90vFB+3iHnue1zSSGmNOOCh1GLJ7rUKVwV2HvijphGQS2UmhUZewS9VgvxYIdgr+fG1A==}
     hasBin: true
-
-  ts-pattern@5.9.0:
-    resolution: {integrity: sha512-6s5V71mX8qBUmlgbrfL33xDUwO0fq48rxAu2LBE11WBeGdpCPOsXksQbZJHvHwhrd3QjUusd3mAOM5Gg0mFBLg==}
 
   tsconfck@3.1.6:
     resolution: {integrity: sha512-ks6Vjr/jEw0P1gmOVwutM3B7fWxoWBL2KRDb1JfqGVawBmO5UsvmWOQFGHBPl5yxYz4eERr19E6L7NMv+Fej4w==}
@@ -8542,8 +8533,6 @@ snapshots:
   tinyrainbow@3.0.3: {}
 
   tree-kill@1.2.2: {}
-
-  ts-pattern@5.9.0: {}
 
   tsconfck@3.1.6(typescript@5.9.3):
     optionalDependencies:
