@@ -131,8 +131,8 @@ CREATE TABLE `media` (
   PRIMARY KEY (`id`),
   CONSTRAINT `media_organization_id_fkey` FOREIGN KEY (`organization_id`) REFERENCES `organization` (`id`) ON UPDATE CASCADE ON DELETE RESTRICT
 );
--- Create index "media_name_key" to table: "media"
-CREATE UNIQUE INDEX `media_name_key` ON `media` (`name`);
+-- Create index "media_organization_id_name_key" to table: "media"
+CREATE UNIQUE INDEX `media_organization_id_name_key` ON `media` (`organization_id`, `name`);
 -- Create index "media_organization_id_idx" to table: "media"
 CREATE INDEX `media_organization_id_idx` ON `media` (`organization_id`);
 
@@ -147,8 +147,8 @@ CREATE TABLE `ad_slots` (
   PRIMARY KEY (`id`),
   CONSTRAINT `ad_slots_media_id_fkey` FOREIGN KEY (`media_id`) REFERENCES `media` (`id`) ON UPDATE CASCADE ON DELETE RESTRICT
 );
--- Create index "ad_slots_name_key" to table: "ad_slots"
-CREATE UNIQUE INDEX `ad_slots_name_key` ON `ad_slots` (`name`);
+-- Create index "ad_slots_media_id_name_key" to table: "ad_slots"
+CREATE UNIQUE INDEX `ad_slots_media_id_name_key` ON `ad_slots` (`media_id`, `name`);
 -- Create index "ad_slots_media_id_idx" to table: "ad_slots"
 CREATE INDEX `ad_slots_media_id_idx` ON `ad_slots` (`media_id`);
 
@@ -177,8 +177,8 @@ CREATE TABLE `advertisers` (
   PRIMARY KEY (`id`),
   CONSTRAINT `advertisers_organization_id_fkey` FOREIGN KEY (`organization_id`) REFERENCES `organization` (`id`) ON UPDATE CASCADE ON DELETE RESTRICT
 );
--- Create index "advertisers_name_key" to table: "advertisers"
-CREATE UNIQUE INDEX `advertisers_name_key` ON `advertisers` (`name`);
+-- Create index "advertisers_organization_id_name_key" to table: "advertisers"
+CREATE UNIQUE INDEX `advertisers_organization_id_name_key` ON `advertisers` (`organization_id`, `name`);
 -- Create index "advertisers_organization_id_idx" to table: "advertisers"
 CREATE INDEX `advertisers_organization_id_idx` ON `advertisers` (`organization_id`);
 
@@ -200,8 +200,8 @@ CREATE TABLE `campaigns` (
   PRIMARY KEY (`id`),
   CONSTRAINT `campaigns_advertiser_id_fkey` FOREIGN KEY (`advertiser_id`) REFERENCES `advertisers` (`id`) ON UPDATE CASCADE ON DELETE RESTRICT
 );
--- Create index "campaigns_name_key" to table: "campaigns"
-CREATE UNIQUE INDEX `campaigns_name_key` ON `campaigns` (`name`);
+-- Create index "campaigns_advertiser_id_name_key" to table: "campaigns"
+CREATE UNIQUE INDEX `campaigns_advertiser_id_name_key` ON `campaigns` (`advertiser_id`, `name`);
 -- Create index "campaigns_advertiser_id_idx" to table: "campaigns"
 CREATE INDEX `campaigns_advertiser_id_idx` ON `campaigns` (`advertiser_id`);
 
@@ -222,8 +222,8 @@ CREATE TABLE `ad_groups` (
   CONSTRAINT `ad_groups_campaign_id_fkey` FOREIGN KEY (`campaign_id`) REFERENCES `campaigns` (`id`) ON UPDATE CASCADE ON DELETE RESTRICT,
   CONSTRAINT `ad_groups_advertiser_id_fkey` FOREIGN KEY (`advertiser_id`) REFERENCES `advertisers` (`id`) ON UPDATE CASCADE ON DELETE RESTRICT
 );
--- Create index "ad_groups_name_key" to table: "ad_groups"
-CREATE UNIQUE INDEX `ad_groups_name_key` ON `ad_groups` (`name`);
+-- Create index "ad_groups_campaign_id_name_key" to table: "ad_groups"
+CREATE UNIQUE INDEX `ad_groups_campaign_id_name_key` ON `ad_groups` (`campaign_id`, `name`);
 -- Create index "ad_groups_campaign_id_idx" to table: "ad_groups"
 CREATE INDEX `ad_groups_campaign_id_idx` ON `ad_groups` (`campaign_id`);
 
