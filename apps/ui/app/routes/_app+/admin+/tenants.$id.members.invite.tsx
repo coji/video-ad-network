@@ -1,7 +1,7 @@
 import { getFormProps, getInputProps, useForm } from '@conform-to/react'
 import { parseWithZod } from '@conform-to/zod/v4'
 import { ArrowLeftIcon } from 'lucide-react'
-import { Link, redirect, useFetcher, useLoaderData } from 'react-router'
+import { Link, redirect, useFetcher } from 'react-router'
 import { z } from 'zod/v4'
 import {
   Button,
@@ -78,8 +78,9 @@ export const action = async (args: Route.ActionArgs) => {
   }
 }
 
-export default function InviteMemberPage() {
-  const { tenant } = useLoaderData<typeof loader>()
+export default function InviteMemberPage({
+  loaderData: { tenant },
+}: Route.ComponentProps) {
   const fetcher = useFetcher<typeof action>()
   const isLoading = fetcher.state !== 'idle'
 

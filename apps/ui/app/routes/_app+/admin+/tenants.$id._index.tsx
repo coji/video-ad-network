@@ -7,7 +7,7 @@ import {
   UserPlusIcon,
   UsersIcon,
 } from 'lucide-react'
-import { Link, redirect, useFetcher, useLoaderData } from 'react-router'
+import { Link, redirect, useFetcher } from 'react-router'
 import { z } from 'zod/v4'
 import {
   AlertDialog,
@@ -207,8 +207,9 @@ export const action = async (args: Route.ActionArgs) => {
   }
 }
 
-export default function TenantDetailPage() {
-  const { tenant, members } = useLoaderData<typeof loader>()
+export default function TenantDetailPage({
+  loaderData: { tenant, members },
+}: Route.ComponentProps) {
   const fetcher = useFetcher<typeof action>()
   const isLoading = fetcher.state !== 'idle'
 

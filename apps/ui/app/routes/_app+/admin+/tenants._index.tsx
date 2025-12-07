@@ -1,6 +1,6 @@
 import { sql } from '@video-ad-network/db'
 import { PlusIcon } from 'lucide-react'
-import { Link, useLoaderData } from 'react-router'
+import { Link } from 'react-router'
 import {
   Badge,
   Button,
@@ -57,8 +57,9 @@ export const loader = async (args: Route.LoaderArgs) => {
   }
 }
 
-export default function TenantsIndexPage() {
-  const { tenants } = useLoaderData<typeof loader>()
+export default function TenantsIndexPage({
+  loaderData: { tenants },
+}: Route.ComponentProps) {
 
   return (
     <div className="space-y-6">
