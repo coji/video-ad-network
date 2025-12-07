@@ -77,14 +77,7 @@ catalog:
 
 onlyBuiltDependencies:
   - '@tailwindcss/oxide'
-  - b
   - better-sqlite3
-  - d
-  - e
   - esbuild
-  - i
-  - l
-  - s
   - sharp
-  - u
   - workerd

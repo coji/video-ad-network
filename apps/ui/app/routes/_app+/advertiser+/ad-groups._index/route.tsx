@@ -12,6 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from '~/components/ui'
+import { formatYen } from '~/lib/utils'
 import { requireOrgUser } from '~/services/auth.server'
 import { db } from '~/services/db.server'
 import type { Route } from './+types/route'
@@ -80,7 +81,7 @@ export default function AdGroupsIndexPage({
                   {adGroup.frequencyCapImpressions}
                 </TableCell>
                 <TableCell>
-                  {Number(adGroup.bidPriceCpm).toLocaleString()}
+                  {formatYen(adGroup.bidPriceCpm)}
                   <small>円</small>
                 </TableCell>
                 <TableCell>{adGroup.campaignName}</TableCell>
