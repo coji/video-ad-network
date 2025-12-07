@@ -39,5 +39,8 @@ export const serializeDateTime = (
     throw new Error('Invalid timezone offset')
   }
 
-  return dayjs(dateStr).add(timezoneOffset, 'minute').utc().format('YYYY-MM-DD HH:mm:ss')
+  return dayjs(dateStr)
+    .add(timezoneOffset, 'minute')
+    .utc()
+    .format('YYYY-MM-DD HH:mm:ss')
 }

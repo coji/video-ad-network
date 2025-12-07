@@ -21,7 +21,10 @@ export const submitEntries = async (
         name: value.campaignName,
         startAt: serializeDateTime(value.campaignStartAt, value.tzOffset),
         endAt: serializeDateTime(
-          dayjs(value.campaignEndAt).add(1, 'day').subtract(1, 'second').toDate(), // 終了日の 23:59:59 にする
+          dayjs(value.campaignEndAt)
+            .add(1, 'day')
+            .subtract(1, 'second')
+            .toDate(), // 終了日の 23:59:59 にする
           value.tzOffset,
         ),
         budget: value.campaignBudget,
