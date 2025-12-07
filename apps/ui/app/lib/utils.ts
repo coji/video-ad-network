@@ -14,5 +14,5 @@ export const twx = createTwc({ compose: cn })
  */
 export function formatYen(value: unknown): string {
   const n = Number(value)
-  return Number.isFinite(n) ? n.toLocaleString() : '-'
+  return Number.isFinite(n) ? n.toLocaleString('ja-JP') : '-'
 }
