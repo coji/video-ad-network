@@ -13,6 +13,7 @@ import {
 } from 'lucide-react'
 import { useEffect, useState, type ReactNode } from 'react'
 import { NavLink, useNavigate, useRevalidator } from 'react-router'
+import { toast } from 'sonner'
 import {
   Avatar,
   AvatarFallback,
@@ -108,6 +109,7 @@ export function AppSidebar() {
         }
       } catch (error) {
         console.error('Error fetching auth data:', error)
+        toast.error('認証情報の取得に失敗しました')
       } finally {
         setIsLoaded(true)
       }
