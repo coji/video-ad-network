@@ -1,9 +1,9 @@
-import * as path from 'node:path'
-import * as readline from 'node:readline'
 import { createId } from '@paralleldrive/cuid2'
 import { getDB } from '@video-ad-network/db'
 import { hashPassword } from 'better-auth/crypto'
 import { config } from 'dotenv'
+import * as path from 'node:path'
+import * as readline from 'node:readline'
 
 // プロジェクトルートを取得 (apps/ui/scripts から ../../..)
 const projectRoot = path.resolve(import.meta.dirname, '../../..')
@@ -51,11 +51,15 @@ async function createAdmin() {
     process.exit(1)
   }
 
-  console.log(`Database: ${isProduction ? 'Turso (production)' : 'Local (.dev.vars)'}`)
+  console.log(
+    `Database: ${isProduction ? 'Turso (production)' : 'Local (.dev.vars)'}`,
+  )
 
   // 本番DBの場合は確認プロンプトを表示
   if (isProduction) {
-    console.log('\n⚠️  WARNING: You are about to modify the PRODUCTION database!')
+    console.log(
+      '\n⚠️  WARNING: You are about to modify the PRODUCTION database!',
+    )
     const confirmed = await confirm('Continue? (y/N): ')
     if (!confirmed) {
       console.log('Aborted.')
@@ -63,7 +67,7 @@ async function createAdmin() {
     }
   }
 
-  const db = getDB(TURSO_DATABASE_URL, process.env.TURSO_AUTH_TOKEN)
+  const db = getDB(TURSO_DATABASE_URL)
 
   console.log(`Creating admin user: ${email}`)
 

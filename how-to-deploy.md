@@ -94,19 +94,16 @@ pnpm -C apps/ad-server exec wrangler login
 
 ## ad-server の secret 設定
 
-ad-server の secret として以下を設定します。
-
-1. DATABASE_URL
-2. TURSO_AUTH_TOKEN
+ad-server の secret として `TURSO_DATABASE_URL` を設定します。
 
 ```sh
 pnpm -C apps/ad-server exec wrangler secret put TURSO_DATABASE_URL
 ```
 
-`? Enter a secret value:` と表示されるので、Turso のデータベースURLを入力します。
+`? Enter a secret value:` と表示されるので、Turso のデータベース URL（authToken 付き）を入力します。
 
 ```sh
-? Enter a secret value: libsql://video-ad-network-mizoguchicoji.turso.io
+? Enter a secret value: libsql://video-ad-network-xxx.turso.io?authToken=your-token
 ```
 
 ※ 実際に入力した値は \*\*\* でマスクされます。
@@ -124,22 +121,6 @@ Worker が作成されていない状態なので、"ad-server" Worker を作成
 ✨ Success! Uploaded secret TURSO_DATABASE_URL
 ```
 
-以下、同様に TURSO_AUTH_TOKEN も設定します。
-
-```sh
-pnpm -C apps/ad-server exec wrangler secret put TURSO_AUTH_TOKEN
-```
-
-```sh
-
- ⛅️ wrangler 3.99.0 (update available 3.101.0)
---------------------------------------------------------
-
-✔ Enter a secret value: … ***************************************************************************************************************************************************************************************************************
-🌀 Creating the secret for the Worker "ad-server"
-✨ Success! Uploaded secret TURSO_AUTH_TOKEN
-```
-
 ## ad-server の環境変数変更
 
 `apps/ad-server/wrangler.toml` ファイル内に、公開情報としての環境変数で `TRACKER_ORIGIN` というものが定義されています。これを ad-server の公開URLに変更する必要があります。
@@ -155,18 +136,15 @@ TRACKER_ORIGIN = "https://ad-server.mizoguchi-coji.workers.dev"
 
 ad-server 同様に必要な以下の secret を設定していきます。
 
-1. TURSO_DATABASE_URL
-2. TURSO_AUTH_TOKEN
-3. BETTER_AUTH_URL
-4. BETTER_AUTH_SECRET
+1. TURSO_DATABASE_URL（authToken 付き）
+2. BETTER_AUTH_URL
+3. BETTER_AUTH_SECRET
 
 ```sh
 pnpm -C apps/ui exec wrangler secret put TURSO_DATABASE_URL
 ```
 
-```sh
-pnpm -C apps/ui exec wrangler secret put TURSO_AUTH_TOKEN
-```
+値には authToken をクエリパラメータとして含めます（例: `libsql://your-db.turso.io?authToken=your-token`）。
 
 以下は UI の認証に使う better-auth 関連のものです。
 

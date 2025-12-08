@@ -86,7 +86,6 @@ video-ad-network/
 ```sh
 TRACKER_ORIGIN=http://localhost:5173
 TURSO_DATABASE_URL=http://127.0.0.1:8080
-TURSO_AUTH_TOKEN=
 ```
 
 #### ui の環境変数
@@ -95,7 +94,6 @@ TURSO_AUTH_TOKEN=
 
 ```sh
 TURSO_DATABASE_URL=http://127.0.0.1:8080
-TURSO_AUTH_TOKEN=
 BETTER_AUTH_URL=http://localhost:5175
 BETTER_AUTH_SECRET="ランダムな秘密鍵（openssl rand -base64 32 で生成）"
 ```

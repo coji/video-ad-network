@@ -4,12 +4,11 @@ import { redirect, type LoaderFunctionArgs } from 'react-router'
 import { createAuth, type Auth } from './auth.config'
 
 // Database
-export const db = getDB(env.TURSO_DATABASE_URL, env.TURSO_AUTH_TOKEN)
+export const db = getDB(env.TURSO_DATABASE_URL)
 
 // Better Auth instance
 export const auth: Auth = createAuth({
   TURSO_DATABASE_URL: env.TURSO_DATABASE_URL,
-  TURSO_AUTH_TOKEN: env.TURSO_AUTH_TOKEN,
   BETTER_AUTH_URL: env.BETTER_AUTH_URL,
   BETTER_AUTH_SECRET: env.BETTER_AUTH_SECRET,
 })

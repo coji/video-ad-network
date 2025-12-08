@@ -14,7 +14,6 @@ if [ ! -f "$PROJECT_ROOT/apps/ad-server/.dev.vars" ]; then
   cat > "$PROJECT_ROOT/apps/ad-server/.dev.vars" << EOF
 TRACKER_ORIGIN=http://localhost:5173
 TURSO_DATABASE_URL=http://127.0.0.1:8080
-TURSO_AUTH_TOKEN=
 EOF
 fi
 
@@ -23,7 +22,6 @@ if [ ! -f "$PROJECT_ROOT/apps/ui/.dev.vars" ]; then
   echo "Creating apps/ui/.dev.vars..."
   cat > "$PROJECT_ROOT/apps/ui/.dev.vars" << EOF
 TURSO_DATABASE_URL=http://127.0.0.1:8080
-TURSO_AUTH_TOKEN=
 BETTER_AUTH_URL=http://localhost:5175
 BETTER_AUTH_SECRET=$(openssl rand -base64 32)
 EOF
