@@ -1,34 +1,67 @@
+import * as path from 'node:path'
+import * as readline from 'node:readline'
 import { createId } from '@paralleldrive/cuid2'
 import { getDB } from '@video-ad-network/db'
 import { hashPassword } from 'better-auth/crypto'
 import { config } from 'dotenv'
 
-// --turso フラグがない場合は .dev.vars から読み込む（開発用）
-// --turso フラグがある場合は環境変数/direnv を使用（本番用）
-const useTurso = process.argv.includes('--turso')
-if (!useTurso) {
+// プロジェクトルートを取得 (apps/ui/scripts から ../../..)
+const projectRoot = path.resolve(import.meta.dirname, '../../..')
+
+// --production フラグで開発/本番を切り替え
+const isProduction = process.argv.includes('--production')
+if (isProduction) {
+  // 本番: プロジェクトルートの .env.production から読み込む
+  config({ path: path.join(projectRoot, '.env.production') })
+} else {
+  // 開発: .dev.vars から読み込む
   config({ path: '.dev.vars' })
 }
 
+async function confirm(message: string): Promise<boolean> {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  })
+  return new Promise((resolve) => {
+    rl.question(message, (answer) => {
+      rl.close()
+      resolve(answer.toLowerCase() === 'y')
+    })
+  })
+}
+
 async function createAdmin() {
-  const email = process.argv[2] || 'admin@example.com'
-  const password = process.argv[3] || 'password123'
-  const name = process.argv[4] || 'Admin User'
+  // --production フラグを除外した引数を取得
+  const args = process.argv.slice(2).filter((arg) => arg !== '--production')
+  const email = args[0] || 'admin@example.com'
+  const password = args[1] || 'password123'
+  const name = args[2] || 'Admin User'
 
   // 環境変数のチェック
   const TURSO_DATABASE_URL = process.env.TURSO_DATABASE_URL
 
   if (!TURSO_DATABASE_URL) {
     console.error('Error: TURSO_DATABASE_URL is required')
-    if (useTurso) {
-      console.error('Set it via environment variable or direnv (.envrc)')
+    if (isProduction) {
+      console.error('Create .env.production from .env.production.example')
     } else {
       console.error('Set it in .dev.vars file')
     }
     process.exit(1)
   }
 
-  console.log(`Database: ${useTurso ? 'Turso (production)' : 'Local (.dev.vars)'}`)
+  console.log(`Database: ${isProduction ? 'Turso (production)' : 'Local (.dev.vars)'}`)
+
+  // 本番DBの場合は確認プロンプトを表示
+  if (isProduction) {
+    console.log('\n⚠️  WARNING: You are about to modify the PRODUCTION database!')
+    const confirmed = await confirm('Continue? (y/N): ')
+    if (!confirmed) {
+      console.log('Aborted.')
+      process.exit(0)
+    }
+  }
 
   const db = getDB(TURSO_DATABASE_URL, process.env.TURSO_AUTH_TOKEN)
 

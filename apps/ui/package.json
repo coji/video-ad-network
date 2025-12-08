@@ -15,7 +15,7 @@
     "typegen": "wrangler types --strict-vars=false",
     "validate": "run-p format lint && run-p typecheck",
     "auth:create-admin": "tsx scripts/create-admin.ts",
-    "auth:create-admin:turso": "tsx scripts/create-admin.ts --turso"
+    "auth:create-admin:production": "tsx scripts/create-admin.ts --production"
   },
   "dependencies": {
     "@conform-to/react": "1.14.1",

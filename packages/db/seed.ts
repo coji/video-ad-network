@@ -1,10 +1,35 @@
+import * as path from 'node:path'
+import * as readline from 'node:readline'
 import { createId } from '@paralleldrive/cuid2'
 import dayjs from 'dayjs'
 import { config } from 'dotenv'
 import { getDB } from './src/index.js'
 
-// .env ファイルから環境変数を読み込む
-config()
+// プロジェクトルートを取得 (packages/db から ../..)
+const projectRoot = path.resolve(import.meta.dirname, '../..')
+
+// --production フラグで開発/本番を切り替え
+const isProduction = process.argv.includes('--production')
+if (isProduction) {
+  // 本番: プロジェクトルートの .env.production から読み込む
+  config({ path: path.join(projectRoot, '.env.production') })
+} else {
+  // 開発: デフォルトの .env
+  config()
+}
+
+async function confirm(message: string): Promise<boolean> {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  })
+  return new Promise((resolve) => {
+    rl.question(message, (answer) => {
+      rl.close()
+      resolve(answer.toLowerCase() === 'y')
+    })
+  })
+}
 
 async function seed() {
   // Support both file paths and Turso URLs
@@ -14,6 +39,19 @@ async function seed() {
     'file:../../data/dev.db'
   // Add file: prefix only if it's a relative path without protocol
   const dbUrl = rawUrl.includes(':') ? rawUrl : `file:${rawUrl}`
+
+  console.log(`Database: ${isProduction ? 'Turso (production)' : 'Local'}`)
+
+  // 本番DBの場合は確認プロンプトを表示
+  if (isProduction) {
+    console.log('\n⚠️  WARNING: You are about to seed the PRODUCTION database!')
+    const confirmed = await confirm('Continue? (y/N): ')
+    if (!confirmed) {
+      console.log('Aborted.')
+      process.exit(0)
+    }
+  }
+
   const db = getDB(dbUrl)
 
   console.log('Seeding database...')

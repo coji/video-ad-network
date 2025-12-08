@@ -113,17 +113,18 @@ pnpm db:generate    # Kysely 型定義の生成
 
 ### データベースコマンド一覧
 
-| コマンド               | 説明                                 |
-| ---------------------- | ------------------------------------ |
-| `pnpm db:reset`        | DB削除→スキーマ適用→seed投入         |
-| `pnpm db:push`         | スキーマを直接適用（開発用）         |
-| `pnpm db:seed`         | seedデータを投入                     |
-| `pnpm db:diff <name>`  | スキーマ変更からマイグレーション作成 |
-| `pnpm db:apply`        | マイグレーション適用                 |
-| `pnpm db:status`       | マイグレーション状態確認             |
-| `pnpm db:generate`     | DBからKysely型定義を生成             |
-| `pnpm db:apply:turso`  | 本番Tursoにマイグレーション適用      |
-| `pnpm db:status:turso` | 本番Tursoのマイグレーション状態確認  |
+| コマンド                    | 説明                                 |
+| --------------------------- | ------------------------------------ |
+| `pnpm db:reset`             | DB削除→スキーマ適用→seed投入         |
+| `pnpm db:push`              | スキーマを直接適用（開発用）         |
+| `pnpm db:seed`              | seedデータを投入                     |
+| `pnpm db:diff <name>`       | スキーマ変更からマイグレーション作成 |
+| `pnpm db:apply`             | マイグレーション適用                 |
+| `pnpm db:status`            | マイグレーション状態確認             |
+| `pnpm db:generate`          | DBからKysely型定義を生成             |
+| `pnpm db:apply:production`  | 本番DBにマイグレーション適用         |
+| `pnpm db:status:production` | 本番DBのマイグレーション状態確認     |
+| `pnpm db:seed:production`   | 本番DBにseedデータを投入（確認付き） |
 
 ### 管理者ユーザーの作成
 
@@ -261,36 +262,57 @@ pnpm --filter @video-ad-network/ui run test
 pnpm --filter @video-ad-network/ad-sdk run test
 ```
 
-## 本番環境の設定
+## デプロイ
 
-1. Turso CLI をインストールします:
+### 初回セットアップ（Turso データベース）
+
+1. Turso CLI をインストール:
 
    ```sh
    curl -sSfL https://get.tur.so/install.sh | bash
    ```
 
-2. Tursoにログインします:
+2. Turso にログイン:
 
    ```sh
    turso auth login
    ```
 
-3. データベースを作成します:
+3. データベースを作成:
 
    ```sh
    turso db create video-ad-network
    ```
 
-4. データベースのURLとトークンを取得します:
+4. `.env.production` を設定:
 
    ```sh
-   turso db show video-ad-network --url
-   turso db tokens create video-ad-network
+   cp .env.production.example .env.production
    ```
 
-## デプロイ
+   `.env.production` に本番の Turso 接続情報を設定:
 
-プロジェクト全体をデプロイするには、以下のコマンドを実行します:
+   ```sh
+   # turso db show video-ad-network --url でURLを取得
+   # turso db tokens create video-ad-network でトークンを取得
+   TURSO_DATABASE_URL="libsql://your-db.turso.io?authToken=your-token"
+   ```
+
+5. 本番 DB にマイグレーションを適用:
+
+   ```sh
+   pnpm db:apply:production
+   ```
+
+6. 管理者ユーザーを作成:
+
+   ```sh
+   pnpm auth:create-admin:production admin@example.com your-secure-password "Admin User"
+   ```
+
+### アプリケーションのデプロイ
+
+プロジェクト全体をデプロイ:
 
 ```sh
 pnpm run deploy
@@ -298,52 +320,28 @@ pnpm run deploy
 
 これにより、`ad-server`と`ui`の両方が順番にデプロイされます。
 
-個別のアプリケーションをデプロイする場合は、以下のコマンドを使用します:
-
-### ad-server のデプロイ
+個別にデプロイする場合:
 
 ```sh
+# ad-server のみ
 pnpm run deploy:ad-server
-```
 
-このコマンドは、Cloudflare Workers に ad-server をデプロイします。デプロイ前に、Cloudflare の認証情報が正しく設定されていることを確認してください。
-
-### ui のデプロイ
-
-```sh
+# ui のみ
 pnpm run deploy:ui
 ```
 
-このコマンドは、Cloudflare Workers に ui をデプロイします。デプロイ前に、Cloudflare の認証情報が正しく設定されていることを確認してください。
+注意: デプロイ前に Cloudflare の認証情報が正しく設定されていることを確認してください。
 
-注意: 初回デプロイ時や設定変更時には、追加の手順や確認が必要な場合があります。各プラットフォーム（Cloudflare Workers）のドキュメントを参照してください。
+### 本番 DB コマンド一覧
 
-### 本番環境での管理者ユーザー作成
+| コマンド                            | 説明                           |
+| ----------------------------------- | ------------------------------ |
+| `pnpm db:status:production`         | マイグレーション状態確認       |
+| `pnpm db:apply:production`          | マイグレーション適用           |
+| `pnpm db:seed:production`           | seed データ投入（確認付き）    |
+| `pnpm auth:create-admin:production` | 管理者ユーザー作成（確認付き） |
 
-初回デプロイ後、管理UIにログインするための管理者ユーザーを作成する必要があります。
-
-1. `.dev.vars` に本番のTurso接続情報を設定:
-
-   ```sh
-   # apps/ui/.dev.vars
-   TURSO_DATABASE_URL=libsql://your-db.turso.io
-   TURSO_AUTH_TOKEN=your-token
-   ```
-
-2. 管理者ユーザーを作成:
-
-   ```sh
-   pnpm auth:create-admin admin@example.com your-secure-password "Admin User"
-   ```
-
-   または、環境変数を直接指定して実行:
-
-   ```sh
-   cd apps/ui
-   TURSO_DATABASE_URL="libsql://your-db.turso.io" \
-   TURSO_AUTH_TOKEN="$(turso db tokens create video-ad-network)" \
-   tsx scripts/create-admin.ts admin@example.com your-secure-password "Admin User"
-   ```
+**注意**: `:production` サフィックスのコマンドは実行前に確認プロンプトが表示されます。
 
 ## 貢献
 

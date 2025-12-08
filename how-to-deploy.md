@@ -204,47 +204,34 @@ pnpm db:diff add_user_preferences
 
 ## 本番環境へのマイグレーション適用
 
-Turso 本番データベースにマイグレーションを適用するには、環境変数 `TURSO_DATABASE_URL` を設定してから `atlas migrate apply` を実行します。
+Turso 本番データベースにマイグレーションを適用するには、プロジェクトルートに `.env.production` を作成して接続情報を設定します。
 
-### 方法1: direnv を使う（推奨）
-
-direnv を使うと、`packages/db` ディレクトリに入ると自動で環境変数がセットされます。
+### 設定
 
 ```sh
-# direnv のインストール
-brew install direnv
-
-# シェルのフックを設定（.zshrc に追加）
-echo 'eval "$(direnv hook zsh)"' >> ~/.zshrc
-source ~/.zshrc
-
-# .envrc.example をコピーしてトークンを設定
-cd packages/db
-cp .envrc.example .envrc
-# .envrc の TURSO_DATABASE_URL にトークンを設定
-
-# direnv を許可
-direnv allow
-
-# マイグレーション実行
-atlas migrate apply --env turso
+# プロジェクトルートで
+cp .env.production.example .env.production
 ```
 
-### 方法2: コマンド実行時に環境変数を指定
+`.env.production` に本番の Turso 接続情報を設定：
 
 ```sh
-cd packages/db
-TURSO_DATABASE_URL="libsql://your-db.turso.io?authToken=your-token" atlas migrate apply --env turso
+# turso db show video-ad-network --url でURLを取得
+# turso db tokens create video-ad-network でトークンを取得
+TURSO_DATABASE_URL="libsql://your-db.turso.io?authToken=your-token"
 ```
 
-実際の例：
+### マイグレーション実行
 
 ```sh
-cd packages/db
-TURSO_DATABASE_URL="libsql://video-ad-network-xxx.turso.io?authToken=$(turso db tokens create video-ad-network)" atlas migrate apply --env turso
+# マイグレーション状態確認
+pnpm db:status:production
+
+# マイグレーション適用
+pnpm db:apply:production
 ```
 
-## マイグレーション状態の確認
+### マイグレーション状態の確認
 
 ローカル環境の場合：
 
@@ -255,8 +242,7 @@ pnpm db:status
 本番環境の場合：
 
 ```sh
-cd packages/db
-TURSO_DATABASE_URL="libsql://your-db.turso.io?authToken=your-token" atlas migrate status --env turso
+pnpm db:status:production
 ```
 
 ## 初回デプロイ時の注意
