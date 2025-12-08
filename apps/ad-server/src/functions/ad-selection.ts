@@ -11,7 +11,7 @@ export interface AdCandidate {
   height: number | null
   mimeType: string | null
   description: string | null
-  bidPriceCpm: number
+  bidPriceCpm: string // Kysely returns decimal as string
   frequencyCapImpressions: number
   frequencyCapWindow: number
   frequencyCapUnit: string
@@ -33,8 +33,8 @@ async function fetchAds(
     .innerJoin('adGroups', 'adGroups.id', 'ads.adGroupId')
     .innerJoin('campaigns', 'campaigns.id', 'adGroups.campaignId')
     .innerJoin('advertisers', 'advertisers.id', 'campaigns.advertiserId')
-    .where('campaigns.status', '==', 'ACTIVE')
-    .where('ads.type', '==', mediaType)
+    .where('campaigns.status', '=', 'ACTIVE')
+    .where('ads.type', '=', mediaType)
     .where(
       'companionBanners.width',
       'in',
@@ -57,7 +57,6 @@ async function fetchAds(
       'campaigns.id as campaignId',
       'adGroups.id as adGroupId',
     ])
-    .where('campaigns.status', '==', 'ACTIVE')
     .orderBy('adGroups.bidPriceCpm', 'desc')
     .execute()
 }

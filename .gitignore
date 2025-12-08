@@ -19,6 +19,7 @@ node_modules/
 .env
 .env.production
 .dev.vars
+.envrc
 
 # logs
 logs/
@@ -37,3 +38,4 @@ lerna-debug.log*
 
 data
 .serena
+.env.turso

@@ -79,7 +79,11 @@ export async function handleVastRequest(c: Context) {
     uid,
   })
 
-  const companionBanners = await getCompanionBanners(kysely, ad.id)
+  const companionBanners = await getCompanionBanners(
+    kysely,
+    ad.id,
+    adSlot.companionSizes,
+  )
 
   incrementFrequencyCount(
     frequencyData,

@@ -14,7 +14,8 @@
     "typecheck": "react-router typegen && tsc",
     "typegen": "wrangler types --strict-vars=false",
     "validate": "run-p format lint && run-p typecheck",
-    "auth:create-admin": "tsx scripts/create-admin.ts"
+    "auth:create-admin": "tsx scripts/create-admin.ts",
+    "auth:create-admin:production": "tsx scripts/create-admin.ts --production"
   },
   "dependencies": {
     "@conform-to/react": "1.14.1",

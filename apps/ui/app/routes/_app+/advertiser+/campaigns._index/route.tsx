@@ -13,6 +13,7 @@ import {
   TableRow,
 } from '~/components/ui'
 import { formatDateTime } from '~/lib/datetime'
+import { formatYen } from '~/lib/utils'
 import { requireOrgUser } from '~/services/auth.server'
 import { db } from '~/services/db.server'
 import type { Route } from './+types/route'
@@ -64,8 +65,8 @@ export default function CampaignIndexPage({
                 <TableCell>{campaign.name}</TableCell>
                 <TableCell>{campaign.budgetType}</TableCell>
                 <TableCell>
-                  {campaign.spentBudget.toLocaleString()}
-                  <small>円</small> / {campaign.budget.toLocaleString()}
+                  {formatYen(campaign.spentBudget)}
+                  <small>円</small> / {formatYen(campaign.budget)}
                   <small>円</small>
                 </TableCell>
                 <TableCell>

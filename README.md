@@ -35,6 +35,7 @@ video-ad-network/
 
 - Node.js (バージョン 20 以上) [mise](https://zenn.dev/light_planck/articles/mise-node-20240603) を使ってインストールするのをオススメします。
 - pnpm (バージョン 9.11.0 以上) Node.js インストール後に `npm i -g pnpm` でインストールしてください。
+- [Atlas CLI](https://atlasgo.io/getting-started#installation) データベースマイグレーション管理ツール。`brew install ariga/tap/atlas` でインストールできます。
 - [Cloudflare](https://www.cloudflare.com/ja-jp/) アカウント (広告配信サーバー, 管理UI用)
 - [Turso](https://turso.tech/) アカウント (データベース)
 
@@ -58,10 +59,9 @@ video-ad-network/
 
    これにより以下が自動で行われます:
    - `data/` ディレクトリの作成
-   - `packages/db/.env` の作成
    - `apps/ad-server/.dev.vars` の作成
-   - Prisma クライアントの生成
-   - データベースのマイグレーションと seed データの投入
+   - `apps/ui/.dev.vars` の作成
+   - データベースのスキーマ適用と seed データの投入
 
 3. 開発サーバーを起動します:
 
@@ -86,7 +86,6 @@ video-ad-network/
 ```sh
 TRACKER_ORIGIN=http://localhost:5173
 TURSO_DATABASE_URL=http://127.0.0.1:8080
-TURSO_AUTH_TOKEN=
 ```
 
 #### ui の環境変数
@@ -95,27 +94,48 @@ TURSO_AUTH_TOKEN=
 
 ```sh
 TURSO_DATABASE_URL=http://127.0.0.1:8080
-TURSO_AUTH_TOKEN=
 BETTER_AUTH_URL=http://localhost:5175
 BETTER_AUTH_SECRET="ランダムな秘密鍵（openssl rand -base64 32 で生成）"
-```
-
-#### packages/db の環境変数
-
-`packages/db/.env` を作成:
-
-```sh
-DATABASE_URL=file:/path/to/video-ad-network/data/dev.db
 ```
 
 ### データベースの手動セットアップ
 
 ```sh
-# マイグレーションの適用
-pnpm -C packages/db exec prisma migrate deploy
+# スキーマの適用と seed データの投入
+pnpm db:reset
 
-# seed データの投入
-pnpm -C packages/db exec prisma db seed
+# または個別に
+pnpm db:push        # スキーマの適用のみ
+pnpm db:generate    # Kysely 型定義の生成
+```
+
+### データベースコマンド一覧
+
+| コマンド                    | 説明                                 |
+| --------------------------- | ------------------------------------ |
+| `pnpm db:reset`             | DB削除→スキーマ適用→seed投入         |
+| `pnpm db:push`              | スキーマを直接適用（開発用）         |
+| `pnpm db:seed`              | seedデータを投入                     |
+| `pnpm db:diff <name>`       | スキーマ変更からマイグレーション作成 |
+| `pnpm db:apply`             | マイグレーション適用                 |
+| `pnpm db:status`            | マイグレーション状態確認             |
+| `pnpm db:generate`          | DBからKysely型定義を生成             |
+| `pnpm db:apply:production`  | 本番DBにマイグレーション適用         |
+| `pnpm db:status:production` | 本番DBのマイグレーション状態確認     |
+| `pnpm db:seed:production`   | 本番DBにseedデータを投入（確認付き） |
+
+### 管理者ユーザーの作成
+
+開発環境で管理者ユーザーを作成するには:
+
+```sh
+pnpm auth:create-admin <email> <password> <name>
+```
+
+例:
+
+```sh
+pnpm auth:create-admin admin@example.com mypassword123 "Admin User"
 ```
 
 ## 開発
@@ -240,36 +260,57 @@ pnpm --filter @video-ad-network/ui run test
 pnpm --filter @video-ad-network/ad-sdk run test
 ```
 
-## 本番環境の設定
+## デプロイ
 
-1. Turso CLI をインストールします:
+### 初回セットアップ（Turso データベース）
+
+1. Turso CLI をインストール:
 
    ```sh
    curl -sSfL https://get.tur.so/install.sh | bash
    ```
 
-2. Tursoにログインします:
+2. Turso にログイン:
 
    ```sh
    turso auth login
    ```
 
-3. データベースを作成します:
+3. データベースを作成:
 
    ```sh
    turso db create video-ad-network
    ```
 
-4. データベースのURLとトークンを取得します:
+4. `.env.production` を設定:
 
    ```sh
-   turso db show video-ad-network --url
-   turso db tokens create video-ad-network
+   cp .env.production.example .env.production
    ```
 
-## デプロイ
+   `.env.production` に本番の Turso 接続情報を設定:
 
-プロジェクト全体をデプロイするには、以下のコマンドを実行します:
+   ```sh
+   # turso db show video-ad-network --url でURLを取得
+   # turso db tokens create video-ad-network でトークンを取得
+   TURSO_DATABASE_URL="libsql://your-db.turso.io?authToken=your-token"
+   ```
+
+5. 本番 DB にマイグレーションを適用:
+
+   ```sh
+   pnpm db:apply:production
+   ```
+
+6. 管理者ユーザーを作成:
+
+   ```sh
+   pnpm auth:create-admin:production admin@example.com your-secure-password "Admin User"
+   ```
+
+### アプリケーションのデプロイ
+
+プロジェクト全体をデプロイ:
 
 ```sh
 pnpm run deploy
@@ -277,25 +318,28 @@ pnpm run deploy
 
 これにより、`ad-server`と`ui`の両方が順番にデプロイされます。
 
-個別のアプリケーションをデプロイする場合は、以下のコマンドを使用します:
-
-### ad-server のデプロイ
+個別にデプロイする場合:
 
 ```sh
+# ad-server のみ
 pnpm run deploy:ad-server
-```
 
-このコマンドは、Cloudflare Workers に ad-server をデプロイします。デプロイ前に、Cloudflare の認証情報が正しく設定されていることを確認してください。
-
-### ui のデプロイ
-
-```sh
+# ui のみ
 pnpm run deploy:ui
 ```
 
-このコマンドは、Cloudflare Workers に ui をデプロイします。デプロイ前に、Cloudflare の認証情報が正しく設定されていることを確認してください。
+注意: デプロイ前に Cloudflare の認証情報が正しく設定されていることを確認してください。
 
-注意: 初回デプロイ時や設定変更時には、追加の手順や確認が必要な場合があります。各プラットフォーム（Cloudflare Workers）のドキュメントを参照してください。
+### 本番 DB コマンド一覧
+
+| コマンド                            | 説明                           |
+| ----------------------------------- | ------------------------------ |
+| `pnpm db:status:production`         | マイグレーション状態確認       |
+| `pnpm db:apply:production`          | マイグレーション適用           |
+| `pnpm db:seed:production`           | seed データ投入（確認付き）    |
+| `pnpm auth:create-admin:production` | 管理者ユーザー作成（確認付き） |
+
+**注意**: `:production` サフィックスのコマンドは実行前に確認プロンプトが表示されます。
 
 ## 貢献
 

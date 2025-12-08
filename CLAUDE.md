@@ -7,7 +7,7 @@ Video ad network monorepo - ad delivery server, admin UI, client SDK, shared DB 
 - `apps/ad-server` - Hono on Cloudflare Workers (VAST/tracking endpoints)
 - `apps/ui` - React Router v7 admin dashboard (better-auth)
 - `packages/ad-sdk` - Browser SDK for VAST ad playback
-- `packages/db` - Prisma schema + Kysely query builder (Turso/SQLite)
+- `packages/db` - Atlas schema + Kysely query builder (Turso/SQLite)
 
 ## Commands
 
@@ -19,14 +19,17 @@ pnpm format                     # Prettier check
 pnpm test                       # Run tests
 
 # Database
-pnpm -C packages/db exec prisma migrate reset   # Reset with seed
-pnpm -C packages/db exec prisma migrate dev     # New migration
-pnpm -C packages/db exec prisma generate        # Regenerate types
+pnpm db:reset                   # Reset DB with seed
+pnpm db:diff <name>             # Create migration from schema changes
+pnpm db:apply                   # Apply migrations
+pnpm db:push                    # Apply schema directly (dev only)
+pnpm db:generate                # Regenerate Kysely types
+pnpm db:status                  # Check migration status
 ```
 
 ## Tech Stack
 
-pnpm workspaces, Turborepo, Biome, Prettier, Cloudflare Workers, Turso (prod) / SQLite (dev), better-auth
+pnpm workspaces, Turborepo, Biome, Prettier, Cloudflare Workers, Turso (prod) / SQLite (dev), Atlas, Kysely, better-auth
 
 ## useEffect Policy
 

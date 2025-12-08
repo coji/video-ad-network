@@ -5,13 +5,12 @@ import { organization } from 'better-auth/plugins/organization'
 
 export type AuthEnv = {
   TURSO_DATABASE_URL: string
-  TURSO_AUTH_TOKEN?: string
   BETTER_AUTH_URL: string
   BETTER_AUTH_SECRET: string
 }
 
 export const createAuth = (env: AuthEnv) => {
-  const dialect = createDialect(env.TURSO_DATABASE_URL, env.TURSO_AUTH_TOKEN)
+  const dialect = createDialect(env.TURSO_DATABASE_URL)
 
   return betterAuth({
     baseURL: env.BETTER_AUTH_URL,

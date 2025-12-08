@@ -48,6 +48,7 @@ catalog:
   hono: 4.10.7
   isbot: 5.1.32
   kysely: 0.28.8
+  kysely-codegen: 0.19.0
   lucide-react: 0.556.0
   next-themes: 0.4.6
   npm-run-all: 4.1.5
@@ -55,8 +56,6 @@ catalog:
   prettier: 3.7.4
   prettier-plugin-organize-imports: 4.3.0
   prettier-plugin-tailwindcss: 0.7.2
-  prisma: 6.19.0
-  prisma-kysely: 2.2.1
   react: 19.2.1
   react-dom: 19.2.1
   react-router: 7.10.1
@@ -76,19 +75,9 @@ catalog:
   wrangler: 4.53.0
   zx: 8.8.5
 
-ignoredBuiltDependencies:
-  - prisma
-
 onlyBuiltDependencies:
-  - '@prisma/engines'
   - '@tailwindcss/oxide'
-  - b
-  - d
-  - e
+  - better-sqlite3
   - esbuild
-  - i
-  - l
-  - s
   - sharp
-  - u
   - workerd
