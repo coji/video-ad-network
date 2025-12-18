@@ -32,14 +32,17 @@ jobs:
         env:
           TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
 
-      - name: Deploy ad-server
-        if: steps.migrate.outcome == 'success'
-        run: pnpm run deploy:ad-server
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      # TODO: Uncomment after setting CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID secrets
+      # - name: Deploy ad-server
+      #   if: steps.migrate.outcome == 'success'
+      #   run: pnpm run deploy:ad-server
+      #   env:
+      #     CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      #     CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
-      - name: Deploy ui
-        if: steps.migrate.outcome == 'success'
-        run: pnpm run deploy:ui
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      # - name: Deploy ui
+      #   if: steps.migrate.outcome == 'success'
+      #   run: pnpm run deploy:ui
+      #   env:
+      #     CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      #     CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
