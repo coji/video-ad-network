@@ -37,14 +37,14 @@
   "devDependencies": {
     "@biomejs/biome": "catalog:",
     "@types/node": "catalog:",
-    "cc-hooks-ts": "2.0.56",
+    "cc-hooks-ts": "catalog:",
     "concurrently": "catalog:",
-    "dotenv-cli": "11.0.0",
+    "dotenv-cli": "catalog:",
     "npm-run-all": "catalog:",
     "prettier": "catalog:",
     "prettier-plugin-organize-imports": "catalog:",
     "tsx": "catalog:",
     "turbo": "catalog:"
   },
-  "packageManager": "pnpm@10.24.0"
+  "packageManager": "pnpm@10.26.2"
 }
